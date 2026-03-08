@@ -12,17 +12,82 @@
   <body>
     <div class="grid-overlay"></div>
 
-    <main>
-      <div class="badge">// online</div>
-      <h1>Andrae Williams</h1>
-      <p class="tagline">Building an arsenal of skills.</p>
-      <p class="sub">Like Iron Man, Batman, and Superman — but the lab.</p>
-      <nav>
-        <a href="https://github.com/MistaJoka" target="_blank" rel="noopener">GitHub →</a>
-      </nav>
-    </main>
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-name">Andrae Williams</div>
+          <div class="badge">// online</div>
+        </div>
 
-    <footer>
+        <nav class="sidebar-nav">
+          <a href="#home" class="nav-link active" data-section="home">
+            <span class="nav-dot"></span>
+            Home
+          </a>
+          <a href="#tools" class="nav-link" data-section="tools">
+            <span class="nav-dot"></span>
+            Tools
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
+            GitHub →
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main-content">
+        <!-- Home section -->
+        <section id="home" class="section">
+          <h1>Andrae Williams</h1>
+          <p class="tagline">Building an arsenal of skills.</p>
+          <p class="sub">Like Iron Man, Batman, and Superman — but the lab.</p>
+        </section>
+
+        <!-- Tools section -->
+        <section id="tools" class="section">
+          <div class="section-header">
+            <h2>Tools</h2>
+            <span class="section-count">// 4 items</span>
+          </div>
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-name">Tool One</span>
+                <span class="status-badge active">// active</span>
+              </div>
+              <p class="tool-desc">Short description of what this tool does and why it matters.</p>
+            </div>
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-name">Tool Two</span>
+                <span class="status-badge active">// active</span>
+              </div>
+              <p class="tool-desc">Short description of what this tool does and why it matters.</p>
+            </div>
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-name">Tool Three</span>
+                <span class="status-badge wip">// wip</span>
+              </div>
+              <p class="tool-desc">Short description of what this tool does and why it matters.</p>
+            </div>
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-name">Tool Four</span>
+                <span class="status-badge wip">// wip</span>
+              </div>
+              <p class="tool-desc">Short description of what this tool does and why it matters.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="site-footer">
       <span>andraewilliams.com</span>
     </footer>
 
