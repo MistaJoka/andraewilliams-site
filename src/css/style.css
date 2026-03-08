@@ -191,3 +191,65 @@ body {
 .sidebar-link:hover {
   color: var(--accent);
 }
+
+/* =====================
+   MAIN CONTENT
+   ===================== */
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* =====================
+   SECTIONS
+   ===================== */
+.section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 4rem;
+  animation: fadeUp 0.5s ease both;
+}
+
+/* =====================
+   HOME SECTION
+   ===================== */
+#home h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-shadow: 0 0 60px rgba(0, 240, 255, 0.15);
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.tagline {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.sub {
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* =====================
+   FOOTER
+   ===================== */
+.site-footer {
+  position: fixed;
+  bottom: 1.5rem;
+  left: calc(var(--sidebar-w) + 2rem);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  z-index: 1;
+}
