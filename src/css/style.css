@@ -59,3 +59,135 @@ body {
   pointer-events: none;
   z-index: 0;
 }
+
+/* =====================
+   APP LAYOUT
+   ===================== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* =====================
+   SIDEBAR
+   ===================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  z-index: 100;
+}
+
+.sidebar-top {
+  margin-bottom: 2.5rem;
+}
+
+.sidebar-name {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+}
+
+/* Status badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  letter-spacing: 0.08em;
+}
+
+.badge::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+/* Nav */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-btn);
+  border-left: 2px solid transparent;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+.nav-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.nav-link.active .nav-dot {
+  opacity: 1;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+/* Sidebar bottom */
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.sidebar-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sidebar-link:hover {
+  color: var(--accent);
+}
