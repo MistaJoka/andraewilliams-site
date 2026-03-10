@@ -288,7 +288,7 @@ body {
    ===================== */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.25rem;
   max-width: 800px;
 }
@@ -314,6 +314,18 @@ body {
   box-shadow: 0 0 30px rgba(0, 240, 255, 0.08), inset 0 0 20px rgba(0, 240, 255, 0.03);
 }
 
+.tool-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.tool-card-link:hover .tool-card-cta {
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+}
+
 .tool-card-header {
   display: flex;
   align-items: center;
@@ -333,6 +345,31 @@ body {
   font-size: 0.85rem;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.tool-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tool-card-meta span {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tool-card-cta {
+  margin-top: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 /* =====================
@@ -438,10 +475,6 @@ body {
 
   .section {
     padding: 2.5rem 1.5rem;
-  }
-
-  .tools-grid {
-    grid-template-columns: 1fr;
   }
 
   .site-footer {
