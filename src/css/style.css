@@ -493,6 +493,181 @@ body {
 }
 
 /* =====================
+   SMOKE PLAYGROUND
+   ===================== */
+.main-content--smoke-playground {
+  justify-content: flex-start;
+  padding: 1.75rem 2rem 4rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.smoke-playground-page-header {
+  flex-shrink: 0;
+}
+
+.smoke-playground-title {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.smoke-playground-lede {
+  font-size: 0.88rem;
+  color: var(--muted);
+  max-width: 36rem;
+}
+
+.smoke-playground-layout {
+  display: flex;
+  flex: 1;
+  gap: 1.25rem;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.smoke-playground-panel {
+  width: 288px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.1rem 1.15rem;
+  max-height: min(720px, calc(100vh - 11rem));
+  overflow: auto;
+}
+
+.smoke-playground-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.smoke-playground-panel-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.smoke-playground-reset {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.smoke-playground-reset:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: rgba(0, 240, 255, 0.25);
+  background: var(--accent-dim);
+}
+
+.smoke-playground-reset:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.smoke-playground-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.smoke-playground-fieldset:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.smoke-playground-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.smoke-playground-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.smoke-playground-value {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.smoke-playground-row input[type='range'] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.smoke-playground-viewport-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.smoke-playground-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 280px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.04);
+}
+
+.smoke-playground-viewport canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.smoke-playground-reduced {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: var(--bg);
+}
+
+/* =====================
    MOBILE (< 768px)
    ===================== */
 @media (max-width: 768px) {
@@ -559,5 +734,22 @@ body {
 
   .site-footer {
     left: 1.25rem;
+  }
+
+  .main-content--smoke-playground {
+    padding: 1rem 1.25rem 3.5rem;
+  }
+
+  .smoke-playground-layout {
+    flex-direction: column;
+  }
+
+  .smoke-playground-panel {
+    width: 100%;
+    max-height: none;
+  }
+
+  .smoke-playground-viewport-wrap {
+    min-height: 45vh;
   }
 }

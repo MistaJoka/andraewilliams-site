@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Interactive canvas smoke playground — tune particles, motion, and color in real time."
+    />
+    <link rel="canonical" href="https://andraewilliams.com/smoke-playground.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://andraewilliams.com/smoke-playground.html" />
+    <meta property="og:title" content="Smoke playground — Andrae Williams" />
+    <meta
+      property="og:description"
+      content="Tune ambient smoke particles with live sliders and a full canvas viewport."
+    />
+    <meta property="og:site_name" content="Andrae Williams" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Smoke playground — Andrae Williams" />
+    <meta
+      name="twitter:description"
+      content="Tune ambient smoke particles with live sliders and a full canvas viewport."
+    />
+    <title>Smoke playground — Andrae Williams</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="grid-overlay"></div>
+
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-name">Andrae Williams</div>
+          <div class="badge">// online</div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="index.html" class="nav-link">
+            <span class="nav-dot"></span>
+            Home
+          </a>
+          <a href="tools.html" class="nav-link">
+            <span class="nav-dot"></span>
+            Tools
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
+            GitHub →
+          </a>
+        </div>
+      </aside>
+
+      <main class="main-content main-content--smoke-playground">
+        <header class="smoke-playground-page-header">
+          <h1 class="smoke-playground-title">Smoke playground</h1>
+          <p class="smoke-playground-lede">
+            Adjust parameters on the left; the canvas updates in real time.
+          </p>
+        </header>
+
+        <div class="smoke-playground-layout">
+          <div class="smoke-playground-panel">
+            <div class="smoke-playground-panel-head">
+              <span class="smoke-playground-panel-title">Parameters</span>
+              <button type="button" class="smoke-playground-reset" id="smoke-reset">
+                Reset
+              </button>
+            </div>
+            <fieldset class="smoke-playground-fieldset" id="smoke-controls">
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Max particles <span class="smoke-playground-value" data-for="maxParticles"></span
+                ></span>
+                <input type="range" data-param="maxParticles" min="20" max="150" step="1" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Spawn rate <span class="smoke-playground-value" data-for="spawnPerFrame"></span
+                ></span>
+                <input type="range" data-param="spawnPerFrame" min="0.2" max="3.5" step="0.05" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Rise (min) <span class="smoke-playground-value" data-for="vyMin"></span
+                ></span>
+                <input type="range" data-param="vyMin" min="0.4" max="2.8" step="0.05" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Rise (variance) <span class="smoke-playground-value" data-for="vyRange"></span
+                ></span>
+                <input type="range" data-param="vyRange" min="0.5" max="4" step="0.05" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Drift <span class="smoke-playground-value" data-for="vxSpread"></span
+                ></span>
+                <input type="range" data-param="vxSpread" min="0" max="1.4" step="0.02" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Wobble <span class="smoke-playground-value" data-for="wobbleStrength"></span
+                ></span>
+                <input type="range" data-param="wobbleStrength" min="0" max="1.6" step="0.02" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Wobble speed <span class="smoke-playground-value" data-for="wobbleSpeedBase"></span
+                ></span>
+                <input type="range" data-param="wobbleSpeedBase" min="0.008" max="0.055" step="0.001" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Radius growth <span class="smoke-playground-value" data-for="radiusGrowth"></span
+                ></span>
+                <input type="range" data-param="radiusGrowth" min="0.02" max="0.28" step="0.01" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Trail fade <span class="smoke-playground-value" data-for="trailAlpha"></span
+                ></span>
+                <input type="range" data-param="trailAlpha" min="0.04" max="0.32" step="0.01" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Puff opacity <span class="smoke-playground-value" data-for="puffAlpha"></span
+                ></span>
+                <input type="range" data-param="puffAlpha" min="0.035" max="0.16" step="0.005" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Life (base) <span class="smoke-playground-value" data-for="maxLifeMin"></span
+                ></span>
+                <input type="range" data-param="maxLifeMin" min="60" max="200" step="2" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Life (spread) <span class="smoke-playground-value" data-for="maxLifeRange"></span
+                ></span>
+                <input type="range" data-param="maxLifeRange" min="20" max="160" step="2" />
+              </label>
+              <label class="smoke-playground-row">
+                <span class="smoke-playground-label"
+                  >Hue <span class="smoke-playground-value" data-for="colorHue"></span
+                ></span>
+                <input type="range" data-param="colorHue" min="0" max="360" step="1" />
+              </label>
+            </fieldset>
+          </div>
+
+          <div class="smoke-playground-viewport-wrap">
+            <div class="smoke-playground-viewport" id="smoke-viewport" aria-label="Smoke preview">
+              <canvas id="smoke-canvas-playground" aria-hidden="true"></canvas>
+              <p class="smoke-playground-reduced" id="smoke-reduced-msg" hidden>
+                Animation is off when reduced motion is preferred.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <span>andraewilliams.com</span>
+    </footer>
+
+    <script type="module" src="js/smoke-playground.js"></script>
+  </body>
+</html>
