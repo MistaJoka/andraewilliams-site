@@ -4,8 +4,9 @@ import { defineConfig } from 'vite';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-/** Local-only Pretext smoke app (not deployed; see deploy workflow). */
-export default defineConfig({
+/** Pretext smoke app: dev at `/`, production build for GitHub Pages at `/pretext-smoke/`. */
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/pretext-smoke/' : '/',
   root: resolve(__dirname, 'src/pretext-smoke'),
   server: {
     port: 5173,
@@ -14,4 +15,4 @@ export default defineConfig({
     outDir: resolve(__dirname, 'dist-pretext'),
     emptyOutDir: true,
   },
-});
+}));

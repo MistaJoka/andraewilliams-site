@@ -1,6 +1,6 @@
 # andraewilliams.com
 
-Personal site and project hub: static HTML and CSS (no client JavaScript on the main pages yet). Deployed with GitHub Pages from the `src/` folder.
+Personal site and project hub: static HTML and CSS on the main pages, plus a small Vite-built **Pretext** demo at `/pretext-smoke/`. Deployed with GitHub Pages.
 
 **Live site:** [andraewilliams.com](https://andraewilliams.com) (custom domain via `src/CNAME`)
 
@@ -8,8 +8,8 @@ Personal site and project hub: static HTML and CSS (no client JavaScript on the 
 
 | Path | Purpose |
 |------|---------|
-| `src/` | Site root (HTML, CSS, `CNAME`) — this is what Pages serves |
-| `src/pretext-smoke/` | Local Vite + Pretext demo — **not** deployed |
+| `src/` | Site root (HTML, CSS, `CNAME`); deploy workflow stages `src/` plus built Pretext into `_site` |
+| `src/pretext-smoke/` | Vite + Pretext source; CI builds it to `/pretext-smoke/` on the live site |
 | `docs/` | Plans, roadmap, and project notes |
 
 ## Local preview
@@ -29,11 +29,11 @@ npm install
 npm run dev:pretext
 ```
 
-Uses `src/pretext-smoke/`. The deploy workflow **rsyncs `src/` without `pretext-smoke`**, so production stays unchanged.
+Uses `src/pretext-smoke/`. Production build output is produced in CI and published at **https://andraewilliams.com/pretext-smoke/** (see Deploy).
 
 ## Deploy
 
-Pushes to `main` run `.github/workflows/deploy.yml`, which copies `src/` to a staging folder (excluding `pretext-smoke`) and uploads that artifact to GitHub Pages.
+Pushes to `main` run `.github/workflows/deploy.yml`: `npm ci` and `npm run build:pretext`, then rsync `src/` into `_site` **excluding** the `pretext-smoke` source folder, copy `dist-pretext/` into `_site/pretext-smoke/`, and upload to GitHub Pages.
 
 ## More context
 

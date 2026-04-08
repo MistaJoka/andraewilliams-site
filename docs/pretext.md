@@ -33,11 +33,11 @@ npm install
 npm run dev:pretext
 ```
 
-Open the URL Vite prints (default `http://localhost:5173`). Source lives in **`src/pretext-smoke/`** — `prepare()` once, `layout()` on resize. That folder is **excluded from the Pages deploy** (see `.github/workflows/deploy.yml`) so the live site does not ship a broken ESM demo.
+Open the URL Vite prints (default `http://localhost:5173`). Source lives in **`src/pretext-smoke/`** — `prepare()` once, `layout()` on resize. CI runs **`npm run build:pretext`** and copies **`dist-pretext/`** into **`/pretext-smoke/`** on the live site (source `pretext-smoke` is not rsync’d as raw ESM; see `.github/workflows/deploy.yml`).
 
-### When you ship a real feature
+### When you add another bundled feature
 
-- Add a small bundle (Vite/esbuild) and either output into a path Pages serves or adjust the workflow once.
+- Same pattern: Vite build with an appropriate `base`, copy output into `_site` in the deploy workflow.
 - **Spike only:** `type="module"` + ESM CDN — OK for throwaways; pin versions and watch CSP.
 
 `package.json` already lists `@chenglou/pretext`; `npm run build:pretext` writes to `dist-pretext/` (gitignored) if you want to inspect production output.

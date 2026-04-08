@@ -20,13 +20,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install and build Pretext smoke
+        run: |
+          npm ci
+          npm run build:pretext
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Prepare site (exclude local-only Pretext demo)
+      - name: Prepare site
         run: |
           mkdir -p _site
           rsync -a --exclude 'pretext-smoke' src/ _site/
+          mkdir -p _site/pretext-smoke
+          rsync -a dist-pretext/ _site/pretext-smoke/
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
