@@ -240,6 +240,19 @@ body {
   font-style: italic;
 }
 
+.sub-attrib {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
 /* =====================
    FOOTER
    ===================== */

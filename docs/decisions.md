@@ -41,3 +41,20 @@ A lightweight log of key decisions and why they were made.
 - Clean root directory from day one.
 - Easy to understand where things belong as the project grows.
 - Matches professional project conventions without over-engineering.
+
+---
+
+## 2026-04-07 — Text measurement: Pretext when we leave “DOM guesswork”
+
+**Decision:** When a feature needs **accurate multiline text metrics or line breaking** without repeated DOM measurement, use **[Pretext](https://github.com/chenglou/pretext)** (`@chenglou/pretext`) and follow **`docs/pretext.md`**.
+
+**Why:**
+- Avoids reflow-heavy APIs (`getBoundingClientRect`, `offsetHeight`, etc.) for hot paths like virtualization, canvas text, or width probing.
+- Keeps font-driven behavior aligned with canvas measurement, with a documented API instead of ad hoc hacks.
+
+**Constraints:**
+- Pretext is an npm package; adopting it for a shipped feature implies introducing a **minimal bundler** (or a deliberate ESM strategy). The static Pages setup stays until that feature lands.
+- **`src/pretext-smoke`** exercises Pretext locally via Vite (`npm run dev:pretext`). Deploy excludes that folder so production stays a plain static tree.
+
+**Rejected for that job (defaults):**
+- Measuring the same text in a hidden DOM node on every frame — simple but does not scale and couples layout to the main document.

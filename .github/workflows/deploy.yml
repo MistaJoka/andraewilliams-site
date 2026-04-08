@@ -23,10 +23,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload src/ as site
+      - name: Prepare site (exclude local-only Pretext demo)
+        run: |
+          mkdir -p _site
+          rsync -a --exclude 'pretext-smoke' src/ _site/
+
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./src
+          path: ./_site
 
       - name: Deploy to GitHub Pages
         id: deployment
