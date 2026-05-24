@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9b5dff"/>
+      <stop offset="100%" stop-color="#00f0ff"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00f0ff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="#0a0a0f"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="200" cy="150" r="160" fill="#9b5dff" fill-opacity="0.1"/>
+  <text x="120" y="180" fill="#00f0ff" font-family="monospace" font-size="22" letter-spacing="6">ANDRAE WILLIAMS</text>
+  <text x="120" y="290" fill="#e8e8f0" font-family="Georgia, serif" font-size="96" font-weight="700" letter-spacing="-2">About</text>
+  <text x="120" y="360" fill="#5a5a7a" font-family="monospace" font-size="24">My domain. My lab. My playground.</text>
+  <rect x="120" y="400" width="520" height="160" rx="14" fill="#111118" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="150" y="445" fill="#5a5a7a" font-family="monospace" font-size="16" letter-spacing="4">MISSION</text>
+  <text x="150" y="485" fill="#e8e8f0" font-family="monospace" font-size="20">Sci-fi inspired portfolio &amp; learning lab.</text>
+  <text x="150" y="520" fill="#5a5a7a" font-family="monospace" font-size="18">Static tools today ’ server apps tomorrow.</text>
+  <rect x="680" y="400" width="400" height="160" rx="14" fill="#111118" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="710" y="445" fill="#5a5a7a" font-family="monospace" font-size="16" letter-spacing="4">STACK</text>
+  <text x="710" y="485" fill="url(#g1)" font-family="monospace" font-size="20">html · css · vanilla js</text>
+  <text x="710" y="520" fill="#5a5a7a" font-family="monospace" font-size="18">github pages · free tools only</text>
+  <text x="120" y="600" fill="#5a5a7a" font-family="monospace" font-size="18">andraewilliams.com/about</text>
+</svg>

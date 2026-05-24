@@ -4,7 +4,7 @@ const text =
   'andraewilliams.com — Pretext measures this paragraph without DOM layout thrash. ' +
   'Resize the window and watch layout() re-run with the new width. '.repeat(3);
 
-const font = '400 15px Inter, sans-serif';
+const font = '400 15px Outfit, sans-serif';
 const lineHeight = 24;
 
 const prepared = prepare(text, font);

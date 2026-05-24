@@ -16,21 +16,26 @@
       content="Personal site and project hub — tools, apps, and experiments."
     />
     <meta property="og:site_name" content="Andrae Williams" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://andraewilliams.com/og/home.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Andrae Williams" />
     <meta
       name="twitter:description"
       content="Personal site and project hub — tools, apps, and experiments."
     />
+    <meta name="twitter:image" content="https://andraewilliams.com/og/home.svg" />
     <title>Andrae Williams</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <div class="grid-overlay"></div>
+    <div class="ambient-noise" aria-hidden="true"></div>
 
     <div class="app-layout">
       <!-- Sidebar -->
@@ -44,6 +49,10 @@
           <a href="index.html" class="nav-link active" aria-current="page">
             <span class="nav-dot"></span>
             Home
+          </a>
+          <a href="about.html" class="nav-link">
+            <span class="nav-dot"></span>
+            About
           </a>
           <a href="tools.html" class="nav-link">
             <span class="nav-dot"></span>
@@ -81,13 +90,54 @@
 
       <!-- Main content -->
       <main class="main-content">
-        <section id="home" class="section">
-          <h1>Andrae Williams</h1>
-          <p class="tagline">Building an arsenal of skills.</p>
-          <p class="sub">
-            Knowledge is power. Only the educated are free.
-            <span class="sub-attrib">Bacon · Epictetus</span>
-          </p>
+        <section id="home" class="section section--hero">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <p class="hero-eyebrow">Personal lab · v0.1</p>
+              <h1>
+                Andrae
+                <span class="hero-accent">Williams</span>
+              </h1>
+              <p class="tagline">Building an arsenal of skills.</p>
+              <p class="sub">
+                Knowledge is power. Only the educated are free.
+                <span class="sub-attrib">Bacon · Epictetus</span>
+              </p>
+              <div class="hero-actions">
+                <a href="tools.html" class="hero-cta">View tools →</a>
+                <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="hero-cta hero-cta--ghost">GitHub</a>
+              </div>
+            </div>
+
+            <aside class="hero-panel" aria-label="System status">
+              <div class="hero-panel-head">
+                <span class="hero-panel-title">sys.status</span>
+                <div class="hero-panel-dots" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="hero-terminal">
+                <p><span class="line-prompt">›</span><span class="line-out">andraewilliams.com</span></p>
+                <p class="line-dim">stack: html · css · vanilla js</p>
+                <p class="line-dim">deploy: github pages</p>
+                <p><span class="line-prompt">›</span><span class="line-out">status: building in public</span></p>
+              </div>
+              <div class="hero-stats">
+                <div class="stat-chip">
+                  <span class="stat-value">3</span>
+                  <span class="stat-label">Tools</span>
+                </div>
+                <div class="stat-chip">
+                  <span class="stat-value">∞</span>
+                  <span class="stat-label">Experiments</span>
+                </div>
+                <div class="stat-chip">
+                  <span class="stat-value">1</span>
+                  <span class="stat-label">Mission</span>
+                </div>
+              </div>
+            </aside>
+          </div>
         </section>
       </main>
     </div>
@@ -96,6 +146,7 @@
       <span>andraewilliams.com</span>
     </footer>
 
+    <script type="module" src="js/ui.js"></script>
     <script type="module" src="js/smoke-home.js"></script>
   </body>
 </html>
