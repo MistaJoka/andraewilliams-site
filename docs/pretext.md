@@ -22,9 +22,16 @@ Rich inline (chips, mixed fonts) lives under `@chenglou/pretext/rich-inline` —
 
 ## Using it in *this* project
 
-The main site stays **static HTML/CSS/vanilla JS** on GitHub Pages. Pretext is an npm package, so it is wired through **Vite** for local work and any future bundled features.
+The main site stays **static HTML/CSS/vanilla JS** on GitHub Pages. Pretext is an npm package, wired through **Vite** in two places:
 
-### Local smoke app
+1. **Homepage card system** — `src/js/pretext-card-system.js` → `npm run build:cards` → `_site/js/pretext-card-system.js`
+2. **Pretext Layout Lab** — `src/pretext-smoke/` → `npm run build:pretext` → `_site/pretext-smoke/`
+
+### Homepage text-aware cards
+
+Lab section cards with `data-pretext-card` use Tier 1 APIs (`prepare` + `layout`) to show line counts, predicted height, and SAFE / OVERFLOW RISK badges. Font strings must match `.lab-card-name` and `.lab-card-note` CSS.
+
+### Pretext Layout Lab
 
 From the repo root:
 
@@ -33,14 +40,43 @@ npm install
 npm run dev:pretext
 ```
 
-Open the URL Vite prints (default `http://localhost:5173`). Source lives in **`src/pretext-smoke/`** — `prepare()` once, `layout()` on resize. CI runs **`npm run build:pretext`** and copies **`dist-pretext/`** into **`/pretext-smoke/`** on the live site (source `pretext-smoke` is not rsync’d as raw ESM; see `.github/workflows/deploy.yml`).
+Open the URL Vite prints (default `http://localhost:5173`). Source lives in **`src/pretext-smoke/`** — eight hash-routed demos. CI runs **`npm run build:pretext`** and copies **`dist-pretext/`** into **`/pretext-smoke/`** on the live site.
+
+Lab demos:
+
+| Hash | Demo | APIs |
+|------|------|------|
+| `#width-stress` | Width slider + JSON metrics | `prepare`, `layout` |
+| `#fit-guard` | Card fit guard | `prepare`, `layout` |
+| `#shrinkwrap` | CSS vs Pretext tight width | `prepareWithSegments`, `walkLineRanges` |
+| `#kanban` | CRM card text intelligence | `prepare`, `layout` |
+| `#manual-lines` | Manual line viewer | `prepareWithSegments`, `layoutWithLines` |
+| `#i18n` | Multilingual matrix | `prepare`, `layout` |
+| `#virtual-height` | Batch height estimator | `prepare`, `layout` |
+| `#layout-shift` | Measure first vs jump | `layout().height` |
+
+### Full site build
+
+```bash
+npm run build:site   # build:cards + build:pretext + assemble + verify
+npm run preview:site # build and serve _site on :8080
+```
 
 ### When you add another bundled feature
 
-- Same pattern: Vite build with an appropriate `base`, copy output into `_site` in the deploy workflow.
+- Same pattern: Vite build with an appropriate `base`, copy output into `_site` in [`scripts/assemble-site.sh`](../scripts/assemble-site.sh).
 - **Spike only:** `type="module"` + ESM CDN — OK for throwaways; pin versions and watch CSP.
 
-`package.json` already lists `@chenglou/pretext`; `npm run build:pretext` writes to `dist-pretext/` (gitignored) if you want to inspect production output.
+`package.json` lists `@chenglou/pretext`; builds write to `dist-pretext/` and `dist-card-system/` (gitignored).
+
+## API tiers (how this site uses them)
+
+| Tier | APIs | Where |
+|------|------|-------|
+| 1 | `prepare`, `layout` | Homepage cards, fit guard, kanban, i18n, virtual height |
+| 2 | `prepareWithSegments`, `layoutWithLines` | Manual line viewer |
+| 3 | `walkLineRanges` + binary search | Shrinkwrap guard |
+| 4 | `layoutNextLine` | Not rebuilt here — see advanced demos |
 
 ## Rules that matter (from upstream docs)
 
@@ -72,4 +108,5 @@ const { lines, height, lineCount } = layoutWithLines(prepared, 320, 24);
 
 ## See also
 
-- Live demos (upstream): [chenglou.me/pretext](https://chenglou.me/pretext) (linked from the repo README).
+- Live demos (upstream): [chenglou.me/pretext](https://chenglou.me/pretext)
+- Advanced community demos: [somnai-dreams/pretext-demos](https://somnai-dreams.github.io/pretext-demos/) (editorial engine, shrinkwrap showdown, justification)

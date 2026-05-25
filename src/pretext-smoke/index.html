@@ -3,63 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pretext smoke — Andrae Williams</title>
+    <title>Pretext Layout Lab — Andrae Williams</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
-    <style>
-      body {
-        margin: 0;
-        padding: 1.5rem;
-        max-width: 40rem;
-      }
-      h1 {
-        font-family: var(--font-mono);
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin: 0 0 0.5rem;
-        color: var(--primary);
-      }
-      p.hint {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        margin: 0 0 1rem;
-        line-height: 1.6;
-      }
-      p.hint code {
-        font-family: var(--font-mono);
-        font-size: 0.78rem;
-        color: var(--text);
-        background: rgba(255, 255, 255, 0.04);
-        padding: 0.1rem 0.35rem;
-        border-radius: 4px;
-      }
-      pre {
-        margin: 0;
-        padding: 1rem;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        font-family: var(--font-mono);
-        font-size: 0.78rem;
-        line-height: 1.6;
-        overflow: auto;
-      }
-    </style>
+    <script>
+      document.documentElement.dataset.theme =
+        localStorage.getItem('site-theme') || 'graphite-command-pro';
+    </script>
   </head>
-  <body>
-    <h1>Pretext smoke</h1>
-    <p class="hint">
-      Live on this site at <code>/pretext-smoke/</code>. Local preview from repo root:
-      <code>npm install</code> then <code>npm run dev:pretext</code>.
-    </p>
-    <pre id="out">Loading…</pre>
+  <body class="pretext-lab">
+    <header class="lab-header">
+      <div class="lab-header-top">
+        <a href="../index.html" class="lab-back">← andraewilliams.com</a>
+        <p class="lab-eyebrow">pretext.layout.lab</p>
+        <h1 class="lab-title">Pretext Layout Lab</h1>
+        <p class="lab-lede">
+          Text measurement without DOM reflow — prepare once, layout on every width change.
+          <a href="https://somnai-dreams.github.io/pretext-demos/" target="_blank" rel="noopener noreferrer">Advanced demos ↗</a>
+        </p>
+      </div>
+      <div class="lab-hud" id="lab-hud" aria-live="polite">
+        <span>Width: <strong>—</strong>px</span>
+        <span>Lines: <strong>—</strong></span>
+        <span>Height: <strong>—</strong>px</span>
+        <span>Reflow: <strong>—</strong>ms</span>
+        <span>DOM reads: <strong>0</strong></span>
+      </div>
+      <nav class="lab-nav" id="lab-nav" aria-label="Lab demos"></nav>
+    </header>
+    <main class="lab-main" id="demo-root">
+      <p class="lab-loading">Loading demo…</p>
+    </main>
+    <footer class="lab-footer">
+      <span>Built with <a href="https://github.com/chenglou/pretext" target="_blank" rel="noopener noreferrer">@chenglou/pretext</a></span>
+      <a href="https://github.com/MistaJoka/andraewilliams-site" target="_blank" rel="noopener noreferrer">Source ↗</a>
+    </footer>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

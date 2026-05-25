@@ -22,7 +22,7 @@ Personal portfolio + lab. Sci-fi inspired, beginner-friendly, ship small wins.
 |-------|--------|
 | Main site | Plain HTML, CSS, vanilla JS in `src/` |
 | Build | None for main pages — open or `python3 -m http.server` |
-| Bundler | Vite **only** for Pretext demos under `src/pretext-smoke/` |
+| Bundler | Vite for Pretext: `src/pretext-smoke/` (lab) + `src/js/pretext-card-system.js` (homepage cards) |
 | Deploy | GitHub Actions → GitHub Pages; `src/CNAME` = andraewilliams.com |
 | Text metrics | Pretext when DOM measurement won't scale — see `docs/pretext.md` |
 
@@ -32,7 +32,8 @@ Personal portfolio + lab. Sci-fi inspired, beginner-friendly, ship small wins.
 
 ```
 src/           → live site root (HTML, css/, js/)
-src/pretext-smoke/  → Vite + Pretext source (built in CI)
+src/js/pretext-card-system.js  → bundled homepage card measurement (build:cards)
+src/pretext-smoke/  → Vite + Pretext Layout Lab (built in CI)
 docs/          → brief, roadmap, decisions, plans
 ```
 
@@ -42,11 +43,14 @@ docs/          → brief, roadmap, decisions, plans
 # Preview main site
 cd src && python3 -m http.server 8080
 
-# Pretext demo dev
+# Pretext Layout Lab dev
 npm install && npm run dev:pretext
 
-# Pretext production build (matches CI)
+# Production builds (matches CI)
+npm run build:cards
 npm run build:pretext
+npm run build:site
+npm run preview:site
 ```
 
 ## Vibe-coding rules

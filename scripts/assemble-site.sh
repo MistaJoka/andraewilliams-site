@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+npm run build:cards
 npm run build:pretext
 
 mkdir -p src/data
@@ -11,6 +12,8 @@ cp docs/decisions.md src/data/decisions.md
 
 mkdir -p _site
 rsync -a --exclude 'pretext-smoke' src/ _site/
+mkdir -p _site/js
+cp dist-card-system/pretext-card-system.js _site/js/
 mkdir -p _site/pretext-smoke
 rsync -a dist-pretext/ _site/pretext-smoke/
 

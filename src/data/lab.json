@@ -1,20 +1,173 @@
 {
   "items": [
     {
+      "id": "pretext-layout-lab",
+      "name": "Pretext Layout Lab",
+      "subtitle": "Text-aware UI cards without DOM reflow",
+      "status": "live",
+      "note": "A browser text-measurement lab that predicts multiline card height, line count, and overflow risk before layout. Built to understand how high-performance UI systems avoid expensive DOM measurement and keep responsive cards stable.",
+      "concept": "DOM-free multiline text measurement",
+      "apis": ["prepare()", "layout()", "prepareWithSegments()", "layoutWithLines()"],
+      "href": "pretext-smoke/",
+      "source": "https://github.com/MistaJoka/andraewilliams-site",
+      "tags": [
+        "DOM-free measurement",
+        "responsive card fitting",
+        "line-count prediction",
+        "manual text layout",
+        "multilingual wrapping"
+      ],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 4,
+        "proof": {
+          "problem": "Browser DOM measurement forces layout reflow — expensive when cards, lists, or dashboards need to know text size before render.",
+          "concept": "prepare() once, then layout() with pure arithmetic when width or line-height changes.",
+          "why": "Stable cards, honest overflow warnings, and virtualization-friendly height prediction without thrashing the layout tree.",
+          "edgeCases": [
+            "Mixed-language wrapping (CJK, Arabic, emoji)",
+            "Long unbroken tokens and code-like strings",
+            "Responsive width changes via ResizeObserver",
+            "Line budgets for title vs body"
+          ],
+          "proves": [
+            "I understand browser layout cost.",
+            "I know why DOM measurement can be expensive.",
+            "I can predict line count and height before rendering.",
+            "I can use that for real UI systems: cards, chat, dashboards, Kanban boards."
+          ],
+          "meta": "This site's own project cards use the same measurement idea: prepare text once, calculate layout against card width, then display safe/overflow states."
+        }
+      }
+    },
+    {
+      "id": "fit-guard",
+      "name": "Responsive Card Fit Guard",
+      "subtitle": "Preventing overflow in project cards",
+      "status": "live",
+      "note": "Editable title and description with width and line-budget controls. Shows SAFE vs OVERFLOW RISK before the UI breaks.",
+      "concept": "Line-count prediction against max budgets",
+      "apis": ["prepare()", "layout()"],
+      "href": "pretext-smoke/#fit-guard",
+      "tags": ["cards", "overflow", "QA"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 3,
+        "proof": {
+          "problem": "Project cards look broken when titles wrap to four lines in a two-line slot.",
+          "concept": "Measure text against max line budgets before shipping copy.",
+          "why": "UI quality control without DOM reflow — the same guard you'd use in a design system.",
+          "edgeCases": ["Long product names", "Marketing copy that grows over time"],
+          "proves": ["Real UI quality control, not random text measurement."]
+        }
+      }
+    },
+    {
+      "id": "kanban-stress",
+      "name": "Kanban Title Stress Test",
+      "subtitle": "Layout prediction for CRM cards",
+      "status": "live",
+      "note": "Lead titles that grow until Kanban cards fail. Pretext predicts failure before the board breaks.",
+      "concept": "CRM card text intelligence",
+      "apis": ["prepare()", "layout()"],
+      "href": "pretext-smoke/#kanban",
+      "tags": ["kanban", "CRM", "cards"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 2,
+        "proof": {
+          "problem": "Kanban cards fail silently when lead descriptions grow past mobile widths.",
+          "concept": "Predict line count at card width before render.",
+          "why": "CRM users care about speed and clarity — overflow is a trust problem.",
+          "edgeCases": ["Long lead sentences", "Compact vs full card modes"],
+          "proves": ["Business-facing layout prediction for real workflow UI."]
+        }
+      }
+    },
+    {
+      "id": "i18n-stress",
+      "name": "Multilingual Text Edge Cases",
+      "subtitle": "Mixed-language wrapping",
+      "status": "live",
+      "note": "English, Spanish, Arabic, Chinese, emoji, long tokens, and code-like strings — same width, compared line counts.",
+      "concept": "Multilingual wrapping without DOM",
+      "apis": ["prepare()", "layout()"],
+      "href": "pretext-smoke/#i18n",
+      "tags": ["i18n", "CJK", "emoji"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 3,
+        "proof": {
+          "problem": "Card copy fails differently per script — English assumptions break for CJK and RTL.",
+          "concept": "One prepare() path handles mixed scripts via canvas font metrics.",
+          "why": "Serious text measurement must handle real-world multilingual content.",
+          "edgeCases": ["Arabic RTL", "CJK no-space runs", "Emoji clusters"],
+          "proves": ["Edge-case awareness beyond Latin-only demos."]
+        }
+      }
+    },
+    {
+      "id": "virtual-height",
+      "name": "Virtual Feed Height Estimator",
+      "subtitle": "Predicting list/card height before render",
+      "status": "live",
+      "note": "Batch prepare() + layout() on dozens of fake card titles. Sum exact scroll extent with zero DOM reads.",
+      "concept": "Virtualization-friendly height batching",
+      "apis": ["prepare()", "layout()"],
+      "href": "pretext-smoke/#virtual-height",
+      "tags": ["virtualization", "lists", "performance"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 2,
+        "proof": {
+          "problem": "Virtual lists need row heights before items enter the viewport.",
+          "concept": "Batch layout() across many strings — microseconds, not reflows.",
+          "why": "Estimated heights cause scroll jump; Pretext makes them exact.",
+          "edgeCases": ["50+ items", "Variable title lengths"],
+          "proves": ["Performance thinking for feed and list UI."]
+        }
+      }
+    },
+    {
+      "id": "manual-lines",
+      "name": "Manual Line Renderer",
+      "subtitle": "Using Pretext line output directly",
+      "status": "live",
+      "note": "layoutWithLines() materializes each line string for canvas, SVG, or custom DOM layers.",
+      "concept": "Manual text layout",
+      "apis": ["prepareWithSegments()", "layoutWithLines()"],
+      "href": "pretext-smoke/#manual-lines",
+      "tags": ["canvas", "lines", "layoutWithLines"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 3,
+        "proof": {
+          "problem": "Some UIs need per-line strings, not just total height.",
+          "concept": "layoutWithLines() returns each line for manual positioning.",
+          "why": "Canvas, chat bubbles, and custom renderers own the paint step.",
+          "edgeCases": ["Width slider reflow", "Per-line width display"],
+          "proves": ["Tier-2 API usage beyond height-only measurement."]
+        }
+      }
+    },
+    {
       "id": "smoke-playground",
       "name": "Smoke playground",
       "status": "live",
       "note": "Canvas particle smoke with live parameter panel — tune motion, density, and hue.",
       "href": "smoke-playground.html",
-      "tags": ["canvas", "experiment"]
-    },
-    {
-      "id": "pretext-smoke",
-      "name": "Pretext layout demo",
-      "status": "live",
-      "note": "Text measurement without DOM layout thrash — resize and watch metrics update.",
-      "href": "pretext-smoke/",
-      "tags": ["pretext", "layout"]
+      "tags": ["canvas", "experiment"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 3
+      }
     },
     {
       "id": "smoke-ambient",
@@ -23,7 +176,12 @@
       "note": "Optional background smoke effect — off by default, user opt-in.",
       "href": null,
       "tags": ["ambient", "toggle"],
-      "toggle": true
+      "toggle": true,
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 1,
+        "descriptionMaxLines": 2
+      }
     }
   ]
 }

@@ -11,7 +11,7 @@ How pages, sections, and copy are organized. Aligns with [site-identity.md](site
 | `/about.html` | Origin and intent — the one narrative page | First person, calm |
 | `/smoke-playground.html` | Live tool — parameter panel + canvas | Instructional, minimal |
 | `/writeups/*.html` | Case files — goals, tradeoffs, sources | Analytical |
-| `/pretext-smoke/` | Live demo — built artifact | Tool speaks |
+| `/pretext-smoke/` | Pretext Layout Lab — eight interactive demos | Tool speaks |
 | External apps | Linked from arsenal (e.g. promptbook) | App owns its UX |
 
 ## Homepage structure (Operator's Lab)
@@ -23,7 +23,7 @@ Vertical scroll, six sections:
 | Command Center hero | `#command-center` | Static HTML | Name, role, main/sub lines, status strip |
 | Current Mission | `#current-mission` | `mission.json` | What is being built now — honest, editable |
 | Arsenal | `#arsenal` | `tools.manifest.json` | Shipped tools — status, purpose, stack, links |
-| Lab | `#lab` | `lab.json` | Workshop experiments — demos, toggles, not blog |
+| Lab | `#lab` | `lab.json` | Engineering Demonstrations — text-aware project cards with Pretext measurement badges and proof panels |
 | Field Notes | `#field-notes` | `field-notes.json` | Short build logs — case-file cards |
 | Transmission | `#transmission` | Static HTML | Outbound links — GitHub, tools, about, source |
 

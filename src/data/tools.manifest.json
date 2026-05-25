@@ -2,13 +2,13 @@
   "tools": [
     {
       "id": "pretext-smoke",
-      "name": "Pretext layout demo",
+      "name": "Pretext Layout Lab",
       "status": "live",
       "href": "pretext-smoke/",
       "tags": ["vite", "pretext", "static"],
       "type": "Layout engineering",
-      "purpose": "Text measurement and line layout without DOM layout thrash.",
-      "description": "Resize the window and watch layout metrics update. Testing ground for canvas and document-style interfaces.",
+      "purpose": "Text-aware UI measurement lab — card fit guards, shrinkwrap, multilingual stress tests.",
+      "description": "A browser text-measurement lab that predicts multiline card height, line count, and overflow risk before layout. Eight interactive demos plus site-wide text-aware project cards.",
       "writeup": null
     },
     {

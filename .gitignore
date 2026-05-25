@@ -5,4 +5,5 @@ src/.DS_Store
 
 node_modules/
 dist-pretext/
+dist-card-system/
 _site/

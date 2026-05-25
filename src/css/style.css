@@ -2332,6 +2332,220 @@ body::after {
   color: var(--danger);
 }
 
+/* Text-aware project cards (Pretext) */
+.home-lab-grid .project-card {
+  cursor: default;
+}
+
+.lab-card-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.project-card-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.pretext-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.pretext-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pretext-badge--active.pretext-badge--safe {
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
+  background: color-mix(in srgb, var(--success) 8%, transparent);
+}
+
+.pretext-badge--active.pretext-badge--overflow {
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+}
+
+.pretext-badge--active.pretext-badge--measured {
+  color: var(--info);
+  border-color: color-mix(in srgb, var(--info) 35%, transparent);
+}
+
+.pretext-badge--active.pretext-badge--responsive {
+  color: var(--secondary);
+  border-color: color-mix(in srgb, var(--secondary) 35%, transparent);
+}
+
+.project-card-concept {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.project-card-concept-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.project-card-apis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.project-card-apis code {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.12rem 0.4rem;
+}
+
+.pretext-reading {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  margin: 0;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.project-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.project-card-action {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--primary);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.project-card-action:hover {
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.project-card-action--primary {
+  background: var(--primary-dim);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.project-card-action--ghost {
+  color: var(--muted);
+  background: transparent;
+}
+
+.project-card-proof {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.project-card-proof-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 0.75rem 0 0.35rem;
+}
+
+.project-card-proof-label:first-child {
+  margin-top: 0;
+}
+
+.project-card-proof-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+}
+
+.project-card-proof-meta {
+  margin: 0.5rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.project-card-proof-meta dt {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+.project-card-proof-meta dd {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+}
+
+.project-card-proof-meta-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0.5rem 0 0;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--primary);
+}
+
+@media (max-width: 480px) {
+  .project-card-status-wrap {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .pretext-badges {
+    justify-content: flex-start;
+  }
+
+  .project-card-actions {
+    flex-direction: column;
+  }
+
+  .project-card-action {
+    text-align: center;
+  }
+}
+
 /* Field notes */
 .home-notes-grid {
   display: grid;
