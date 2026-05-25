@@ -1,42 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
   <defs>
     <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00f0ff"/>
-      <stop offset="55%" stop-color="#9b5dff"/>
-      <stop offset="100%" stop-color="#ff2d78"/>
+      <stop offset="0%" stop-color="#2979FF"/>
+      <stop offset="55%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#B23A48"/>
     </linearGradient>
     <radialGradient id="orb1" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.18"/>
-      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#2979FF" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#2979FF" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="orb2" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#9b5dff" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#9b5dff" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#0D9488" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#0D9488" stop-opacity="0"/>
     </radialGradient>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00f0ff" stroke-opacity="0.06" stroke-width="1"/>
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2979FF" stroke-opacity="0.06" stroke-width="1"/>
     </pattern>
   </defs>
-  <rect width="1200" height="630" fill="#0a0a0f"/>
+  <rect width="1200" height="630" fill="#080A0D"/>
   <rect width="1200" height="630" fill="url(#grid)"/>
   <circle cx="980" cy="120" r="220" fill="url(#orb1)"/>
   <circle cx="180" cy="520" r="180" fill="url(#orb2)"/>
-  <rect x="80" y="80" width="24" height="24" stroke="#00f0ff" stroke-opacity="0.35" stroke-width="1" fill="none"/>
-  <rect x="1096" y="526" width="24" height="24" stroke="#00f0ff" stroke-opacity="0.35" stroke-width="1" fill="none"/>
-  <text x="120" y="200" fill="#00f0ff" font-family="monospace" font-size="22" letter-spacing="6">PERSONAL LAB</text>
-  <text x="120" y="310" fill="#e8e8f0" font-family="Georgia, serif" font-size="88" font-weight="700" letter-spacing="-2">Andrae</text>
+  <rect x="80" y="80" width="24" height="24" stroke="#2979FF" stroke-opacity="0.35" stroke-width="1" fill="none"/>
+  <rect x="1096" y="526" width="24" height="24" stroke="#2979FF" stroke-opacity="0.35" stroke-width="1" fill="none"/>
+  <text x="120" y="200" fill="#2979FF" font-family="monospace" font-size="22" letter-spacing="6">PERSONAL LAB</text>
+  <text x="120" y="310" fill="#E6EDF3" font-family="Georgia, serif" font-size="88" font-weight="700" letter-spacing="-2">Andrae</text>
   <text x="120" y="410" fill="url(#g1)" font-family="Georgia, serif" font-size="88" font-weight="700" letter-spacing="-2">Williams</text>
-  <text x="120" y="480" fill="#5a5a7a" font-family="monospace" font-size="24">Building an arsenal of skills.</text>
-  <text x="120" y="540" fill="#5a5a7a" font-family="monospace" font-size="18">andraewilliams.com</text>
-  <rect x="720" y="180" width="380" height="320" rx="14" fill="#111118" fill-opacity="0.75" stroke="#ffffff" stroke-opacity="0.06"/>
-  <text x="750" y="230" fill="#5a5a7a" font-family="monospace" font-size="16" letter-spacing="4">SYS.STATUS</text>
-  <circle cx="1060" cy="222" r="5" fill="#ff2d78" fill-opacity="0.7"/>
-  <circle cx="1078" cy="222" r="5" fill="#9b5dff" fill-opacity="0.7"/>
-  <circle cx="1096" cy="222" r="5" fill="#00f0ff" fill-opacity="0.7"/>
-  <text x="750" y="290" fill="#00f0ff" font-family="monospace" font-size="20">:</text>
-  <text x="770" y="290" fill="#e8e8f0" font-family="monospace" font-size="20">andraewilliams.com</text>
-  <text x="750" y="330" fill="#5a5a7a" font-family="monospace" font-size="18">stack: html · css · vanilla js</text>
-  <text x="750" y="365" fill="#5a5a7a" font-family="monospace" font-size="18">deploy: github pages</text>
-  <text x="750" y="410" fill="#00f0ff" font-family="monospace" font-size="20">:</text>
-  <text x="770" y="410" fill="#e8e8f0" font-family="monospace" font-size="20">status: building in public</text>
+  <text x="120" y="480" fill="#8A95A3" font-family="monospace" font-size="24">Building an arsenal of skills.</text>
+  <text x="120" y="540" fill="#8A95A3" font-family="monospace" font-size="18">andraewilliams.com</text>
+  <rect x="720" y="180" width="380" height="320" rx="14" fill="#11161D" fill-opacity="0.75" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="750" y="230" fill="#8A95A3" font-family="monospace" font-size="16" letter-spacing="4">SYS.STATUS</text>
+  <circle cx="1060" cy="222" r="5" fill="#B23A48" fill-opacity="0.7"/>
+  <circle cx="1078" cy="222" r="5" fill="#0D9488" fill-opacity="0.7"/>
+  <circle cx="1096" cy="222" r="5" fill="#2979FF" fill-opacity="0.7"/>
+  <text x="750" y="290" fill="#2979FF" font-family="monospace" font-size="20">:</text>
+  <text x="770" y="290" fill="#E6EDF3" font-family="monospace" font-size="20">andraewilliams.com</text>
+  <text x="750" y="330" fill="#8A95A3" font-family="monospace" font-size="18">stack: html ï¿½ css ï¿½ vanilla js</text>
+  <text x="750" y="365" fill="#8A95A3" font-family="monospace" font-size="18">deploy: github pages</text>
+  <text x="750" y="410" fill="#2979FF" font-family="monospace" font-size="20">:</text>
+  <text x="770" y="410" fill="#E6EDF3" font-family="monospace" font-size="20">status: building in public</text>
 </svg>

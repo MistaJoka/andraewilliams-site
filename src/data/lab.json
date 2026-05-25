@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "id": "smoke-playground",
+      "name": "Smoke playground",
+      "status": "live",
+      "note": "Canvas particle smoke with live parameter panel — tune motion, density, and hue.",
+      "href": "smoke-playground.html",
+      "tags": ["canvas", "experiment"]
+    },
+    {
+      "id": "pretext-smoke",
+      "name": "Pretext layout demo",
+      "status": "live",
+      "note": "Text measurement without DOM layout thrash — resize and watch metrics update.",
+      "href": "pretext-smoke/",
+      "tags": ["pretext", "layout"]
+    },
+    {
+      "id": "smoke-ambient",
+      "name": "Ambient smoke",
+      "status": "experiment",
+      "note": "Optional background smoke effect — off by default, user opt-in.",
+      "href": null,
+      "tags": ["ambient", "toggle"],
+      "toggle": true
+    }
+  ]
+}

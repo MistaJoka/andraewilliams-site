@@ -33,6 +33,7 @@ Done when: someone can land on the site and understand who you are and what you'
 Goal: Use the site as a testing ground for new skills.
 
 - [ ] Add interactive JS features or mini tools
+  - [x] Command-center home: live status panel, tool registry, decisions log viewer
 - [ ] Consider migrating to Vue.js if complexity grows
 - [ ] Add a notes or blog section
 - [ ] Experiment with animations or advanced CSS

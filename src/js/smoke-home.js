@@ -3,9 +3,12 @@
  */
 import { createSmokeController, defaultSmokeParams } from './smoke-engine.js';
 
-function init() {
+let initialized = false;
+
+export function initSmokeHome() {
   const toggle = document.getElementById('smoke-toggle');
-  if (!toggle) return;
+  if (!toggle || initialized) return;
+  initialized = true;
 
   const reducedMq = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -53,4 +56,5 @@ function init() {
   applyReducedState();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', initSmokeHome);
+document.addEventListener('lab-ready', initSmokeHome);

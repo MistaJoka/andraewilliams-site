@@ -1,0 +1,28 @@
+{
+  "notes": [
+    {
+      "id": "operator-lab-home",
+      "date": "2026-05-25",
+      "title": "Operator's Lab identity",
+      "summary": "Home shifts from raw log dump to sectioned command center with manifest-driven cards.",
+      "tags": ["identity", "homepage"],
+      "href": null
+    },
+    {
+      "id": "smoke-playground",
+      "date": "2026-03-07",
+      "title": "Smoke playground",
+      "summary": "Canvas smoke with parameter panel — tradeoffs in case file.",
+      "tags": ["canvas", "webgl"],
+      "href": "writeups/smoke-playground.html"
+    },
+    {
+      "id": "stack-decision",
+      "date": "2026-03-07",
+      "title": "HTML + CSS + vanilla JS",
+      "summary": "Zero build tooling for the main site — instant feedback, honest static deploy.",
+      "tags": ["stack", "github-pages"],
+      "href": "https://github.com/MistaJoka/andraewilliams-site/blob/main/docs/decisions.md"
+    }
+  ]
+}

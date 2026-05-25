@@ -1,0 +1,38 @@
+{
+  "tools": [
+    {
+      "id": "pretext-smoke",
+      "name": "Pretext layout demo",
+      "status": "live",
+      "href": "pretext-smoke/",
+      "tags": ["vite", "pretext", "static"],
+      "type": "Layout engineering",
+      "purpose": "Text measurement and line layout without DOM layout thrash.",
+      "description": "Resize the window and watch layout metrics update. Testing ground for canvas and document-style interfaces.",
+      "writeup": null
+    },
+    {
+      "id": "smoke-playground",
+      "name": "Smoke playground",
+      "status": "live",
+      "href": "smoke-playground.html",
+      "tags": ["canvas", "static"],
+      "type": "Visual systems",
+      "purpose": "Canvas particle smoke with a live control panel.",
+      "description": "Tune motion, density, trails, and hue while the preview updates. Case study covers the shared engine and tradeoffs.",
+      "writeup": "writeups/smoke-playground.html"
+    },
+    {
+      "id": "promptbook",
+      "name": "DOPE Prompt Book",
+      "status": "live",
+      "href": "https://promptbook.andraewilliams.com",
+      "external": true,
+      "tags": ["nextjs", "typescript"],
+      "type": "Product app",
+      "purpose": "Local-first prompt library and composer for reusable AI workflows.",
+      "description": "Build, organize, filter, edit, and assemble prompts. A larger app connecting the portfolio to real workflow.",
+      "writeup": null
+    }
+  ]
+}

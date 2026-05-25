@@ -1,28 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
   <defs>
     <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00f0ff"/>
-      <stop offset="100%" stop-color="#9b5dff"/>
+      <stop offset="0%" stop-color="#2979FF"/>
+      <stop offset="100%" stop-color="#0D9488"/>
     </linearGradient>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00f0ff" stroke-opacity="0.06" stroke-width="1"/>
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2979FF" stroke-opacity="0.06" stroke-width="1"/>
     </pattern>
   </defs>
-  <rect width="1200" height="630" fill="#0a0a0f"/>
+  <rect width="1200" height="630" fill="#080A0D"/>
   <rect width="1200" height="630" fill="url(#grid)"/>
-  <circle cx="900" cy="500" r="200" fill="#00f0ff" fill-opacity="0.08"/>
-  <text x="120" y="180" fill="#00f0ff" font-family="monospace" font-size="22" letter-spacing="6">ANDRAE WILLIAMS</text>
-  <text x="120" y="290" fill="#e8e8f0" font-family="Georgia, serif" font-size="96" font-weight="700" letter-spacing="-2">Tools</text>
-  <text x="120" y="360" fill="#5a5a7a" font-family="monospace" font-size="24">Custom-built apps, demos, and experiments.</text>
+  <circle cx="900" cy="500" r="200" fill="#2979FF" fill-opacity="0.08"/>
+  <text x="120" y="180" fill="#2979FF" font-family="monospace" font-size="22" letter-spacing="6">ANDRAE WILLIAMS</text>
+  <text x="120" y="290" fill="#E6EDF3" font-family="Georgia, serif" font-size="96" font-weight="700" letter-spacing="-2">Tools</text>
+  <text x="120" y="360" fill="#8A95A3" font-family="monospace" font-size="24">Custom-built apps, demos, and experiments.</text>
   <rect x="120" y="420" width="960" height="1" fill="#ffffff" fill-opacity="0.06"/>
-  <rect x="120" y="450" width="280" height="120" rx="12" fill="#111118" stroke="#ffffff" stroke-opacity="0.06"/>
-  <rect x="460" y="450" width="280" height="120" rx="12" fill="#111118" stroke="#ffffff" stroke-opacity="0.06"/>
-  <rect x="800" y="450" width="280" height="120" rx="12" fill="#111118" stroke="#ffffff" stroke-opacity="0.06"/>
-  <text x="150" y="495" fill="#e8e8f0" font-family="monospace" font-size="18" font-weight="700">Pretext demo</text>
-  <text x="150" y="525" fill="#00f0ff" font-family="monospace" font-size="14">live</text>
-  <text x="490" y="495" fill="#e8e8f0" font-family="monospace" font-size="18" font-weight="700">Smoke playground</text>
-  <text x="490" y="525" fill="#00f0ff" font-family="monospace" font-size="14">live</text>
-  <text x="830" y="495" fill="#e8e8f0" font-family="monospace" font-size="18" font-weight="700">Prompt Book</text>
-  <text x="830" y="525" fill="#00f0ff" font-family="monospace" font-size="14">live</text>
-  <text x="120" y="600" fill="#5a5a7a" font-family="monospace" font-size="18">andraewilliams.com/tools</text>
+  <rect x="120" y="450" width="280" height="120" rx="12" fill="#11161D" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="460" y="450" width="280" height="120" rx="12" fill="#11161D" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="800" y="450" width="280" height="120" rx="12" fill="#11161D" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="150" y="495" fill="#E6EDF3" font-family="monospace" font-size="18" font-weight="700">Pretext demo</text>
+  <text x="150" y="525" fill="#2979FF" font-family="monospace" font-size="14">live</text>
+  <text x="490" y="495" fill="#E6EDF3" font-family="monospace" font-size="18" font-weight="700">Smoke playground</text>
+  <text x="490" y="525" fill="#2979FF" font-family="monospace" font-size="14">live</text>
+  <text x="830" y="495" fill="#E6EDF3" font-family="monospace" font-size="18" font-weight="700">Prompt Book</text>
+  <text x="830" y="525" fill="#2979FF" font-family="monospace" font-size="14">live</text>
+  <text x="120" y="600" fill="#8A95A3" font-family="monospace" font-size="18">andraewilliams.com/tools</text>
 </svg>

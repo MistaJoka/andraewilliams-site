@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Andrae Williams — builder portfolio and personal lab for custom tools, apps, and sci-fi inspired web experiments."
+      content="Andrae Williams — builder, analyst, operator. Personal lab for AI-assisted tools, business systems, dashboards, and experiments."
     />
     <link rel="canonical" href="https://andraewilliams.com/" />
     <meta property="og:type" content="website" />
@@ -13,7 +13,7 @@
     <meta property="og:title" content="Andrae Williams" />
     <meta
       property="og:description"
-      content="Builder portfolio and personal lab for custom tools, apps, and web experiments."
+      content="Builder, analyst, operator — personal lab for working software systems."
     />
     <meta property="og:site_name" content="Andrae Williams" />
     <meta property="og:image" content="https://andraewilliams.com/og/home.svg" />
@@ -23,7 +23,7 @@
     <meta name="twitter:title" content="Andrae Williams" />
     <meta
       name="twitter:description"
-      content="Builder portfolio and personal lab for custom tools, apps, and web experiments."
+      content="Builder, analyst, operator — personal lab for working software systems."
     />
     <meta name="twitter:image" content="https://andraewilliams.com/og/home.svg" />
     <title>Andrae Williams</title>
@@ -31,18 +31,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';</script>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/themes.css" />
   </head>
-  <body>
-    <div class="grid-overlay"></div>
+  <body class="page-home">
+    <div class="grid-overlay grid-overlay--dim"></div>
     <div class="ambient-noise" aria-hidden="true"></div>
 
     <div class="app-layout">
-      <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-top">
           <div class="sidebar-name">Andrae Williams</div>
-          <div class="badge">// online</div>
+          <div class="badge" id="deploy-badge">// …</div>
         </div>
 
         <nav class="sidebar-nav">
@@ -61,127 +62,135 @@
         </nav>
 
         <div class="sidebar-bottom">
-          <button
-            type="button"
-            id="smoke-toggle"
-            class="smoke-toggle"
-            aria-pressed="false"
-            aria-label="Toggle smoke effect"
-          >
-            <svg
-              class="smoke-toggle-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                fill="currentColor"
-                d="M12 23a7 7 0 006-7c0-2.5-1-4.5-3-6C14 6.5 12 2 12 2S10 6.5 9 10c-2 1.5-3 3.5-3 6a7 7 0 006 7z"
-              />
-            </svg>
-          </button>
+          <div id="sidebar-theme" class="theme-control--sidebar" data-theme-mount></div>
           <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
             GitHub →
           </a>
         </div>
       </aside>
 
-      <!-- Main content -->
-      <main class="main-content">
-        <section id="home" class="section section--hero">
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <p class="hero-eyebrow">Builder portfolio · personal lab</p>
-              <h1>
-                Andrae
-                <span class="hero-accent">Williams</span>
-              </h1>
-              <p class="tagline">I build small web tools that turn practice into proof.</p>
-              <p class="sub">
-                This site is a growing portfolio of custom apps, visual experiments,
-                and notes from learning modern web development one working slice at a time.
-                <span class="sub-attrib">HTML · CSS · JavaScript · GitHub Pages</span>
-              </p>
-              <div class="hero-actions">
-                <a href="tools.html" class="hero-cta">Inspect the work →</a>
-                <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="hero-cta hero-cta--ghost">GitHub profile</a>
-              </div>
-            </div>
+      <main class="main-content main-content--command">
+        <div class="home-scroll">
 
-            <aside class="hero-panel" aria-label="System status">
-              <div class="hero-panel-head">
-                <span class="hero-panel-title">sys.status</span>
-                <div class="hero-panel-dots" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-              <div class="hero-terminal">
-                <p><span class="line-prompt">›</span><span class="line-out">andraewilliams.com</span></p>
-                <p class="line-dim">stack: html · css · vanilla js</p>
-                <p class="line-dim">deploy: github pages</p>
-                <p><span class="line-prompt">›</span><span class="line-out">focus: portfolio tools</span></p>
-              </div>
-              <div class="hero-stats">
-                <div class="stat-chip">
-                  <span class="stat-value">3</span>
-                  <span class="stat-label">Tools</span>
-                </div>
-                <div class="stat-chip">
-                  <span class="stat-value">∞</span>
-                  <span class="stat-label">Experiments</span>
-                </div>
-                <div class="stat-chip">
-                  <span class="stat-value">1</span>
-                  <span class="stat-label">Mission</span>
-                </div>
-              </div>
-            </aside>
-          </div>
-
-          <section class="featured-work" aria-labelledby="featured-work-title">
-            <div class="section-header section-header--compact">
-              <h2 id="featured-work-title">Featured Work</h2>
-              <span class="section-count">// current builds</span>
-            </div>
-
-            <div class="featured-grid">
-              <a class="featured-card" href="writeups/smoke-playground.html" data-reveal>
-                <span class="featured-kicker">Canvas experiment</span>
-                <h3>Smoke playground</h3>
-                <p>
-                  Case study + live demo: shared canvas engine, home ambient smoke,
-                  and a playground to tune density, hue, and trails.
-                </p>
-              </a>
-
-              <a class="featured-card" href="pretext-smoke/" data-reveal>
-                <span class="featured-kicker">Layout demo</span>
-                <h3>Pretext measurement</h3>
-                <p>
-                  A Vite-built text layout demo that explores accurate measurement
-                  without relying on repeated DOM layout checks.
-                </p>
-              </a>
-
-              <a
-                class="featured-card"
-                href="https://promptbook.andraewilliams.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-              >
-                <span class="featured-kicker">External app</span>
-                <h3>DOPE Prompt Book</h3>
-                <p>
-                  A local-first prompt library and composer for storing, filtering,
-                  editing, and assembling reusable prompts.
-                </p>
-              </a>
+          <!-- 1. Command Center hero -->
+          <section id="command-center" class="home-hero" aria-label="Command center">
+            <p class="home-hero-eyebrow">command.center</p>
+            <h1 class="home-hero-name">Andrae Williams</h1>
+            <p class="home-hero-title">
+              <span class="home-hero-role">Builder</span><span class="home-hero-dot">.</span>
+              <span class="home-hero-role">Analyst</span><span class="home-hero-dot">.</span>
+              <span class="home-hero-role">Operator</span><span class="home-hero-dot">.</span>
+            </p>
+            <p class="home-hero-main">
+              I turn patterns, pressure, and problems into working software systems.
+            </p>
+            <p class="home-hero-sub">
+              A private lab for AI-assisted tools, local business systems, dashboards, and experiments.
+            </p>
+            <div class="home-status-strip" id="home-status-strip" aria-label="System status">
+              <span class="home-status-loading">loading…</span>
             </div>
           </section>
-        </section>
+
+          <!-- 2. Current Mission -->
+          <section id="current-mission" class="home-section" aria-labelledby="mission-heading">
+            <div class="home-section-head">
+              <span class="home-section-label">current.mission</span>
+              <h2 id="mission-heading" class="home-section-title">Current Mission</h2>
+            </div>
+            <article class="glass-card mission-card" id="mission-card">
+              <p class="mission-loading">loading…</p>
+            </article>
+          </section>
+
+          <!-- 3. Arsenal -->
+          <section id="arsenal" class="home-section" aria-labelledby="arsenal-heading">
+            <div class="home-section-head">
+              <span class="home-section-label">arsenal</span>
+              <h2 id="arsenal-heading" class="home-section-title">Arsenal</h2>
+              <span class="home-section-meta" id="arsenal-count">// …</span>
+            </div>
+            <div class="home-arsenal-grid" id="arsenal-grid">
+              <p class="arsenal-loading">loading…</p>
+            </div>
+          </section>
+
+          <!-- 4. Lab -->
+          <section id="lab" class="home-section" aria-labelledby="lab-heading">
+            <div class="home-section-head">
+              <span class="home-section-label">lab</span>
+              <h2 id="lab-heading" class="home-section-title">Lab</h2>
+            </div>
+            <p class="home-section-lede">Workshop — experiments and live UI, not blog posts.</p>
+            <div id="lab-theme" class="lab-theme-panel" data-theme-mount></div>
+            <div class="home-lab-grid" id="lab-grid">
+              <p class="lab-loading">loading…</p>
+            </div>
+          </section>
+
+          <!-- 5. Field Notes -->
+          <section id="field-notes" class="home-section" aria-labelledby="notes-heading">
+            <div class="home-section-head">
+              <span class="home-section-label">field.notes</span>
+              <h2 id="notes-heading" class="home-section-title">Field Notes</h2>
+            </div>
+            <div class="home-notes-grid" id="field-notes-grid">
+              <p class="notes-loading">loading…</p>
+            </div>
+            <p class="home-notes-footer">
+              <a
+                href="https://github.com/MistaJoka/andraewilliams-site/blob/main/docs/decisions.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="home-notes-raw"
+              >
+                raw decisions log ↗
+              </a>
+            </p>
+          </section>
+
+          <!-- 6. Transmission -->
+          <section id="transmission" class="home-section" aria-labelledby="transmission-heading">
+            <div class="home-section-head">
+              <span class="home-section-label">transmission</span>
+              <h2 id="transmission-heading" class="home-section-title">Transmission</h2>
+            </div>
+            <article class="glass-card transmission-card">
+              <p class="transmission-lede">Open channels</p>
+              <ul class="transmission-links">
+                <li>
+                  <a href="https://github.com/MistaJoka" target="_blank" rel="noopener noreferrer">
+                    <span class="transmission-label">github</span>
+                    <span class="transmission-target">MistaJoka ↗</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="tools.html">
+                    <span class="transmission-label">tools</span>
+                    <span class="transmission-target">Full catalog →</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="about.html">
+                    <span class="transmission-label">about</span>
+                    <span class="transmission-target">Origin &amp; intent →</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/MistaJoka/andraewilliams-site"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span class="transmission-label">source</span>
+                    <span class="transmission-target">Site repo ↗</span>
+                  </a>
+                </li>
+              </ul>
+            </article>
+          </section>
+
+        </div>
       </main>
     </div>
 
@@ -189,7 +198,12 @@
       <span>andraewilliams.com</span>
     </footer>
 
-    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/theme.js"></script>
+    <script type="module" src="js/status-panel.js"></script>
+    <script type="module" src="js/home-mission.js"></script>
+    <script type="module" src="js/home-arsenal.js"></script>
+    <script type="module" src="js/home-lab.js"></script>
+    <script type="module" src="js/home-field-notes.js"></script>
     <script type="module" src="js/smoke-home.js"></script>
   </body>
 </html>

@@ -147,6 +147,11 @@ export function createSmokeController(canvas, options) {
     rafId = requestAnimationFrame(step);
   }
 
+  function readBgColor() {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    return raw || '#080a0d';
+  }
+
   function start() {
     if (running) return;
     running = true;
@@ -156,7 +161,7 @@ export function createSmokeController(canvas, options) {
     ctx.save();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#0a0a0f';
+    ctx.fillStyle = readBgColor();
     ctx.fillRect(0, 0, cssW, cssH);
     ctx.restore();
     spawnAcc = 0;

@@ -34,7 +34,9 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
       rel="stylesheet"
     />
+    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';</script>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/themes.css" />
   </head>
   <body>
     <div class="grid-overlay"></div>
@@ -63,6 +65,7 @@
         </nav>
 
         <div class="sidebar-bottom">
+          <div id="sidebar-theme" class="theme-control--sidebar" data-theme-mount></div>
           <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
             GitHub →
           </a>
@@ -184,6 +187,7 @@
       <span>andraewilliams.com</span>
     </footer>
 
+    <script type="module" src="js/theme.js"></script>
     <script type="module" src="js/smoke-playground.js"></script>
   </body>
 </html>

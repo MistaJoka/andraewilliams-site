@@ -1,3 +1,5 @@
+import '../css/style.css';
+import '../css/themes.css';
 import { prepare, layout } from '@chenglou/pretext';
 
 const text =
