@@ -31,10 +31,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';</script>
+    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/themes.css" />
   </head>
@@ -45,20 +45,25 @@
     <div class="app-layout">
       <aside class="sidebar">
         <div class="sidebar-top">
-          <div class="sidebar-name">Andrae Williams</div>
-          <div class="badge">// online</div>
+          <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-expanded="false" aria-label="Expand rail">
+            <span class="sidebar-toggle-icon" aria-hidden="true">›</span>
+          </button>
+          <div class="sidebar-brand">
+            <div class="sidebar-name">Andrae Williams</div>
+            <div class="badge">// online</div>
+          </div>
         </div>
 
-        <nav class="sidebar-nav">
-          <a href="index.html" class="nav-link">
+        <nav class="sidebar-nav" aria-label="Primary">
+          <a href="index.html" class="nav-link" title="Home">
             <span class="nav-dot"></span>
             Home
           </a>
-          <a href="about.html" class="nav-link">
+          <a href="about.html" class="nav-link" title="About">
             <span class="nav-dot"></span>
             About
           </a>
-          <a href="tools.html" class="nav-link">
+          <a href="tools.html" class="nav-link" title="Tools">
             <span class="nav-dot"></span>
             Tools
           </a>
@@ -187,6 +192,7 @@
       <span>andraewilliams.com</span>
     </footer>
 
+    <script type="module" src="js/sidebar.js"></script>
     <script type="module" src="js/theme.js"></script>
     <script type="module" src="js/smoke-playground.js"></script>
   </body>

@@ -129,3 +129,19 @@ A lightweight log of key decisions and why they were made.
 **Rejected alternatives:**
 - Tailwind theme config — not in stack; vanilla CSS variables only.
 - Dynamic OG images per theme — static social previews use default palette only.
+
+---
+
+## 2026-05-25 — Elite tactical UI + collapsed sidebar rail
+
+**Decision:** Apply master tactical design tokens (Rajdhani/Inter/JetBrains Mono, 8px spacing, structured borders/shadows) and default the sidebar to a **52px collapsed rail** with expand toggle.
+
+**Why:**
+- Aligns visual language with command-center / ops workstation spec — sharp, dense, controlled.
+- Collapsed rail maximizes workspace; full sidebar available on demand.
+- Typography split: headings command, body explains, mono proves.
+
+**Implementation:**
+- Design tokens in [`src/css/style.css`](../src/css/style.css)
+- [`src/js/sidebar.js`](../src/js/sidebar.js) — `localStorage.site-sidebar`, default `collapsed`
+- Head boot sets `data-sidebar` before paint (with theme boot)

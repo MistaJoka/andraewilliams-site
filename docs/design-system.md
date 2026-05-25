@@ -40,7 +40,8 @@ Visual design follows the five clusters in [site-identity.md](site-identity.md) 
 
 ## Layout
 
-- Fixed left sidebar (~220px), scrollable main content
+- Fixed left sidebar rail — **52px collapsed by default**, 200px expanded (desktop)
+- Toggle persists via `localStorage.site-sidebar`; theme via `ui.palette` in Lab + expanded sidebar
 - Mobile: sidebar collapses to top bar
 - **Home (Operator's Lab):** vertical scroll — hero, mission, arsenal, lab, field notes, transmission
 - **Tools / About:** existing card/section layout until migrated
@@ -59,6 +60,7 @@ Default palette: **Graphite Command Pro**. Ten tactical palettes are available v
 | `--panel` | `#1A212A` | Raised containers |
 | `--panel-raised` | `#202936` | Elevated panels |
 | `--border` | `#263241` | Dividers, outlines |
+| `--sidebar-w` | 52px collapsed / 200px expanded | Left rail width |
 | `--text` | `#E6EDF3` | Body text |
 | `--text-muted` | `#8A95A3` | Labels, dim lines |
 | `--text-faint` | `#64748B` | Tertiary text |
@@ -100,15 +102,15 @@ OG images and favicon use Graphite Command Pro only (static assets).
 
 | Role | Font | Notes |
 |------|------|-------|
-| Display | Syne or Outfit | Site name, page titles, hero name |
-| Body | Outfit | About, case files, tool descriptions, hero main line |
-| Mono | JetBrains Mono | Labels, status, registry, logs, badges, section labels |
+| Heading | Rajdhani | Page titles, section headers — condensed command presence |
+| Body | Inter | Interface copy, descriptions |
+| Mono | JetBrains Mono | Labels, status, registry, logs, metrics |
 
-**Home Operator's Lab:** mix of display (name), mono (roles, labels, status), body (main/sub lines).
+**Home Operator's Lab:** heading (name), mono (roles, labels, status), body (main/sub lines).
 
 - Body line-height: `1.6`
-- Card line-height: `1.4–1.55`
-- Heading letter-spacing: `-0.02em`
+- Section labels: uppercase, letter-spaced
+- Tabular numbers on metrics via `font-variant-numeric: tabular-nums`
 
 ## Components
 
