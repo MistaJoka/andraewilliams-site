@@ -8,3 +8,11 @@ export const MONO_LINE_HEIGHT = 20;
 
 export const KANBAN_FONT = '500 14px Inter, sans-serif';
 export const KANBAN_COMPACT_FONT = '500 12px Inter, sans-serif';
+
+export function interFont(weight, sizePx) {
+  return `${weight} ${sizePx}px Inter, sans-serif`;
+}
+
+export function lineHeightForSize(sizePx, ratio = 1.45) {
+  return Math.round(sizePx * ratio);
+}

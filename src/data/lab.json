@@ -157,6 +157,52 @@
       }
     },
     {
+      "id": "shrinkwrap-guard",
+      "name": "Shrinkwrap Guard",
+      "subtitle": "Tightest multiline width vs CSS fit-content",
+      "status": "live",
+      "note": "Chat-style bubbles with CSS waste visualization. Pretext binary-searches the minimum width that preserves line count — somnai pattern.",
+      "concept": "walkLineRanges() + binary search shrinkwrap",
+      "apis": ["prepareWithSegments()", "walkLineRanges()"],
+      "href": "pretext-smoke/#shrinkwrap",
+      "tags": ["shrinkwrap", "chat", "CSS"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 3,
+        "proof": {
+          "problem": "CSS fit-content leaves dead space on multiline bubbles and cards.",
+          "concept": "Binary-search the tightest width for a fixed line count without DOM reads.",
+          "why": "Chat UIs, captions, and tooltips need pixel-tight boxes.",
+          "edgeCases": ["Multiline bubbles", "Mixed CJK and emoji threads"],
+          "proves": ["Tier-3 shrinkwrap beyond line-count-only guards."]
+        }
+      }
+    },
+    {
+      "id": "layout-shift",
+      "name": "Layout Shift Compare",
+      "subtitle": "Measure first vs jump later",
+      "status": "live",
+      "note": "Side-by-side feeds: inject async content with vs without Pretext-reserved height. The non-technical proof demo.",
+      "concept": "layout().height before paint",
+      "apis": ["prepare()", "layout()"],
+      "href": "pretext-smoke/#layout-shift",
+      "tags": ["CLS", "feeds", "UX"],
+      "pretext": {
+        "enabled": true,
+        "titleMaxLines": 2,
+        "descriptionMaxLines": 3,
+        "proof": {
+          "problem": "Async text makes feeds and cards jump when height was unknown.",
+          "concept": "Reserve min-height from layout() before inserting content.",
+          "why": "Stable UI feels professional — visitors feel it even without reading API docs.",
+          "edgeCases": ["Async CRM leads", "Streaming card bodies"],
+          "proves": ["Bridge between engineering measurement and user-visible stability."]
+        }
+      }
+    },
+    {
       "id": "smoke-playground",
       "name": "Smoke playground",
       "status": "live",
