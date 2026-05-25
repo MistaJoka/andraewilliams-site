@@ -31,9 +31,24 @@ npm run dev:pretext
 
 Uses `src/pretext-smoke/`. Production build output is produced in CI and published at **https://andraewilliams.com/pretext-smoke/** (see Deploy).
 
+### Production-like preview
+
+Build the same `_site/` tree CI deploys, then serve it locally:
+
+```bash
+npm install
+npm run preview:site
+```
+
+Or build only:
+
+```bash
+npm run build:site
+```
+
 ## Deploy
 
-Pushes to `main` run `.github/workflows/deploy.yml`: `npm ci` and `npm run build:pretext`, then rsync `src/` into `_site` **excluding** the `pretext-smoke` source folder, copy `dist-pretext/` into `_site/pretext-smoke/`, and upload to GitHub Pages.
+Pushes to `main` run `.github/workflows/deploy.yml`: `npm run build:site` (Pretext build, rsync, verify), then upload to GitHub Pages. Pull requests run the same build and verification without deploying.
 
 ## More context
 

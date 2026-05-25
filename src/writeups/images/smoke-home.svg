@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" fill="none" role="img" aria-label="Home page with ambient smoke enabled">
+  <defs>
+    <linearGradient id="smokeGrad" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#6e9bae" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#afcdd7" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#afcdd7" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#00f0ff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="#0a0a0f"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+  <rect x="0" y="0" width="168" height="450" fill="#080810"/>
+  <rect x="168" y="0" width="1" height="450" fill="#ffffff" fill-opacity="0.06"/>
+  <text x="20" y="36" fill="#e8e8f0" font-family="monospace" font-size="11">Andrae Williams</text>
+  <text x="20" y="58" fill="#00f0ff" font-family="monospace" font-size="9">// online</text>
+  <rect x="12" y="78" width="4" height="18" fill="#00f0ff" rx="1"/>
+  <text x="24" y="92" fill="#00f0ff" font-family="monospace" font-size="10">Home</text>
+  <text x="24" y="118" fill="#5a5a7a" font-family="monospace" font-size="10">About</text>
+  <text x="24" y="144" fill="#5a5a7a" font-family="monospace" font-size="10">Tools</text>
+  <circle cx="28" cy="400" r="10" fill="#00f0ff" fill-opacity="0.2" stroke="#00f0ff" stroke-opacity="0.6"/>
+  <ellipse cx="520" cy="420" rx="180" ry="120" fill="url(#smokeGrad)"/>
+  <ellipse cx="640" cy="380" rx="120" ry="90" fill="url(#smokeGrad)" opacity="0.7"/>
+  <ellipse cx="400" cy="400" rx="100" ry="70" fill="url(#smokeGrad)" opacity="0.5"/>
+  <text x="200" y="52" fill="#5a5a7a" font-family="monospace" font-size="10">Builder portfolio · personal lab</text>
+  <text x="200" y="108" fill="#e8e8f0" font-family="Georgia, serif" font-size="42" font-weight="700">Andrae <tspan fill="#00f0ff">Williams</tspan></text>
+  <rect x="480" y="72" width="280" height="200" rx="8" fill="#111118" fill-opacity="0.85" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="496" y="98" fill="#00f0ff" font-family="monospace" font-size="10">sys.status</text>
+  <text x="496" y="130" fill="#e8e8f0" font-family="monospace" font-size="10">: andraewilliams.com</text>
+  <text x="496" y="152" fill="#5a5a7a" font-family="monospace" font-size="9">stack: html · css · vanilla js</text>
+  <rect x="496" y="168" width="248" height="1" fill="#ffffff" fill-opacity="0.06"/>
+  <rect x="496" y="182" width="72" height="48" rx="6" fill="#ffffff" fill-opacity="0.03" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="576" y="182" width="72" height="48" rx="6" fill="#ffffff" fill-opacity="0.03" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="656" y="182" width="72" height="48" rx="6" fill="#ffffff" fill-opacity="0.03" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="200" y="400" fill="#5a5a7a" font-family="monospace" font-size="9">Ambient smoke · toggle on</text>
+</svg>

@@ -68,10 +68,18 @@
 
       <main class="main-content">
         <section id="tools" class="section">
-          <div class="section-header">
-            <h2>Tools</h2>
-            <span class="section-count">// 3 items</span>
+          <div class="tools-page-intro" data-reveal>
+            <p class="hero-eyebrow">Project library</p>
+            <div class="section-header">
+              <h2>Tools</h2>
+              <span class="section-count">// 3 live builds</span>
+            </div>
+            <p class="tools-lede">
+              Each project is a working slice of the portfolio: small enough to
+              understand, real enough to show decisions, tradeoffs, and growth.
+            </p>
           </div>
+
           <div class="tools-grid">
             <a
               class="tool-card tool-card-link"
@@ -80,6 +88,7 @@
               data-reveal
             >
               <span class="tool-card-index" aria-hidden="true">01</span>
+              <span class="tool-type">Layout engineering</span>
               <div class="tool-card-header">
                 <span class="tool-name">Pretext layout demo</span>
                 <span class="status-badge active">live</span>
@@ -87,7 +96,8 @@
 
               <p class="tool-desc">
                 Text measurement and line layout without DOM layout thrash — resize
-                the window and watch layout metrics update.
+                the window and watch layout metrics update. This is the testing
+                ground for richer canvas and document-style interfaces.
               </p>
 
               <div class="tool-card-meta">
@@ -102,11 +112,12 @@
             </a>
             <a
               class="tool-card tool-card-link"
-              href="smoke-playground.html"
-              aria-label="Open smoke playground"
+              href="writeups/smoke-playground.html"
+              aria-label="Read smoke playground case study"
               data-reveal
             >
               <span class="tool-card-index" aria-hidden="true">02</span>
+              <span class="tool-type">Visual systems</span>
               <div class="tool-card-header">
                 <span class="tool-name">Smoke playground</span>
                 <span class="status-badge active">live</span>
@@ -114,17 +125,18 @@
 
               <p class="tool-desc">
                 Canvas particle smoke with a control panel — tune motion, density,
-                trails, and hue while the preview updates live.
+                trails, and hue while the preview updates live. Case study covers
+                the shared engine, tradeoffs, and source links.
               </p>
 
               <div class="tool-card-meta">
                 <span>Canvas</span>
-                <span>2D</span>
+                <span>Case study</span>
                 <span>Static</span>
               </div>
 
               <div class="tool-card-cta">
-                Open playground →
+                Read case study →
               </div>
             </a>
             <a
@@ -136,6 +148,7 @@
               data-reveal
             >
               <span class="tool-card-index" aria-hidden="true">03</span>
+              <span class="tool-type">Product app</span>
               <div class="tool-card-header">
                 <span class="tool-name">DOPE Prompt Book</span>
                 <span class="status-badge active">live</span>
@@ -143,7 +156,8 @@
 
               <p class="tool-desc">
                 Local-first prompt library and composer for building, organizing,
-                filtering, editing, and assembling reusable prompts.
+                filtering, editing, and assembling reusable prompts. A larger app
+                that connects the portfolio to a real workflow.
               </p>
 
               <div class="tool-card-meta">

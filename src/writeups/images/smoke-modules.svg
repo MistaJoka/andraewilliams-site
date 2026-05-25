@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" fill="none" role="img" aria-label="Module diagram: smoke-engine shared by home and playground">
+  <rect width="800" height="450" fill="#0a0a0f"/>
+  <text x="400" y="48" text-anchor="middle" fill="#5a5a7a" font-family="monospace" font-size="11">// module split</text>
+  <rect x="280" y="80" width="240" height="88" rx="8" fill="#111118" stroke="#00f0ff" stroke-opacity="0.35"/>
+  <text x="400" y="118" text-anchor="middle" fill="#00f0ff" font-family="monospace" font-size="14" font-weight="700">smoke-engine.js</text>
+  <text x="400" y="142" text-anchor="middle" fill="#5a5a7a" font-family="monospace" font-size="10">particles · RAF loop · resize</text>
+  <path d="M 400 168 L 400 200" stroke="#5a5a7a" stroke-width="1" stroke-dasharray="4 4"/>
+  <path d="M 200 200 L 600 200" stroke="#5a5a7a" stroke-width="1"/>
+  <path d="M 200 200 L 200 228" stroke="#5a5a7a" stroke-width="1"/>
+  <path d="M 600 200 L 600 228" stroke="#5a5a7a" stroke-width="1"/>
+  <rect x="60" y="228" width="280" height="100" rx="8" fill="#111118" stroke="#9b5dff" stroke-opacity="0.3"/>
+  <text x="200" y="262" text-anchor="middle" fill="#e8e8f0" font-family="monospace" font-size="13" font-weight="700">smoke-home.js</text>
+  <text x="200" y="286" text-anchor="middle" fill="#5a5a7a" font-family="monospace" font-size="9">full-viewport overlay · toggle</text>
+  <text x="200" y="304" text-anchor="middle" fill="#5a5a7a" font-family="monospace" font-size="9">RGB puff · reduced motion</text>
+  <rect x="460" y="228" width="280" height="100" rx="8" fill="#111118" stroke="#9b5dff" stroke-opacity="0.3"/>
+  <text x="600" y="262" text-anchor="middle" fill="#e8e8f0" font-family="monospace" font-size="13" font-weight="700">smoke-playground.js</text>
+  <text x="600" y="286" text-anchor="middle" fill="#5a5a7a" font-family="monospace" font-size="9">sliders · hue · reset</text>
+  <text x="600" y="304" text-anchor="middle" fill="#5a5a7a" font-family="monospace" font-size="9">params object wired to UI</text>
+  <rect x="120" y="360" width="560" height="56" rx="8" fill="rgba(0,240,255,0.06)" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="400" y="392" text-anchor="middle" fill="#e8e8f0" font-family="monospace" font-size="10">defaultSmokeParams() ’ one tuning surface, two experiences</text>
+</svg>

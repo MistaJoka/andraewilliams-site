@@ -5,3 +5,4 @@ src/.DS_Store
 
 node_modules/
 dist-pretext/
+_site/

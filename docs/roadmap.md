@@ -3,11 +3,11 @@
 ## Phase 1 — First Working Site
 Goal: Get a live site at andraewilliams.com with the basics in place.
 
-- [ ] Scaffold src/ folder structure
-- [ ] Build index.html with name, bio, and GitHub link
-- [ ] Style with plain CSS (no framework)
-- [ ] Deploy to GitHub Pages
-- [ ] Connect custom domain (andraewilliams.com)
+- [x] Scaffold src/ folder structure
+- [x] Build index.html with name, bio, and GitHub link
+- [x] Style with plain CSS (no framework)
+- [x] Deploy to GitHub Pages
+- [x] Connect custom domain (andraewilliams.com)
 
 Done when: site is live and readable on mobile and desktop.
 
@@ -16,10 +16,14 @@ Done when: site is live and readable on mobile and desktop.
 ## Phase 2 — Portfolio Layer
 Goal: Make the site useful for showing work to others.
 
-- [ ] Add a projects section
-- [ ] Link to real GitHub projects with descriptions
-- [ ] Improve typography, spacing, and responsiveness
-- [ ] Add a contact link or email
+- [x] Add a tools/projects section
+- [x] Link to live projects with descriptions
+- [x] Improve typography, spacing, and responsiveness
+- [x] Use GitHub as the public contact path for now
+- [ ] Add project writeups that explain goals, tradeoffs, and what was learned
+  - [x] Smoke playground (`src/writeups/smoke-playground.html`)
+- [ ] Add source-code links for projects that are ready to share
+  - [x] Smoke playground (GitHub links on case study page)
 
 Done when: someone can land on the site and understand who you are and what you've built.
 

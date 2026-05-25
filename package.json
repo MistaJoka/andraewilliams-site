@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev:pretext": "vite",
-    "build:pretext": "vite build"
+    "build:pretext": "vite build",
+    "build:site": "bash scripts/assemble-site.sh && bash scripts/verify-site.sh",
+    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.4"
