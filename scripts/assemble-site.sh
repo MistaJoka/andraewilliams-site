@@ -10,12 +10,16 @@ npm run build:pretext
 mkdir -p src/data
 cp docs/decisions.md src/data/decisions.md
 
+# rsync is unavailable on Vercel's build image; use cp (coreutils) instead.
+# Start clean so stale files from a previous build don't linger.
+rm -rf _site
 mkdir -p _site
-rsync -a --exclude 'pretext-smoke' src/ _site/
+cp -R src/. _site/                 # copy src/ contents (incl. dotfiles)
+rm -rf _site/pretext-smoke         # drop the Vite source; built output goes in below
 mkdir -p _site/js
 cp dist-card-system/pretext-card-system.js _site/js/
 mkdir -p _site/pretext-smoke
-rsync -a dist-pretext/ _site/pretext-smoke/
+cp -R dist-pretext/. _site/pretext-smoke/
 
 mkdir -p _site/data
 cp src/data/tools.manifest.json _site/data/
