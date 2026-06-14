@@ -48,7 +48,11 @@ npm run build:site
 
 ## Deploy
 
-Pushes to `main` run `.github/workflows/deploy.yml`: `npm run build:site` (Pretext build, rsync, verify), then upload to GitHub Pages. Pull requests run the same build and verification without deploying.
+Hosted on **Vercel** (`vercel.json`). Every push builds with `npm run build:site` (Pretext build, rsync, verify) and serves the `_site/` output. Pull requests get automatic Vercel preview deployments; pushes to `main` deploy to production at andraewilliams.com.
+
+- Build command: `npm run build:site`
+- Output directory: `_site`
+- DNS: `andraewilliams.com` is managed in GoDaddy and points at Vercel.
 
 ## More context
 

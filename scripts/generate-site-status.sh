@@ -7,7 +7,7 @@ MANIFEST="$ROOT/src/data/tools.manifest.json"
 
 mkdir -p "$(dirname "$OUT")"
 
-commit="${GITHUB_SHA:-local}"
+commit="${GITHUB_SHA:-${VERCEL_GIT_COMMIT_SHA:-local}}"
 if [[ "$commit" != "local" && ${#commit} -gt 7 ]]; then
   commit="${commit:0:7}"
 fi
