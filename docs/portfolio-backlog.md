@@ -3,17 +3,15 @@
 Ordered queue of agreed-upon work. Sequenced so each item makes the next
 cheaper. Pick the top unstarted item and go.
 
-## 1. Tier S polish pass (do first — ~40 min, highest credibility/effort)
-Three independent quick wins, ship together:
-- **Fix the fixed-footer overlap.** `.site-footer` is `position: fixed` with
-  its left edge equal to the content column, so `andraewilliams.com` overlaps
-  card text on every page. See `src/css/style.css:888`. Make it in-flow, or
-  keep it fixed with a solid backdrop + page `padding-bottom`.
-- **Real PNG OG image.** `og:image`/`twitter:image` point at `og/home.svg`;
-  X/LinkedIn/Slack/iMessage don't render SVG → blank link previews. Produce a
-  1200×630 PNG per page and update the meta tags.
-- **Contact / hire path.** Transmission section only links GitHub. Add email +
-  LinkedIn + a resume PDF so a potential client has a clear next step.
+## 1. Tier S polish pass — DONE (2026-06-14)
+- [x] **Fixed-footer overlap** — `.app-layout` switched to `display:block`,
+  `.site-footer` now flows in-document at the bottom. Commit `66b8439`.
+- [x] **PNG OG images** — `og/*.svg` rasterized to committed 1200×630 PNGs via
+  `sharp` (`npm run og`); meta tags repointed. Also fixed stale "github pages"
+  → "vercel" and U+FFFD chars → middle dots in the images. Commit `6636602`.
+- [~] **Contact / hire path — DROPPED.** Site is **private/personal** ("just
+  for me", auth planned), not a client-facing portfolio. No public contact
+  path wanted. Do not reintroduce.
 
 ## 2. Existing-project writeups (do second — near-zero new code)
 - Only Smoke Playground uses the writeup template
