@@ -35,8 +35,8 @@
   <circle cx="1096" cy="222" r="5" fill="#2979FF" fill-opacity="0.7"/>
   <text x="750" y="290" fill="#2979FF" font-family="monospace" font-size="20">:</text>
   <text x="770" y="290" fill="#E6EDF3" font-family="monospace" font-size="20">andraewilliams.com</text>
-  <text x="750" y="330" fill="#8A95A3" font-family="monospace" font-size="18">stack: html � css � vanilla js</text>
-  <text x="750" y="365" fill="#8A95A3" font-family="monospace" font-size="18">deploy: github pages</text>
+  <text x="750" y="330" fill="#8A95A3" font-family="monospace" font-size="18">stack: html · css · vanilla js</text>
+  <text x="750" y="365" fill="#8A95A3" font-family="monospace" font-size="18">deploy: vercel</text>
   <text x="750" y="410" fill="#2979FF" font-family="monospace" font-size="20">:</text>
   <text x="770" y="410" fill="#E6EDF3" font-family="monospace" font-size="20">status: building in public</text>
 </svg>

@@ -17,10 +17,10 @@
   <rect x="120" y="400" width="520" height="160" rx="14" fill="#11161D" stroke="#ffffff" stroke-opacity="0.06"/>
   <text x="150" y="445" fill="#8A95A3" font-family="monospace" font-size="16" letter-spacing="4">MISSION</text>
   <text x="150" y="485" fill="#E6EDF3" font-family="monospace" font-size="20">Sci-fi inspired portfolio &amp; learning lab.</text>
-  <text x="150" y="520" fill="#8A95A3" font-family="monospace" font-size="18">Static tools today � server apps tomorrow.</text>
+  <text x="150" y="520" fill="#8A95A3" font-family="monospace" font-size="18">Static tools today · server apps tomorrow.</text>
   <rect x="680" y="400" width="400" height="160" rx="14" fill="#11161D" stroke="#ffffff" stroke-opacity="0.06"/>
   <text x="710" y="445" fill="#8A95A3" font-family="monospace" font-size="16" letter-spacing="4">STACK</text>
-  <text x="710" y="485" fill="url(#g1)" font-family="monospace" font-size="20">html � css � vanilla js</text>
-  <text x="710" y="520" fill="#8A95A3" font-family="monospace" font-size="18">github pages � free tools only</text>
+  <text x="710" y="485" fill="url(#g1)" font-family="monospace" font-size="20">html · css · vanilla js</text>
+  <text x="710" y="520" fill="#8A95A3" font-family="monospace" font-size="18">vercel · free tools only</text>
   <text x="120" y="600" fill="#8A95A3" font-family="monospace" font-size="18">andraewilliams.com/about</text>
 </svg>
