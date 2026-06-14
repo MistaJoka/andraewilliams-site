@@ -194,7 +194,7 @@ body::after {
    APP LAYOUT
    ===================== */
 .app-layout {
-  display: flex;
+  display: block;
   min-height: 100vh;
   position: relative;
   z-index: 1;
@@ -886,9 +886,8 @@ body::after {
    FOOTER
    ===================== */
 .site-footer {
-  position: fixed;
-  bottom: 1.5rem;
-  left: calc(var(--sidebar-w) + 2rem);
+  margin-left: var(--sidebar-w);
+  padding: 2.5rem 2rem 2rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -896,7 +895,6 @@ body::after {
   font-size: 0.65rem;
   color: var(--muted);
   letter-spacing: 0.05em;
-  z-index: 1;
 }
 
 .site-footer::before {
@@ -2934,8 +2932,8 @@ body::after {
   }
 
   .site-footer {
-    left: 1.25rem;
-    bottom: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 
   .main-content--smoke-playground {
