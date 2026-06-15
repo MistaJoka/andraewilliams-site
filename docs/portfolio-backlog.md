@@ -3,6 +3,12 @@
 Ordered queue of agreed-upon work. Sequenced so each item makes the next
 cheaper. Pick the top unstarted item and go.
 
+## 0. Tactical Command Deck — IN PROGRESS (branch `feat/command-deck`)
+No-scroll, single-screen tactical command-center redesign. **Phase 1 (frame +
+operator theme) DONE; Phases 2–8 remain.** Full continuation guide (state, next
+steps, data hooks): **`docs/command-deck-handoff.md`**. Spec + plan in
+`docs/superpowers/`. Do not merge to main until shipped.
+
 ## 1. Tier S polish pass — DONE (2026-06-14)
 - [x] **Fixed-footer overlap** — `.app-layout` switched to `display:block`,
   `.site-footer` now flows in-document at the bottom. Commit `66b8439`.
