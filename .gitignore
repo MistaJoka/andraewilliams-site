@@ -7,3 +7,7 @@ node_modules/
 dist-pretext/
 dist-card-system/
 _site/
+
+# Python
+__pycache__/
+*.pyc

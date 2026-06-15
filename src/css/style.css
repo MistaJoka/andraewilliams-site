@@ -905,6 +905,204 @@ body::after {
 }
 
 /* =====================
+   CIPHER CONSOLE
+   ===================== */
+.cipher-section {
+  min-height: 100vh;
+  justify-content: flex-start;
+  padding-top: 5rem;
+}
+
+.cipher-console {
+  max-width: 760px;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.5rem;
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.cipher-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.cipher-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cipher-field[hidden] {
+  display: none;
+}
+
+.cipher-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.cipher-select {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 0.5rem 0.75rem;
+  min-width: 150px;
+}
+
+.cipher-mode {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+}
+
+.cipher-mode-btn {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.cipher-mode-btn.active {
+  color: var(--text);
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.cipher-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 0.85rem;
+  resize: vertical;
+}
+
+.cipher-input:focus,
+.cipher-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.cipher-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cipher-execute {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--bg);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-btn);
+  padding: 0.65rem 1.2rem;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+.cipher-execute:hover {
+  opacity: 0.9;
+}
+
+.cipher-execute:active {
+  transform: translateY(1px);
+}
+
+.cipher-execute:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+.cipher-status {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.cipher-status[data-kind='ok'],
+.cipher-status[data-kind='warn'] {
+  color: var(--accent);
+}
+
+.cipher-status[data-kind='error'] {
+  color: #e05260;
+}
+
+.cipher-output-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cipher-output-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cipher-copy {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+}
+
+.cipher-copy:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.cipher-output {
+  margin: 0;
+  min-height: 3.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* =====================
    TOOLS SECTION
    ===================== */
 #tools {

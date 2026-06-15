@@ -9,7 +9,7 @@
       "type": "Layout engineering",
       "purpose": "Text-aware UI measurement lab — card fit guards, shrinkwrap, multilingual stress tests.",
       "description": "A browser text-measurement lab that predicts multiline card height, line count, and overflow risk before layout. Eight interactive demos plus site-wide text-aware project cards.",
-      "writeup": null
+      "writeup": "writeups/pretext-layout-lab.html"
     },
     {
       "id": "smoke-playground",
@@ -33,6 +33,17 @@
       "purpose": "Local-first prompt library and composer for reusable AI workflows.",
       "description": "Build, organize, filter, edit, and assemble prompts. A larger app connecting the portfolio to real workflow.",
       "writeup": null
+    },
+    {
+      "id": "cipher-console",
+      "name": "Cipher Console",
+      "status": "live",
+      "href": "cipher-console.html",
+      "tags": ["python", "vercel", "serverless"],
+      "type": "Operator tool",
+      "purpose": "Encode/decode text — Base64, Hex, ROT13, URL — on a Python serverless function.",
+      "description": "A tactical encoding console backed by a Python stdlib serverless function on Vercel. First Python-on-Vercel build; press EXECUTE to run a transform.",
+      "writeup": "writeups/cipher-console.html"
     }
   ]
 }

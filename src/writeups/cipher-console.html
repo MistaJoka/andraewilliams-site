@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Build log: Cipher Console — the first Python-on-Vercel tool on andraewilliams.com, built with AI codegen. Prompt, output, fixes, and what I learned."
+    />
+    <link rel="canonical" href="https://andraewilliams.com/writeups/cipher-console.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://andraewilliams.com/writeups/cipher-console.html" />
+    <meta property="og:title" content="Cipher Console — build log" />
+    <meta
+      property="og:description"
+      content="How I built a Python serverless encoding tool with AI codegen: the prompt, what it generated, what I fixed, and what I learned."
+    />
+    <meta property="og:site_name" content="Andrae Williams" />
+    <meta property="og:image" content="https://andraewilliams.com/og/tools.png" />
+    <title>Cipher Console — build log · Andrae Williams</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <div class="grid-overlay"></div>
+    <div class="ambient-noise" aria-hidden="true"></div>
+
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-name">Andrae Williams</div>
+          <div class="badge">// online</div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="../index.html" class="nav-link">
+            <span class="nav-dot"></span>
+            Home
+          </a>
+          <a href="../about.html" class="nav-link">
+            <span class="nav-dot"></span>
+            About
+          </a>
+          <a href="../tools.html" class="nav-link">
+            <span class="nav-dot"></span>
+            Tools
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
+            GitHub →
+          </a>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <article class="section section--writeup">
+          <a href="../tools.html" class="writeup-back" data-reveal>← Tools</a>
+
+          <header class="writeup-header" data-reveal>
+            <p class="hero-eyebrow">Build log · AI codegen · operator tool</p>
+            <h1 class="writeup-title">Cipher Console</h1>
+            <p class="writeup-lede">
+              The first tool on this site that runs my own backend code: a Python serverless
+              function on Vercel. This log documents how it was built with AI codegen — the brief,
+              what the model produced, what I changed, and what I took away.
+            </p>
+            <div class="writeup-actions">
+              <a href="../cipher-console.html" class="hero-cta">Open the console →</a>
+              <a
+                href="https://github.com/MistaJoka/andraewilliams-site/blob/main/api/cipher.py"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hero-cta hero-cta--ghost"
+              >
+                View the Python function
+              </a>
+            </div>
+            <dl class="writeup-meta">
+              <div>
+                <dt>Status</dt>
+                <dd><span class="status-badge active">live</span></dd>
+              </div>
+              <div>
+                <dt>Stack</dt>
+                <dd>Python (stdlib) · Vercel serverless · vanilla JS</dd>
+              </div>
+              <div>
+                <dt>Entry</dt>
+                <dd>lab.log / 004</dd>
+              </div>
+            </dl>
+          </header>
+
+          <section class="writeup-block" data-reveal>
+            <h2>The brief</h2>
+            <p>
+              I wanted my first piece of server-side code on the site — proof I can ship Python, not
+              just static HTML. The brief I gave the AI: a tactical "Cipher Console" that encodes and
+              decodes text with four reversible transforms (Base64, Hex, ROT13, URL), where the work
+              runs in <strong>Python on a Vercel serverless function</strong> rather than the browser,
+              because running it server-side is the whole point. Keep it standard-library only — no
+              dependencies, free to run — and match the site's existing command-center styling.
+            </p>
+          </section>
+
+          <section class="writeup-block" data-reveal>
+            <h2>What the AI generated</h2>
+            <ul class="writeup-list">
+              <li>
+                A Python function at <code>api/cipher.py</code> using Vercel's
+                <code>BaseHTTPRequestHandler</code> pattern, with a pure <code>transform()</code> core
+                and a thin HTTP wrapper around it.
+              </li>
+              <li>
+                A front-end page (<code>cipher-console.html</code> + <code>cipher-console.js</code>)
+                that POSTs <code>{ op, mode, text }</code> and renders the result or a structured error.
+              </li>
+              <li>
+                Wiring into the site: a manifest entry, a Tools card, and this build log.
+              </li>
+            </ul>
+          </section>
+
+          <section class="writeup-block" data-reveal>
+            <h2>What I changed / verified</h2>
+            <ul class="writeup-list">
+              <li>
+                <strong>Separated logic from transport.</strong> The transforms live in a pure
+                <code>transform()</code> function so they can be unit-tested with plain
+                <code>python3</code> — known-answer checks (hex of "abc" is <code>616263</code>, ROT13
+                of "abc" is "nop", a bad-Base64 decode raises instead of crashing) all pass before the
+                function ever deploys.
+              </li>
+              <li>
+                <strong>Errors return 400, never 500.</strong> Invalid input (e.g. decoding malformed
+                Base64) is caught and returned as <code>{ "error": … }</code>, which the UI shows as a
+                red <code>ERROR //</code> line instead of a stack trace.
+              </li>
+              <li>
+                <strong>ROT13 hides the mode toggle.</strong> It's self-inverse, so encode/decode is
+                meaningless — the UI drops the control instead of showing a no-op.
+              </li>
+              <li>
+                <strong>Confirmed the Vercel integration.</strong> The one real risk was whether an
+                <code>/api/*.py</code> function deploys alongside the site's custom build
+                (<code>outputDirectory: _site</code>). It does.
+              </li>
+            </ul>
+          </section>
+
+          <aside class="writeup-callout" data-reveal>
+            <span class="about-card-label">What I learned</span>
+            <p>
+              The leverage in AI codegen isn't "type a prompt, ship the output" — it's directing the
+              shape. Insisting the transforms be a pure, testable function (not tangled into the HTTP
+              handler) is what made it verifiable with three lines of <code>python3</code>. And the
+              jump from static HTML to a serverless function turned out to be small: one file in
+              <code>/api</code>, standard library only, no new infrastructure. That's the on-ramp to
+              the server-based tools I'm building toward.
+            </p>
+          </aside>
+
+          <section class="writeup-block writeup-block--files" data-reveal>
+            <h2>Source files</h2>
+            <ul class="writeup-files">
+              <li>
+                <a
+                  href="https://github.com/MistaJoka/andraewilliams-site/blob/main/api/cipher.py"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >api/cipher.py</a
+                >
+                — the Python serverless function (logic + handler)
+              </li>
+              <li>
+                <a
+                  href="https://github.com/MistaJoka/andraewilliams-site/blob/main/src/js/cipher-console.js"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >src/js/cipher-console.js</a
+                >
+                — front-end wiring
+              </li>
+              <li>
+                <a
+                  href="https://github.com/MistaJoka/andraewilliams-site/blob/main/src/cipher-console.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >src/cipher-console.html</a
+                >
+                — console page markup
+              </li>
+            </ul>
+          </section>
+        </article>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <span>andraewilliams.com</span>
+    </footer>
+    <script type="module" src="../js/ui.js"></script>
+  </body>
+</html>

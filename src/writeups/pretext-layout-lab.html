@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Case study: Pretext Layout Lab — predicting multiline text height, line count, and overflow risk before the browser lays out, with zero DOM reflow."
+    />
+    <link rel="canonical" href="https://andraewilliams.com/writeups/pretext-layout-lab.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://andraewilliams.com/writeups/pretext-layout-lab.html" />
+    <meta property="og:title" content="Pretext Layout Lab — case study" />
+    <meta
+      property="og:description"
+      content="A browser text-measurement lab that predicts card height and overflow before layout — measure first, render with confidence."
+    />
+    <meta property="og:site_name" content="Andrae Williams" />
+    <meta property="og:image" content="https://andraewilliams.com/og/tools.png" />
+    <title>Pretext Layout Lab — case study · Andrae Williams</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <div class="grid-overlay"></div>
+    <div class="ambient-noise" aria-hidden="true"></div>
+
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-name">Andrae Williams</div>
+          <div class="badge">// online</div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="../index.html" class="nav-link">
+            <span class="nav-dot"></span>
+            Home
+          </a>
+          <a href="../about.html" class="nav-link">
+            <span class="nav-dot"></span>
+            About
+          </a>
+          <a href="../tools.html" class="nav-link">
+            <span class="nav-dot"></span>
+            Tools
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
+            GitHub →
+          </a>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <article class="section section--writeup">
+          <a href="../tools.html" class="writeup-back" data-reveal>← Tools</a>
+
+          <header class="writeup-header" data-reveal>
+            <p class="hero-eyebrow">Case study · layout engineering</p>
+            <h1 class="writeup-title">Pretext Layout Lab</h1>
+            <p class="writeup-lede">
+              A browser text-measurement lab that predicts how text will wrap — height, line count,
+              and overflow risk — <em>before</em> the browser lays anything out, with zero DOM reflow.
+              Measure first, render with confidence.
+            </p>
+            <div class="writeup-actions">
+              <a href="../pretext-smoke/" class="hero-cta">Open live lab →</a>
+              <a
+                href="https://github.com/MistaJoka/andraewilliams-site/tree/main/src/pretext-smoke"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hero-cta hero-cta--ghost"
+              >
+                View source on GitHub
+              </a>
+            </div>
+            <dl class="writeup-meta">
+              <div>
+                <dt>Status</dt>
+                <dd><span class="status-badge active">live</span></dd>
+              </div>
+              <div>
+                <dt>Stack</dt>
+                <dd>Vite · Pretext · vanilla JS</dd>
+              </div>
+              <div>
+                <dt>Entry</dt>
+                <dd>lab.log / 001</dd>
+              </div>
+            </dl>
+          </header>
+
+          <section class="writeup-block" data-reveal>
+            <h2>Problem</h2>
+            <p>
+              Card UIs break when text is longer than the designer assumed: a title grows two lines,
+              a description overflows, and the grid jumps. The usual fixes — measuring a hidden DOM
+              node, or shipping it and clamping with CSS — either force expensive reflows or hide the
+              failure instead of predicting it. I wanted to know a card would overflow
+              <strong>before</strong> painting it.
+            </p>
+          </section>
+
+          <section class="writeup-block" data-reveal>
+            <h2>Approach</h2>
+            <p>
+              The lab is built on <a href="https://github.com/chenglou/pretext" target="_blank"
+              rel="noopener noreferrer">Pretext</a>, which measures and lays out text without touching
+              the live DOM. Given a string, a width, and a font, it returns line breaks and a height —
+              so I can run layout math in advance and decide what to do while there is still time to
+              change it. Eight focused demos each isolate one failure mode:
+            </p>
+            <ul class="writeup-list">
+              <li><strong>Text-aware cards without DOM reflow</strong> — measure, then render once.</li>
+              <li><strong>Overflow prediction</strong> — flag SAFE vs OVERFLOW RISK against a line budget.</li>
+              <li><strong>Line-count prediction</strong> for CRM/Kanban titles that grow until they break.</li>
+              <li><strong>Mixed-language wrapping</strong> — English, Spanish, Arabic, CJK, emoji, long tokens.</li>
+              <li><strong>List/card height before render</strong> — batch <code>prepare()</code> + <code>layout()</code> over many cards.</li>
+              <li><strong>Tightest multiline width</strong> — binary-search the narrowest width that preserves line count.</li>
+              <li><strong>Measure-first vs jump-later</strong> — side-by-side feeds with and without reserved height.</li>
+              <li><strong>Raw line output</strong> — feed Pretext's lines straight into canvas/SVG/custom layers.</li>
+            </ul>
+          </section>
+
+          <section class="writeup-block" data-reveal>
+            <h2>Tradeoffs</h2>
+            <ul class="writeup-list">
+              <li>
+                <strong>Measure cost vs. reflow cost</strong> — measuring up front isn't free, but it's
+                paid once and off the critical render path, instead of thrashing layout on every change.
+              </li>
+              <li>
+                <strong>Prediction vs. perfection</strong> — the goal is a reliable height/overflow
+                <em>signal</em>, not pixel-exact rendering; the browser still does the final paint.
+              </li>
+              <li>
+                <strong>One dependency, kept small</strong> — Pretext does the measuring; everything
+                around it stays vanilla JS so the demos are readable.
+              </li>
+            </ul>
+          </section>
+
+          <aside class="writeup-callout" data-reveal>
+            <span class="about-card-label">What I learned</span>
+            <p>
+              Treating layout as something you can <em>predict</em> rather than react to changes how you
+              build card UIs — you reserve the right height before paint, so the grid never jumps. The
+              multilingual demo was the humbling one: line-count assumptions that hold for English fall
+              apart on Arabic and CJK, which is exactly why measuring beats guessing.
+            </p>
+          </aside>
+
+          <section class="writeup-block writeup-block--files" data-reveal>
+            <h2>Source files</h2>
+            <ul class="writeup-files">
+              <li>
+                <a
+                  href="https://github.com/MistaJoka/andraewilliams-site/tree/main/src/pretext-smoke/demos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >src/pretext-smoke/demos/</a
+                >
+                — the eight interactive demos
+              </li>
+              <li>
+                <a
+                  href="https://github.com/MistaJoka/andraewilliams-site/blob/main/src/pretext-smoke/main.js"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >src/pretext-smoke/main.js</a
+                >
+                — lab shell + router
+              </li>
+              <li>
+                <a
+                  href="https://github.com/MistaJoka/andraewilliams-site/blob/main/src/js/pretext-card-system.js"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >src/js/pretext-card-system.js</a
+                >
+                — site-wide text-aware project cards
+              </li>
+            </ul>
+          </section>
+        </article>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <span>andraewilliams.com</span>
+    </footer>
+    <script type="module" src="../js/ui.js"></script>
+  </body>
+</html>
