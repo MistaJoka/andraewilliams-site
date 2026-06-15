@@ -5,7 +5,7 @@
   "stack": ["html", "css", "javascript"],
   "pages": ["index.html", "showcase.html", "contact.html", "about.html"],
   "capabilities": [
-    "semantic-html",
+    "base-element",
     "css-grid-flex",
     "forms-validation",
     "fetch-json",

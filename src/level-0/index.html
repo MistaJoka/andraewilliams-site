@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
     <meta
       name="description"
       content="Level 0 — the full range of static web fundamentals. HTML, CSS, JavaScript, forms, fetch, and accessibility. No build step."
@@ -153,6 +154,7 @@
 ├── contact.html     <span class="note">← forms</span>
 ├── about.html       <span class="note">← how it works</span>
 ├── 404.html         <span class="note">← not found</span>
+├── base-path.js   <span class="note">← &lt;base href&gt; for multi-host URLs</span>
 ├── style.css        <span class="note">← all design</span>
 ├── script.js        <span class="note">← all behavior</span>
 ├── favicon.svg
@@ -166,6 +168,7 @@
           <h2 id="complete-heading">Level&nbsp;0 checklist</h2>
         </div>
         <ul class="check-grid">
+          <li><code>&lt;base href&gt;</code> resolver for subdomain + nested path</li>
           <li>Multi-page navigation with shared CSS and JS</li>
           <li>Semantic HTML, meta tags, Open Graph, canonical URLs</li>
           <li>CSS Grid, Flexbox, variables, media queries, dark mode</li>

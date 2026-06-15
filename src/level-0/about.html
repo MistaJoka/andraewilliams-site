@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
     <meta
       name="description"
       content="How Level 0 works — capability matrix, request flow, and what Level 1 adds."
@@ -50,9 +51,26 @@
     </header>
 
     <main class="site-main" id="main">
-      <section class="section" aria-labelledby="matrix-heading">
+      <section class="section" aria-labelledby="urls-heading">
         <div class="section__head">
           <span class="section__index">01</span>
+          <h2 id="urls-heading">Why links need a base URL</h2>
+        </div>
+        <p class="lede">
+          Relative links like <code>showcase.html</code> resolve against the browser URL — not the folder
+          on disk. This site is served from the subdomain root and from
+          <code>/level-0/</code> on the portfolio. Same HTML, two paths.
+        </p>
+        <p>
+          <code>base-path.js</code> injects <code>&lt;base href&gt;</code> before CSS loads so assets
+          and navigation resolve correctly. Active base:
+          <code id="base-url">—</code>
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="matrix-heading">
+        <div class="section__head">
+          <span class="section__index">02</span>
           <h2 id="matrix-heading">Capability matrix</h2>
         </div>
         <p class="lede">Every row is implemented on this site. Follow the link to see it live.</p>
@@ -65,6 +83,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <th scope="row">&lt;base href&gt; resolver</th>
+              <td><a href="about.html#urls-heading">About</a></td>
+              <td><code>base-path.js</code> — multi-host relative URLs</td>
+            </tr>
             <tr>
               <th scope="row">Multi-page nav</th>
               <td><a href="index.html">Home</a></td>
@@ -126,7 +149,7 @@
 
       <section class="section" aria-labelledby="flow-heading">
         <div class="section__head">
-          <span class="section__index">02</span>
+          <span class="section__index">03</span>
           <h2 id="flow-heading">Request flow</h2>
         </div>
         <ol class="flow">
@@ -151,7 +174,7 @@
 
       <section class="section" aria-labelledby="next-heading">
         <div class="section__head">
-          <span class="section__index">03</span>
+          <span class="section__index">04</span>
           <h2 id="next-heading">Level 1 unlocks</h2>
         </div>
         <p>Level&nbsp;0 is intentionally maxed out. What you add next:</p>

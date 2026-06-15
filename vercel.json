@@ -3,18 +3,6 @@
   "framework": null,
   "buildCommand": "npm run build:site",
   "outputDirectory": "_site",
-  "redirects": [
-    {
-      "source": "/level-0",
-      "destination": "https://level0.andraewilliams.com",
-      "permanent": true
-    },
-    {
-      "source": "/level-0/:path*",
-      "destination": "https://level0.andraewilliams.com/:path*",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/:path*",
