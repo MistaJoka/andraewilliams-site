@@ -325,3 +325,36 @@
   --shadow: rgba(0, 0, 0, 0.45);
   --surface-glass: rgba(17, 17, 17, 0.72);
 }
+
+/* Operator — tactical command-deck default: amber on black, green = go, red = threat. */
+[data-theme="operator"] {
+  --bg: #070809;
+  --surface: #0b0d10;
+  --panel: #0b0d10;
+  --panel-raised: #0e1115;
+  --border: #2d2f2a;
+  --text: #d8d4c8;
+  --text-muted: #8a8778;
+  --text-faint: #5c5a4f;
+  --primary: #f0a818;
+  --primary-hover: #ffbf3a;
+  --primary-active: #c9890f;
+  --primary-dim: rgba(240, 168, 24, 0.14);
+  --glow-primary: rgba(240, 168, 24, 0.3);
+  --secondary: #4ade80;
+  --secondary-hover: #6ee7a0;
+  --secondary-active: #2faa5e;
+  --secondary-dim: rgba(74, 222, 128, 0.14);
+  --glow-secondary: rgba(74, 222, 128, 0.25);
+  --accent: #f0a818;
+  --accent-hover: #ffbf3a;
+  --accent-muted: #a8761a;
+  --accent-dim: rgba(240, 168, 24, 0.14);
+  --glow-accent: rgba(240, 168, 24, 0.3);
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.14);
+  --danger: #e0322f;
+  --danger-soft: rgba(224, 50, 47, 0.14);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --surface-glass: rgba(11, 13, 16, 0.78);
+}

@@ -31,186 +31,113 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/command-deck.css" />
   </head>
-  <body class="page-home">
-    <div class="grid-overlay grid-overlay--dim"></div>
-    <div class="ambient-noise" aria-hidden="true"></div>
+  <body class="deck-page">
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" data-sidebar-toggle aria-label="Collapse rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link active" aria-current="page" href="index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link" href="about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link" href="tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
 
-    <div class="app-layout">
-      <aside class="sidebar">
-        <div class="sidebar-top">
-          <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-expanded="false" aria-label="Expand rail">
-            <span class="sidebar-toggle-icon" aria-hidden="true">›</span>
-          </button>
-          <div class="sidebar-brand">
-            <div class="sidebar-name">Andrae Williams</div>
-            <div class="badge" id="deploy-badge">// …</div>
-          </div>
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./operator --boot <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // GUARDED</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">GRID 34.05N · SEC-001</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
         </div>
 
-        <nav class="sidebar-nav" aria-label="Primary">
-          <a href="index.html" class="nav-link active" aria-current="page" title="Home">
-            <span class="nav-dot"></span>
-            Home
-          </a>
-          <a href="about.html" class="nav-link" title="About">
-            <span class="nav-dot"></span>
-            About
-          </a>
-          <a href="tools.html" class="nav-link" title="Tools">
-            <span class="nav-dot"></span>
-            Tools
-          </a>
-        </nav>
+        <main class="deck-active">
+          <section class="deck-panel deck-dossier" aria-label="Operator dossier">
+            <span class="deck-bracket" aria-hidden="true"></span>
+            <span class="deck-watermark" aria-hidden="true">001</span>
+            <span class="deck-stamp" aria-hidden="true">CLASSIFIED</span>
+            <div class="deck-row"><span class="deck-label deck-label--primary" style="margin:0">TARGET.DOSSIER</span><span class="deck-dim" style="font-size:9px">FILE 001-AW</span></div>
+            <div style="display:flex;gap:11px;margin:14px 0 6px">
+              <span class="deck-photo" aria-hidden="true"></span>
+              <div>
+                <div class="deck-dim" style="font-size:9px;letter-spacing:.12em">CALLSIGN</div>
+                <div class="deck-callsign">MISTAJOKA</div>
+                <h1 style="font-size:12px;letter-spacing:.08em;margin:4px 0 0;font-weight:500">Andrae Williams</h1>
+                <div style="color:var(--primary);font-size:10px;letter-spacing:.05em;margin-top:7px">BUILDER / ANALYST / OPERATOR</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+              <span class="deck-barcode" aria-hidden="true"><i style="height:60%"></i><i></i><i style="height:40%"></i><i></i><i style="height:80%"></i><i style="height:50%"></i><i></i><i style="height:30%"></i><i></i><i style="height:70%"></i><i></i><i style="height:90%"></i><i style="height:40%"></i><i></i><i style="height:60%"></i></span>
+              <span class="deck-dim" style="font-size:9px">ID-001-AW-26</span>
+            </div>
+            <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px">
+              <div class="deck-row"><span class="deck-label deck-label--primary" style="margin:0;letter-spacing:.16em">ACTIVE OP</span><span class="deck-badge">OPERATIONAL</span></div>
+              <div id="deck-active-op" style="font-size:11px;margin-top:6px">Deploy no-scroll command deck</div>
+            </div>
+          </section>
 
-        <div class="sidebar-bottom">
-          <div id="sidebar-theme" class="theme-control--sidebar" data-theme-mount></div>
-          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
-            GitHub →
-          </a>
+          <section class="deck-panel" style="grid-row:1 / span 2" aria-label="Assets">
+            <div class="deck-label deck-label--primary">ASSETS <span class="deck-dim">// standby</span></div>
+            <div class="deck-stack" id="deck-assets"><span class="deck-dim">// STANDBY</span></div>
+          </section>
+
+          <section class="deck-panel deck-radar" aria-label="Scan">
+            <div class="deck-label">SCAN <span class="deck-dim">// 3 CONTACTS</span></div>
+            <div class="deck-radar-scope" aria-hidden="true">
+              <span class="deck-radar-ring"></span>
+              <span class="deck-radar-sweep"></span>
+              <span class="deck-blip" style="top:27%;left:62%"></span>
+              <span class="deck-blip" style="top:64%;left:36%"></span>
+              <span class="deck-blip deck-blip--hostile" style="top:52%;left:71%"></span>
+            </div>
+          </section>
+
+          <section class="deck-panel" aria-label="Systems">
+            <div class="deck-label">SYSTEMS</div>
+            <div class="deck-stack" id="deck-systems"><span class="deck-dim">// STANDBY</span></div>
+          </section>
+
+          <section class="deck-panel" aria-label="Ops log">
+            <div class="deck-label">OPS.LOG</div>
+            <div class="deck-stack" id="deck-opslog"><span class="deck-dim">// STANDBY</span></div>
+          </section>
+
+          <section class="deck-panel" style="grid-column:2 / span 2" aria-label="Secure comms">
+            <div class="deck-row"><span class="deck-label deck-label--primary" style="margin:0">SECURE.COMMS</span><span class="deck-go" style="font-size:9px;letter-spacing:.1em">● ENCRYPTED</span></div>
+            <div style="display:flex;gap:24px;margin-top:9px;flex-wrap:wrap">
+              <span><span class="deck-dim">github</span> <a href="https://github.com/MistaJoka" target="_blank" rel="noopener noreferrer">MISTAJOKA ↗</a></span>
+              <span><span class="deck-dim">source</span> <a href="https://github.com/MistaJoka/andraewilliams-site" target="_blank" rel="noopener noreferrer">REPO ↗</a></span>
+              <span><span class="deck-dim">tools</span> <a href="tools.html">CATALOG →</a></span>
+              <span><span class="deck-dim">about</span> <a href="about.html">ORIGIN →</a></span>
+            </div>
+          </section>
+        </main>
+
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> RECON COMPLETE &nbsp;·&nbsp; ASSET-04 DEPLOYED &nbsp;·&nbsp; <span style="color:var(--primary)">GRID 34.05N LOCKED</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp; <span style="color:var(--danger)">INTRUSION REPELLED</span> &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> RECON COMPLETE &nbsp;·&nbsp; ASSET-04 DEPLOYED &nbsp;·&nbsp; <span style="color:var(--primary)">GRID 34.05N LOCKED</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp; <span style="color:var(--danger)">INTRUSION REPELLED</span> &nbsp;·&nbsp;
+          </span>
         </div>
-      </aside>
 
-      <main class="main-content main-content--command">
-        <div class="home-scroll">
-
-          <!-- 1. Command Center hero -->
-          <section id="command-center" class="home-hero" aria-label="Command center">
-            <p class="home-hero-eyebrow">command.center</p>
-            <h1 class="home-hero-name">Andrae Williams</h1>
-            <p class="home-hero-title">
-              <span class="home-hero-role">Builder</span><span class="home-hero-dot">.</span>
-              <span class="home-hero-role">Analyst</span><span class="home-hero-dot">.</span>
-              <span class="home-hero-role">Operator</span><span class="home-hero-dot">.</span>
-            </p>
-            <p class="home-hero-main">
-              I turn patterns, pressure, and problems into working software systems.
-            </p>
-            <p class="home-hero-sub">
-              A private lab for AI-assisted tools, local business systems, dashboards, and experiments.
-            </p>
-            <div class="home-status-strip" id="home-status-strip" aria-label="System status">
-              <span class="home-status-loading">loading…</span>
-            </div>
-          </section>
-
-          <!-- 2. Current Mission -->
-          <section id="current-mission" class="home-section" aria-labelledby="mission-heading">
-            <div class="home-section-head">
-              <span class="home-section-label">current.mission</span>
-              <h2 id="mission-heading" class="home-section-title">Current Mission</h2>
-            </div>
-            <article class="glass-card mission-card" id="mission-card">
-              <p class="mission-loading">loading…</p>
-            </article>
-          </section>
-
-          <!-- 3. Arsenal -->
-          <section id="arsenal" class="home-section" aria-labelledby="arsenal-heading">
-            <div class="home-section-head">
-              <span class="home-section-label">arsenal</span>
-              <h2 id="arsenal-heading" class="home-section-title">Arsenal</h2>
-              <span class="home-section-meta" id="arsenal-count">// …</span>
-            </div>
-            <div class="home-arsenal-grid" id="arsenal-grid">
-              <p class="arsenal-loading">loading…</p>
-            </div>
-          </section>
-
-          <!-- 4. Lab -->
-          <section id="lab" class="home-section" aria-labelledby="lab-heading">
-            <div class="home-section-head">
-              <span class="home-section-label">lab</span>
-              <h2 id="lab-heading" class="home-section-title">Lab</h2>
-            </div>
-            <p class="home-section-lede">Engineering Demonstrations — Small technical labs that prove I understand the browser, UI systems, AI tooling, and business logic.</p>
-            <div id="lab-theme" class="lab-theme-panel" data-theme-mount></div>
-            <div class="home-lab-grid" id="lab-grid">
-              <p class="lab-loading">loading…</p>
-            </div>
-          </section>
-
-          <!-- 5. Field Notes -->
-          <section id="field-notes" class="home-section" aria-labelledby="notes-heading">
-            <div class="home-section-head">
-              <span class="home-section-label">field.notes</span>
-              <h2 id="notes-heading" class="home-section-title">Field Notes</h2>
-            </div>
-            <div class="home-notes-grid" id="field-notes-grid">
-              <p class="notes-loading">loading…</p>
-            </div>
-            <p class="home-notes-footer">
-              <a
-                href="https://github.com/MistaJoka/andraewilliams-site/blob/main/docs/decisions.md"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="home-notes-raw"
-              >
-                raw decisions log ↗
-              </a>
-            </p>
-          </section>
-
-          <!-- 6. Transmission -->
-          <section id="transmission" class="home-section" aria-labelledby="transmission-heading">
-            <div class="home-section-head">
-              <span class="home-section-label">transmission</span>
-              <h2 id="transmission-heading" class="home-section-title">Transmission</h2>
-            </div>
-            <article class="glass-card transmission-card">
-              <p class="transmission-lede">Open channels</p>
-              <ul class="transmission-links">
-                <li>
-                  <a href="https://github.com/MistaJoka" target="_blank" rel="noopener noreferrer">
-                    <span class="transmission-label">github</span>
-                    <span class="transmission-target">MistaJoka ↗</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="tools.html">
-                    <span class="transmission-label">tools</span>
-                    <span class="transmission-target">Full catalog →</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="about.html">
-                    <span class="transmission-label">about</span>
-                    <span class="transmission-target">Origin &amp; intent →</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/MistaJoka/andraewilliams-site"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span class="transmission-label">source</span>
-                    <span class="transmission-target">Site repo ↗</span>
-                  </a>
-                </li>
-              </ul>
-            </article>
-          </section>
-
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">PAGE SCROLL // DISABLED</span>
+          <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
         </div>
-      </main>
+      </div>
     </div>
 
-    <footer class="site-footer">
-      <span>andraewilliams.com</span>
-    </footer>
-
-    <script type="module" src="js/sidebar.js"></script>
     <script type="module" src="js/theme.js"></script>
-    <script type="module" src="js/status-panel.js"></script>
-    <script type="module" src="js/home-mission.js"></script>
-    <script type="module" src="js/home-arsenal.js"></script>
-    <script type="module" src="js/home-lab.js"></script>
-    <script type="module" src="js/home-field-notes.js"></script>
-    <script type="module" src="js/pretext-card-system.js"></script>
-    <script type="module" src="js/smoke-home.js"></script>
+    <script type="module" src="js/command-deck.js"></script>
   </body>
 </html>

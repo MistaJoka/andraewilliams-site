@@ -1,0 +1,514 @@
+/* =====================================================================
+   COMMAND DECK — no-scroll tactical frame. Theme-agnostic: reads tokens
+   from themes.css (operator theme is the default). Visual source of truth:
+   the locked v5.1 mockup.
+   ===================================================================== */
+
+.deck-page {
+  --rail-w: 52px;
+}
+
+html,
+body.deck-page {
+  height: 100%;
+  margin: 0;
+}
+
+body.deck-page {
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+/* ---- frame ---- */
+.deck {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--rail-w) 1fr;
+  height: 100dvh;
+  background-color: var(--bg);
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.26) 2px 3px),
+    linear-gradient(rgba(120, 130, 110, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 130, 110, 0.045) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+}
+
+.deck-main {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+  min-height: 0;
+}
+
+/* ---- rail ---- */
+.deck-rail {
+  border-right: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 70%, #000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 16px;
+}
+
+.deck-rail-toggle {
+  color: var(--text-muted);
+  font-size: 14px;
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+}
+
+.deck-rail-mark {
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+}
+
+.deck-rail-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  margin-top: 4px;
+}
+
+.deck-rail-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-faint);
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.deck-rail-link .deck-dot {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--text-faint);
+}
+
+.deck-rail-link.active {
+  color: var(--primary);
+}
+
+.deck-rail-link.active .deck-dot {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.deck-rail-link:focus-visible {
+  outline: 1px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---- chrome: prompt / hazard / banner ---- */
+.deck-prompt,
+.deck-banner,
+.deck-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.deck-prompt {
+  padding: 7px 13px;
+  background: #000;
+  border-bottom: 1px solid var(--border);
+}
+
+.deck-prompt-user {
+  color: var(--success);
+}
+
+.deck-prompt-path {
+  color: var(--text-faint);
+}
+
+.deck-cursor {
+  color: var(--primary);
+  animation: deck-blink 1s step-end infinite;
+}
+
+.deck-threat {
+  color: var(--primary);
+  letter-spacing: 0.12em;
+}
+
+.deck-hazard {
+  height: 6px;
+  background: repeating-linear-gradient(45deg, var(--primary) 0 9px, color-mix(in srgb, var(--bg) 80%, #000) 9px 18px);
+  opacity: 0.85;
+}
+
+.deck-banner {
+  padding: 6px 13px;
+  background: color-mix(in srgb, var(--bg) 80%, #000);
+  border-bottom: 1px solid var(--border);
+}
+
+.deck-clearance {
+  color: var(--primary);
+}
+
+.deck-coords {
+  color: var(--text-faint);
+}
+
+.deck-clock {
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+}
+
+.deck-clock-z {
+  color: var(--primary);
+}
+
+/* ---- active region (bento) ---- */
+.deck-active {
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.55fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 0.7fr;
+  gap: 8px;
+  padding: 10px;
+}
+
+/* long-form pages: one contained scroll panel instead of the bento */
+.deck-active--scroll {
+  display: block;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.deck-placeholder {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  letter-spacing: 0.3em;
+  border: 1px dashed var(--border);
+}
+
+/* ---- panels ---- */
+.deck-panel {
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+  padding: 11px;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.deck-panel--scroll {
+  overflow-y: auto;
+}
+
+.deck-label {
+  letter-spacing: 0.2em;
+  font-size: 10px;
+  margin-bottom: 9px;
+  color: var(--text-muted);
+}
+
+.deck-label--primary {
+  color: var(--primary);
+}
+
+.deck-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.deck-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.deck-panel a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.deck-panel a:focus-visible {
+  outline: 1px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.deck-dim {
+  color: var(--text-faint);
+}
+
+.deck-go {
+  color: var(--success);
+}
+
+/* ---- dossier ---- */
+.deck-dossier {
+  grid-row: 1 / span 2;
+  border-color: color-mix(in srgb, var(--border) 70%, var(--text-faint));
+  display: flex;
+  flex-direction: column;
+}
+
+.deck-bracket {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  top: 6px;
+  left: 6px;
+  border-top: 1px solid var(--primary);
+  border-left: 1px solid var(--primary);
+}
+
+.deck-watermark {
+  position: absolute;
+  right: 6px;
+  bottom: -18px;
+  font-size: 120px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text) 4%, transparent);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.deck-stamp {
+  position: absolute;
+  top: 42px;
+  right: 8px;
+  transform: rotate(-11deg);
+  border: 2px solid var(--danger);
+  color: var(--danger);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  padding: 2px 7px;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.deck-photo {
+  width: 50px;
+  height: 60px;
+  flex: none;
+  position: relative;
+  background: color-mix(in srgb, var(--surface) 80%, #000);
+  background-image: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.4) 2px 3px);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, var(--text-faint));
+}
+
+.deck-photo::before,
+.deck-photo::after {
+  content: '';
+  position: absolute;
+  background: var(--primary);
+  opacity: 0.7;
+}
+
+.deck-photo::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.deck-photo::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.deck-callsign {
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  line-height: 1.05;
+}
+
+.deck-barcode {
+  display: flex;
+  gap: 1.5px;
+  align-items: flex-end;
+  height: 16px;
+}
+
+.deck-barcode i {
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: var(--text-muted);
+}
+
+.deck-badge {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--success);
+  border: 1px solid var(--success);
+  padding: 2px 6px;
+}
+
+/* ---- radar ---- */
+.deck-radar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deck-radar .deck-label {
+  align-self: flex-start;
+}
+
+.deck-radar-scope {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--success) 35%, var(--bg));
+  background: radial-gradient(circle, color-mix(in srgb, var(--success) 6%, transparent), transparent 70%);
+  overflow: hidden;
+}
+
+.deck-radar-ring {
+  position: absolute;
+  inset: 19px;
+  border: 1px solid color-mix(in srgb, var(--success) 20%, var(--bg));
+  border-radius: 50%;
+}
+
+.deck-radar-sweep {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, color-mix(in srgb, var(--success) 42%, transparent), transparent 55deg);
+  animation: deck-spin 3.4s linear infinite;
+}
+
+.deck-blip {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.deck-blip--hostile {
+  width: 4px;
+  height: 4px;
+  background: var(--danger);
+}
+
+/* ---- ticker ---- */
+.deck-ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 80%, #000);
+  padding: 5px 0;
+}
+
+.deck-ticker-track {
+  display: inline-block;
+  animation: deck-tick 24s linear infinite;
+  color: var(--text-faint);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+/* ---- status bar ---- */
+.deck-status {
+  padding: 6px 13px;
+  background: #000;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+}
+
+.deck-uplink-dot {
+  color: var(--success);
+  animation: deck-pulse 1.4s ease-in-out infinite;
+}
+
+/* ---- motion ---- */
+@keyframes deck-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes deck-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.14; }
+}
+
+@keyframes deck-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes deck-tick {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+html[data-motion='reduce'] .deck-cursor,
+html[data-motion='reduce'] .deck-uplink-dot,
+html[data-motion='reduce'] .deck-radar-sweep,
+html[data-motion='reduce'] .deck-ticker-track {
+  animation: none;
+}
+
+/* ---- responsive: phones can't be a fixed cockpit ---- */
+@media (max-width: 768px) {
+  body.deck-page {
+    overflow: auto;
+  }
+
+  .deck {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .deck-rail {
+    flex-direction: row;
+    justify-content: center;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    gap: 22px;
+  }
+
+  .deck-rail-nav {
+    flex-direction: row;
+    margin-top: 0;
+    gap: 22px;
+  }
+
+  .deck-active {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    overflow: visible;
+  }
+
+  .deck-dossier {
+    grid-row: auto;
+  }
+
+  .deck-radar,
+  .deck-ticker {
+    display: none;
+  }
+}
