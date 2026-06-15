@@ -13,20 +13,23 @@ cheaper. Pick the top unstarted item and go.
   for me", auth planned), not a client-facing portfolio. No public contact
   path wanted. Do not reintroduce.
 
-## 2. Existing-project writeups (do second — near-zero new code)
-- Only Smoke Playground uses the writeup template
-  (`src/writeups/smoke-playground.html`). Add goals / tradeoffs / what-I-learned
-  writeups for the other live projects (start with Pretext Layout Lab).
-- This establishes the Build Log pattern reused by Cipher Console below.
+## 2. Existing-project writeups — DONE (2026-06-14)
+- [x] Pretext Layout Lab writeup (`src/writeups/pretext-layout-lab.html`), wired
+  via manifest + Tools card routes to the case study. Commit `dedc591`.
+- [ ] Optional later: DOPE Prompt Book writeup (external Next.js app — needs the
+  owner's input on that codebase; deliberately not invented).
 
-## 3. Cipher Console build (do last — needs usage headroom)
-- Spec: `docs/superpowers/specs/2026-06-14-cipher-console-design.md` (approved
-  design). Next step is the implementation plan (writing-plans skill).
-- Tactical encoding tool (Base64/Hex/ROT13/URL) backed by a Python stdlib
-  serverless function at `/api/cipher.py` — first Python-on-Vercel deploy.
-- Ships with a Build Log writeup (`src/writeups/cipher-console.html`).
-- One risk to confirm on first deploy: `/api/*.py` deploys alongside the custom
-  build (`framework: null`, `outputDirectory: _site`).
+## 3. Cipher Console build — DONE & LIVE (2026-06-14)
+- [x] `api/cipher.py` (stdlib serverless), `cipher-console.html` + JS, themed CSS,
+  manifest entry (tools → 4), Tools card 04, AI build log. Commit `dedc591`.
+- [x] **Verified live**: `POST /api/cipher` returns correct transforms on
+  www.andraewilliams.com; bad input returns a 400 error, not a 500.
+- Resolved: `/api/*.py` DOES deploy alongside the custom build
+  (`framework: null`, `outputDirectory: _site`) — confirmed in production.
+
+## Backlog clear — all items shipped. Next ideas: Tier B polish (verify stat,
+## apex-primary domain, last-deployed timestamp, 404 page, analytics) or new
+## Tier 1 Python tools (Recon Lookup, Log Parser) per portfolio-direction memory.
 
 ## Lower-priority (Tier B, not yet scheduled)
 - Wire hero `verify: unknown` to a real value.
