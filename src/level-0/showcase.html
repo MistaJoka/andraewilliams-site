@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Level 0 showcase — CSS layout, native dialog, tabs, fetch JSON, localStorage, and accessibility demos."
+    />
+    <meta name="author" content="Andrae Williams" />
+    <meta name="theme-color" content="#c45c26" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href="https://level0.andraewilliams.com/showcase.html" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content="Level 0 · Showcase" />
+    <title>Level 0 · Showcase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div id="live-region" class="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow">
+            <p class="site-badge">Live · static</p>
+            <p class="site-label">Showcase · Level 0</p>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">Dark mode</button>
+        </div>
+        <h1 class="site-title">Interactive demos.</h1>
+        <p class="site-tagline">
+          Every pattern below lives in <code>style.css</code> and <code>script.js</code>.
+          No libraries. Open source and poke it.
+        </p>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="showcase.html">Showcase</a>
+          <a href="contact.html">Contact</a>
+          <a href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main" id="main">
+      <section class="section" id="css" aria-labelledby="css-heading">
+        <div class="section__head">
+          <span class="section__index">01</span>
+          <h2 id="css-heading">CSS layout</h2>
+        </div>
+        <p class="lede">Grid for columns. Flexbox for rows that wrap. Variables for the whole theme.</p>
+        <p><strong>CSS Grid</strong> — three equal tracks:</p>
+        <div class="layout-demo" aria-hidden="true">
+          <span>1fr</span><span>1fr</span><span>1fr</span>
+        </div>
+        <p><strong>Flexbox</strong> — items grow and wrap on small screens:</p>
+        <div class="flex-demo" aria-hidden="true">
+          <span>flex</span><span>flex</span><span>flex</span><span>flex</span>
+        </div>
+        <figure class="figure">
+          <svg viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="stack-title">
+            <title id="stack-title">HTML, CSS, and JavaScript layers</title>
+            <rect x="20" y="70" width="200" height="28" rx="6" fill="currentColor" opacity="0.12"/>
+            <text x="120" y="88" text-anchor="middle" font-family="monospace" font-size="11" fill="currentColor">JavaScript</text>
+            <rect x="30" y="42" width="180" height="28" rx="6" fill="currentColor" opacity="0.2"/>
+            <text x="120" y="60" text-anchor="middle" font-family="monospace" font-size="11" fill="currentColor">CSS</text>
+            <rect x="40" y="14" width="160" height="28" rx="6" fill="currentColor" opacity="0.32"/>
+            <text x="120" y="32" text-anchor="middle" font-family="monospace" font-size="11" fill="currentColor">HTML</text>
+          </svg>
+          <figcaption>Inline SVG — scalable graphics without an image file.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section" id="native" aria-labelledby="native-heading">
+        <div class="section__head">
+          <span class="section__index">02</span>
+          <h2 id="native-heading">Native HTML</h2>
+        </div>
+        <p class="lede">Modern elements built into the browser — no component library required.</p>
+        <div class="btn-row">
+          <button type="button" class="btn btn--primary" data-dialog-open="demo-dialog">Open dialog</button>
+        </div>
+        <dialog id="demo-dialog" class="native-dialog" data-dialog aria-labelledby="dialog-title">
+          <div class="dialog-body">
+            <h2 id="dialog-title">Native &lt;dialog&gt;</h2>
+            <p>
+              Modal focus trap, backdrop click to close, and <code>.showModal()</code> —
+              all built in. This is what Level&nbsp;0 looks like before you reach for a UI kit.
+            </p>
+            <div class="dialog-actions">
+              <button type="button" class="btn btn--ghost" data-dialog-close>Close</button>
+            </div>
+          </div>
+        </dialog>
+        <div class="faq" style="margin-top: 1rem">
+          <details>
+            <summary>What is &lt;details&gt;?</summary>
+            <p>A disclosure widget — expand/collapse without JavaScript. Used for FAQs and optional content.</p>
+          </details>
+          <details>
+            <summary>Why prefer native elements?</summary>
+            <p>Less code, better accessibility defaults, and behavior that survives when CSS or JS fails to load.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" id="tabs" aria-labelledby="tabs-heading">
+        <div class="section__head">
+          <span class="section__index">03</span>
+          <h2 id="tabs-heading">Tabs &amp; live regions</h2>
+        </div>
+        <p class="lede">ARIA tabs with arrow-key navigation. Live region for screen reader announcements.</p>
+        <div class="tabs" data-tabs>
+          <div class="tablist" role="tablist" aria-label="Stack layers">
+            <button role="tab" id="tab-html" aria-selected="true" aria-controls="panel-html">HTML</button>
+            <button role="tab" id="tab-css" aria-selected="false" aria-controls="panel-css" tabindex="-1">CSS</button>
+            <button role="tab" id="tab-js" aria-selected="false" aria-controls="panel-js" tabindex="-1">JS</button>
+          </div>
+          <div role="tabpanel" class="tabpanel" id="panel-html" aria-labelledby="tab-html">
+            <p>Structure and meaning — headings, links, forms, landmarks. The content layer everything else enhances.</p>
+          </div>
+          <div role="tabpanel" class="tabpanel" id="panel-css" hidden aria-labelledby="tab-css">
+            <p>Presentation — layout, color, typography, responsive breakpoints, print rules, and motion preferences.</p>
+          </div>
+          <div role="tabpanel" class="tabpanel" id="panel-js" hidden aria-labelledby="tab-js">
+            <p>Behavior — DOM updates, fetch, storage, validation UX, and widgets HTML cannot express alone.</p>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn--ghost" id="live-demo-btn">Test live region</button>
+        </div>
+      </section>
+
+      <section class="section" id="fetch" aria-labelledby="fetch-heading">
+        <div class="section__head">
+          <span class="section__index">04</span>
+          <h2 id="fetch-heading">Fetch static JSON</h2>
+        </div>
+        <p class="lede">
+          <code>fetch('data/site.json')</code> — async data from a plain file. No API server.
+          Level&nbsp;1 might generate this at build time; Level&nbsp;0 reads it as-is.
+        </p>
+        <pre class="json-panel" id="json-output" aria-label="Loaded JSON">Loading…</pre>
+        <div class="btn-row">
+          <button type="button" class="btn btn--ghost" data-copy="#json-output">Copy snippet</button>
+        </div>
+      </section>
+
+      <section class="section" id="storage" aria-labelledby="storage-heading">
+        <div class="section__head">
+          <span class="section__index">05</span>
+          <h2 id="storage-heading">localStorage theme</h2>
+        </div>
+        <p class="lede">
+          The header toggle saves your choice to <code>localStorage</code> under
+          <code>l0-theme</code>. Reload the page — it sticks. Current theme:
+          <strong id="theme-label">—</strong>.
+        </p>
+        <p>
+          CSS handles system preference via <code>prefers-color-scheme</code>.
+          JavaScript overrides when you choose manually — both patterns, one site.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>
+          HTML · CSS · JavaScript · no build step · © <span id="year">—</span>
+          <a href="https://andraewilliams.com/">Andrae Williams</a>
+        </p>
+        <p><a href="index.html">← Back to home</a></p>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

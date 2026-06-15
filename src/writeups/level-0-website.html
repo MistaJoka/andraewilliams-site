@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Case file: Level 0 Website — a complete static site in four files, no build step."
+    />
+    <link rel="canonical" href="https://andraewilliams.com/writeups/level-0-website.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://andraewilliams.com/writeups/level-0-website.html" />
+    <meta property="og:title" content="Level 0 Website — case file" />
+    <meta
+      property="og:description"
+      content="The smallest complete website — HTML, CSS, JS, and a second page. Baseline before the command deck."
+    />
+    <meta property="og:site_name" content="Andrae Williams" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Level 0 Website — case file" />
+    <meta name="view-transition" content="same-origin" />
+    <title>Level 0 Website — case file · Andrae Williams</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/command-deck.css" />
+  </head>
+  <body class="deck-page">
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link" href="../index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link" href="../about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link" href="../tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
+
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./operator --case level-0 <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // GUARDED</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">FILE L0-001 · CASE</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
+        </div>
+
+        <main class="deck-active deck-active--scroll">
+          <article class="deck-panel deck-longform section--writeup">
+            <a href="../index.html#lab" class="writeup-back">← Lab</a>
+
+            <header class="writeup-header">
+              <span class="deck-label deck-label--primary">CASE FILE // L0-001</span>
+              <h1 class="writeup-title">Level 0 Website</h1>
+              <p class="writeup-lede">
+                The smallest website that still counts as complete — four files, zero build step,
+                two pages. Everything is readable in place. This is the baseline the command deck
+                grows from.
+              </p>
+              <div class="writeup-actions">
+                <a href="https://level0.andraewilliams.com" class="hero-cta" target="_blank" rel="noopener noreferrer">Open live site ↗</a>
+              </div>
+              <dl class="writeup-meta">
+                <div>
+                  <dt>Status</dt>
+                  <dd>Live · subdomain</dd>
+                </div>
+                <div>
+                  <dt>Host</dt>
+                  <dd>level0.andraewilliams.com</dd>
+                </div>
+                <div>
+                  <dt>Stack</dt>
+                  <dd>HTML · CSS · vanilla JS</dd>
+                </div>
+                <div>
+                  <dt>Type</dt>
+                  <dd>Workshop artifact</dd>
+                </div>
+              </dl>
+            </header>
+
+            <section class="writeup-block" aria-labelledby="l0-problem">
+              <h2 id="l0-problem">Problem</h2>
+              <p>
+                It's easy to jump straight into frameworks, component libraries, and deploy pipelines
+                before understanding what a browser actually loads. A "Level 0" site fixes that:
+                one folder you can open locally, trace every line, and change without tooling.
+              </p>
+              <p>
+                The portfolio itself uses a command-deck design system, JSON-driven sections, and
+                platform CSS — but that polish sits on the same fundamentals this demo exposes.
+              </p>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="l0-scope">
+              <h2 id="l0-scope">What's included</h2>
+              <ul class="writeup-list">
+                <li><strong>index.html</strong> — home page with semantic structure and content sections.</li>
+                <li><strong>about.html</strong> — second page to prove relative linking works.</li>
+                <li><strong>style.css</strong> — layout, typography, color tokens, responsive rules, focus styles.</li>
+                <li><strong>script.js</strong> — footer year stamp and active nav via <code>aria-current</code>.</li>
+              </ul>
+              <div class="writeup-callout">
+                <p>
+                  Still excluded on purpose: build step, shared partials, backend, framework.
+                  Included in the demo: favicon, Open Graph, dark mode, print styles, and full a11y baseline.
+                </p>
+              </div>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="l0-design">
+              <h2 id="l0-design">Design choice</h2>
+              <p>
+                Level 0 uses a warm paper palette and system fonts — intentionally different from the
+                operator deck. The contrast makes the boundary clear: this is the foundation; the main
+                site is what you build on top.
+              </p>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="l0-hosting">
+              <h2 id="l0-hosting">Hosting</h2>
+              <p>
+                Source lives in <code>src/level-0/</code> in the main repo. Vercel serves it at
+                <strong>level0.andraewilliams.com</strong> via a host-based rewrite in
+                <code>vercel.json</code> — same deploy as the portfolio, separate URL like
+                promptbook.andraewilliams.com.
+              </p>
+              <p>
+                Requests to <code>andraewilliams.com/level-0/</code> redirect permanently to the
+                subdomain so the demo has one canonical home.
+              </p>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="l0-verify">
+              <h2 id="l0-verify">Verify locally</h2>
+              <pre class="writeup-callout" style="font-family: var(--font-mono); font-size: 0.8125rem; overflow-x: auto;"><code>cd src/level-0
+python3 -m http.server 8080
+# open http://localhost:8080</code></pre>
+              <p>
+                Production: <a href="https://level0.andraewilliams.com">level0.andraewilliams.com</a>
+                after DNS is wired (see below).
+              </p>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="l0-dns">
+              <h2 id="l0-dns">DNS setup (manual)</h2>
+              <ol class="writeup-list">
+                <li>Vercel project → <strong>Settings → Domains</strong> → add <code>level0.andraewilliams.com</code></li>
+                <li>GoDaddy → CNAME <code>level0</code> → <code>cname.vercel-dns.com</code> (or the target Vercel shows)</li>
+                <li>Deploy <code>main</code> — rewrite rules ship with <code>vercel.json</code></li>
+              </ol>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="l0-links">
+              <h2 id="l0-links">Links</h2>
+              <ul class="writeup-files">
+                <li><a href="https://level0.andraewilliams.com" target="_blank" rel="noopener noreferrer">level0.andraewilliams.com ↗</a></li>
+                <li><a href="https://level0.andraewilliams.com/about.html" target="_blank" rel="noopener noreferrer">About page ↗</a></li>
+                <li><a href="../index.html#lab">Lab section on home →</a></li>
+              </ul>
+            </section>
+          </article>
+        </main>
+
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> CASE FILE L0-001 &nbsp;·&nbsp; <span class="deck-ticker-accent">LEVEL 0 WEBSITE</span> &nbsp;·&nbsp; WORKSHOP ARTIFACT &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> CASE FILE L0-001 &nbsp;·&nbsp; <span class="deck-ticker-accent">LEVEL 0 WEBSITE</span> &nbsp;·&nbsp; WORKSHOP ARTIFACT &nbsp;·&nbsp;
+          </span>
+        </div>
+
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">PAGE SCROLL // ENABLED · KEYS h/a/t</span>
+          <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../js/command-deck.js"></script>
+    <script type="module" src="../js/analytics.js"></script>
+  </body>
+</html>

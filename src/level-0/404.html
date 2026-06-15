@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Page not found — Level 0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <title>404 · Level 0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow">
+            <p class="site-badge">404</p>
+            <p class="site-label">Not found</p>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">Dark mode</button>
+        </div>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="showcase.html">Showcase</a>
+          <a href="contact.html">Contact</a>
+          <a href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main page-404" id="main">
+      <p><code>404</code></p>
+      <h1 class="site-title">This page does not exist.</h1>
+      <p class="lede" style="max-width: 32ch; margin-inline: auto">
+        Even a Level&nbsp;0 site needs a not-found page — a static <code>404.html</code>
+        file the host serves when a URL misses.
+      </p>
+      <div class="btn-row" style="justify-content: center; margin-top: 1.5rem">
+        <a class="btn btn--primary" href="index.html">Back to home</a>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>HTML · CSS · JavaScript · no build step · © <span id="year">—</span></p>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

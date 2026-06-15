@@ -1,0 +1,22 @@
+{
+  "site": "Level 0",
+  "url": "https://level0.andraewilliams.com",
+  "version": "1.0.0",
+  "stack": ["html", "css", "javascript"],
+  "pages": ["index.html", "showcase.html", "contact.html", "about.html"],
+  "capabilities": [
+    "semantic-html",
+    "css-grid-flex",
+    "forms-validation",
+    "fetch-json",
+    "local-storage",
+    "dialog-details",
+    "tabs-aria",
+    "dark-mode",
+    "accessibility",
+    "responsive",
+    "print-styles"
+  ],
+  "dependencies": 0,
+  "buildStep": false
+}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Level 0 — the full range of static web fundamentals. HTML, CSS, JavaScript, forms, fetch, and accessibility. No build step."
+    />
+    <meta name="author" content="Andrae Williams" />
+    <meta name="theme-color" content="#c45c26" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href="https://level0.andraewilliams.com/" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://level0.andraewilliams.com/" />
+    <meta property="og:title" content="Level 0 — the full static web range" />
+    <meta
+      property="og:description"
+      content="Every browser-native skill before Level 1: layout, forms, fetch, storage, dialog, tabs, a11y."
+    />
+    <meta property="og:site_name" content="Level 0" />
+    <meta name="twitter:card" content="summary" />
+    <title>Level 0 · the full static web range</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div id="live-region" class="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow">
+            <p class="site-badge">Live · static</p>
+            <p class="site-label">level0.andraewilliams.com</p>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">Dark mode</button>
+        </div>
+        <h1 class="site-title">The full Level&nbsp;0 range.</h1>
+        <p class="site-tagline">
+          Everything the browser gives you for free — before build tools, frameworks,
+          or a server. One stylesheet, one script, honest static files.
+        </p>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="showcase.html">Showcase</a>
+          <a href="contact.html">Contact</a>
+          <a href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main" id="main">
+      <ul class="stats" aria-label="Site facts">
+        <li>
+          <strong>4</strong>
+          <span>pages</span>
+        </li>
+        <li>
+          <strong id="capability-count">11</strong>
+          <span>capabilities</span>
+        </li>
+        <li>
+          <strong>0</strong>
+          <span>dependencies</span>
+        </li>
+      </ul>
+
+      <section class="section" aria-labelledby="intro-heading">
+        <div class="section__head">
+          <span class="section__index">01</span>
+          <h2 id="intro-heading">What Level&nbsp;0 covers</h2>
+        </div>
+        <p class="lede">
+          Level&nbsp;1 adds templating, serverless functions, and shared design systems.
+          Level&nbsp;0 is the ceiling of plain HTML, CSS, and JavaScript — every pattern
+          below is live on this site, readable in source, and editable without compiling.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="cap-heading">
+        <div class="section__head">
+          <span class="section__index">02</span>
+          <h2 id="cap-heading">Explore the range</h2>
+        </div>
+        <ul class="cap-grid">
+          <li>
+            <a class="cap-card" href="showcase.html#css">
+              <span class="cap-card__tag">CSS</span>
+              <h3>Layout &amp; theme</h3>
+              <p>Grid, flexbox, custom properties, dark mode, print styles, responsive rules.</p>
+              <span class="cap-card__arrow">showcase →</span>
+            </a>
+          </li>
+          <li>
+            <a class="cap-card" href="showcase.html#native">
+              <span class="cap-card__tag">HTML</span>
+              <h3>Native elements</h3>
+              <p><code>&lt;dialog&gt;</code>, <code>&lt;details&gt;</code>, semantic landmarks, tables.</p>
+              <span class="cap-card__arrow">showcase →</span>
+            </a>
+          </li>
+          <li>
+            <a class="cap-card" href="showcase.html#tabs">
+              <span class="cap-card__tag">JS + ARIA</span>
+              <h3>Tabs &amp; live regions</h3>
+              <p>Keyboard-friendly tabs, <code>aria-live</code> announcements, focus management.</p>
+              <span class="cap-card__arrow">showcase →</span>
+            </a>
+          </li>
+          <li>
+            <a class="cap-card" href="showcase.html#fetch">
+              <span class="cap-card__tag">JS</span>
+              <h3>Fetch JSON</h3>
+              <p>Load <code>data/site.json</code> at runtime — async data without a backend.</p>
+              <span class="cap-card__arrow">showcase →</span>
+            </a>
+          </li>
+          <li>
+            <a class="cap-card" href="contact.html">
+              <span class="cap-card__tag">HTML</span>
+              <h3>Forms</h3>
+              <p>Labels, validation, <code>fieldset</code>, and honest client-only submit UX.</p>
+              <span class="cap-card__arrow">contact →</span>
+            </a>
+          </li>
+          <li>
+            <a class="cap-card" href="showcase.html#storage">
+              <span class="cap-card__tag">JS</span>
+              <h3>localStorage</h3>
+              <p>Theme preference persists across visits — no cookies, no server.</p>
+              <span class="cap-card__arrow">showcase →</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="files-heading">
+        <div class="section__head">
+          <span class="section__index">03</span>
+          <h2 id="files-heading">Project layout</h2>
+        </div>
+        <pre class="file-tree" aria-label="Folder structure"><code><span class="dir">level-0/</span>
+├── index.html       <span class="note">← hub (you are here)</span>
+├── showcase.html    <span class="note">← interactive demos</span>
+├── contact.html     <span class="note">← forms</span>
+├── about.html       <span class="note">← how it works</span>
+├── 404.html         <span class="note">← not found</span>
+├── style.css        <span class="note">← all design</span>
+├── script.js        <span class="note">← all behavior</span>
+├── favicon.svg
+└── <span class="dir">data/</span>
+    └── site.json    <span class="note">← fetch demo</span></code></pre>
+      </section>
+
+      <section class="section" aria-labelledby="complete-heading">
+        <div class="section__head">
+          <span class="section__index">04</span>
+          <h2 id="complete-heading">Level&nbsp;0 checklist</h2>
+        </div>
+        <ul class="check-grid">
+          <li>Multi-page navigation with shared CSS and JS</li>
+          <li>Semantic HTML, meta tags, Open Graph, canonical URLs</li>
+          <li>CSS Grid, Flexbox, variables, media queries, dark mode</li>
+          <li>Forms with native validation and accessible labels</li>
+          <li><code>fetch()</code> loading static JSON</li>
+          <li><code>localStorage</code> for theme preference</li>
+          <li><code>&lt;dialog&gt;</code> and <code>&lt;details&gt;</code> without libraries</li>
+          <li>ARIA tabs, skip link, focus styles, live regions</li>
+          <li>Print stylesheet and <code>prefers-reduced-motion</code></li>
+          <li>Custom 404 page</li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="next-heading">
+        <div class="section__head">
+          <span class="section__index">05</span>
+          <h2 id="next-heading">Start exploring</h2>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="showcase.html">Open showcase</a>
+          <a class="btn btn--ghost" href="about.html">How it works</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>
+          HTML · CSS · JavaScript · no build step · © <span id="year">—</span>
+          <a href="https://andraewilliams.com/">Andrae Williams</a>
+        </p>
+        <p>
+          <a href="showcase.html">Showcase</a>
+          ·
+          <a href="https://andraewilliams.com/writeups/level-0-website.html">Case file</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

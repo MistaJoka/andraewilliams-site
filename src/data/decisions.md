@@ -145,3 +145,16 @@ A lightweight log of key decisions and why they were made.
 - Design tokens in [`src/css/style.css`](../src/css/style.css)
 - [`src/js/sidebar.js`](../src/js/sidebar.js) — `localStorage.site-sidebar`, default `collapsed`
 - Head boot sets `data-sidebar` before paint (with theme boot)
+
+---
+
+## 2026-06-15 — Level 0 at level0.andraewilliams.com
+
+**Decision:** Host the Level 0 workshop site on subdomain **level0.andraewilliams.com**, same Vercel project as the portfolio. Source stays in `src/level-0/`; `vercel.json` rewrites the subdomain to that folder and redirects `andraewilliams.com/level-0/*` to the subdomain.
+
+**Why:**
+- Matches the promptbook pattern — portfolio links out; the artifact owns its URL.
+- Keeps one repo and one deploy; no separate build for four static files.
+- Level 0 stays readable as a standalone site at the domain root, not a nested path.
+
+**Manual step:** Add `level0.andraewilliams.com` in Vercel Domains; CNAME `level0` in GoDaddy to Vercel.
