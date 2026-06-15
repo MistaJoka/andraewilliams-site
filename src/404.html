@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>404 — Signal Lost · Andrae Williams</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar='collapsed';</script>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/command-deck.css" />
+  </head>
+  <body class="deck-page">
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link" href="index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link" href="about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link" href="tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
+
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./operator --scan <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // UNKNOWN</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">GRID 34.05N · SEC-404</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
+        </div>
+
+        <main class="deck-active deck-active--scroll">
+          <section class="deck-panel deck-404" aria-labelledby="deck-404-title">
+            <span class="deck-label deck-label--primary">SIGNAL // LOST</span>
+            <h1 id="deck-404-title" class="deck-404-code">404</h1>
+            <p class="deck-404-text">
+              Target route not found in the armory registry. The uplink you requested does not exist
+              or was moved.
+            </p>
+            <div class="deck-comms-links">
+              <span><span class="deck-dim">home</span> <a href="index.html">COMMAND DECK →</a></span>
+              <span><span class="deck-dim">tools</span> <a href="tools.html">ARMORY →</a></span>
+            </div>
+          </section>
+        </main>
+
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> ROUTE NOT FOUND &nbsp;·&nbsp; <span class="deck-ticker-alert">SIGNAL LOST</span> &nbsp;·&nbsp; RETURN TO BASE &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> ROUTE NOT FOUND &nbsp;·&nbsp; <span class="deck-ticker-alert">SIGNAL LOST</span> &nbsp;·&nbsp; RETURN TO BASE &nbsp;·&nbsp;
+          </span>
+        </div>
+
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">STATUS // 404</span>
+          <span>STATUS <span class="deck-ticker-alert">OFFLINE</span></span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/command-deck.js"></script>
+    <script type="module" src="js/analytics.js"></script>
+  </body>
+</html>

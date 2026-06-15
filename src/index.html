@@ -31,7 +31,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/themes.css" />
     <link rel="stylesheet" href="css/command-deck.css" />
@@ -39,7 +39,7 @@
   <body class="deck-page">
     <div class="deck">
       <nav class="deck-rail" aria-label="Primary">
-        <button type="button" class="deck-rail-toggle" data-sidebar-toggle aria-label="Collapse rail">›</button>
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
         <span class="deck-rail-mark" aria-hidden="true"></span>
         <div class="deck-rail-nav">
           <a class="deck-rail-link active" aria-current="page" href="index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
@@ -65,28 +65,34 @@
             <span class="deck-bracket" aria-hidden="true"></span>
             <span class="deck-watermark" aria-hidden="true">001</span>
             <span class="deck-stamp" aria-hidden="true">CLASSIFIED</span>
-            <div class="deck-row"><span class="deck-label deck-label--primary" style="margin:0">TARGET.DOSSIER</span><span class="deck-dim" style="font-size:9px">FILE 001-AW</span></div>
-            <div style="display:flex;gap:11px;margin:14px 0 6px">
+            <div class="deck-row">
+              <span class="deck-label deck-label--primary deck-dossier-head">TARGET.DOSSIER</span>
+              <span class="deck-dim deck-dossier-file">FILE 001-AW</span>
+            </div>
+            <div class="deck-dossier-identity">
               <span class="deck-photo" aria-hidden="true"></span>
               <div>
-                <div class="deck-dim" style="font-size:9px;letter-spacing:.12em">CALLSIGN</div>
+                <div class="deck-dim deck-dossier-label">CALLSIGN</div>
                 <div class="deck-callsign">MISTAJOKA</div>
-                <h1 style="font-size:12px;letter-spacing:.08em;margin:4px 0 0;font-weight:500">Andrae Williams</h1>
-                <div style="color:var(--primary);font-size:10px;letter-spacing:.05em;margin-top:7px">BUILDER / ANALYST / OPERATOR</div>
+                <h1 class="deck-dossier-name">Andrae Williams</h1>
+                <div class="deck-dossier-role">BUILDER / ANALYST / OPERATOR</div>
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+            <div class="deck-dossier-idrow">
               <span class="deck-barcode" aria-hidden="true"><i style="height:60%"></i><i></i><i style="height:40%"></i><i></i><i style="height:80%"></i><i style="height:50%"></i><i></i><i style="height:30%"></i><i></i><i style="height:70%"></i><i></i><i style="height:90%"></i><i style="height:40%"></i><i></i><i style="height:60%"></i></span>
-              <span class="deck-dim" style="font-size:9px">ID-001-AW-26</span>
+              <span class="deck-dim deck-dossier-id">ID-001-AW-26</span>
             </div>
-            <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px">
-              <div class="deck-row"><span class="deck-label deck-label--primary" style="margin:0;letter-spacing:.16em">ACTIVE OP</span><span class="deck-badge">OPERATIONAL</span></div>
-              <div id="deck-active-op" style="font-size:11px;margin-top:6px">Deploy no-scroll command deck</div>
+            <div class="deck-dossier-op">
+              <div class="deck-row">
+                <span class="deck-label deck-label--primary deck-dossier-op-label">ACTIVE OP</span>
+                <span class="deck-badge">OPERATIONAL</span>
+              </div>
+              <div id="deck-active-op" class="deck-active-op-text">Loading…</div>
             </div>
           </section>
 
-          <section class="deck-panel" style="grid-row:1 / span 2" aria-label="Assets">
-            <div class="deck-label deck-label--primary">ASSETS <span class="deck-dim">// standby</span></div>
+          <section class="deck-panel deck-panel--assets" aria-label="Assets">
+            <div class="deck-label deck-label--primary">ASSETS <span class="deck-dim" id="deck-assets-count">// standby</span></div>
             <div class="deck-stack" id="deck-assets"><span class="deck-dim">// STANDBY</span></div>
           </section>
 
@@ -111,9 +117,12 @@
             <div class="deck-stack" id="deck-opslog"><span class="deck-dim">// STANDBY</span></div>
           </section>
 
-          <section class="deck-panel" style="grid-column:2 / span 2" aria-label="Secure comms">
-            <div class="deck-row"><span class="deck-label deck-label--primary" style="margin:0">SECURE.COMMS</span><span class="deck-go" style="font-size:9px;letter-spacing:.1em">● ENCRYPTED</span></div>
-            <div style="display:flex;gap:24px;margin-top:9px;flex-wrap:wrap">
+          <section class="deck-panel deck-panel--comms" aria-label="Secure comms">
+            <div class="deck-row">
+              <span class="deck-label deck-label--primary deck-comms-head">SECURE.COMMS</span>
+              <span class="deck-go deck-comms-encrypted">● ENCRYPTED</span>
+            </div>
+            <div class="deck-comms-links">
               <span><span class="deck-dim">github</span> <a href="https://github.com/MistaJoka" target="_blank" rel="noopener noreferrer">MISTAJOKA ↗</a></span>
               <span><span class="deck-dim">source</span> <a href="https://github.com/MistaJoka/andraewilliams-site" target="_blank" rel="noopener noreferrer">REPO ↗</a></span>
               <span><span class="deck-dim">tools</span> <a href="tools.html">CATALOG →</a></span>
@@ -124,20 +133,20 @@
 
         <div class="deck-ticker" aria-hidden="true">
           <span class="deck-ticker-track">
-            <span class="deck-go">▶</span> RECON COMPLETE &nbsp;·&nbsp; ASSET-04 DEPLOYED &nbsp;·&nbsp; <span style="color:var(--primary)">GRID 34.05N LOCKED</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp; <span style="color:var(--danger)">INTRUSION REPELLED</span> &nbsp;·&nbsp;
-            <span class="deck-go">▶</span> RECON COMPLETE &nbsp;·&nbsp; ASSET-04 DEPLOYED &nbsp;·&nbsp; <span style="color:var(--primary)">GRID 34.05N LOCKED</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp; <span style="color:var(--danger)">INTRUSION REPELLED</span> &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> RECON COMPLETE &nbsp;·&nbsp; ASSET-04 DEPLOYED &nbsp;·&nbsp; <span class="deck-ticker-accent">GRID 34.05N LOCKED</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp; <span class="deck-ticker-alert">INTRUSION REPELLED</span> &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> RECON COMPLETE &nbsp;·&nbsp; ASSET-04 DEPLOYED &nbsp;·&nbsp; <span class="deck-ticker-accent">GRID 34.05N LOCKED</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp; <span class="deck-ticker-alert">INTRUSION REPELLED</span> &nbsp;·&nbsp;
           </span>
         </div>
 
         <div class="deck-status">
           <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
-          <span class="deck-dim">PAGE SCROLL // DISABLED</span>
+          <span class="deck-dim">PAGE SCROLL // DISABLED · KEYS h/a/t</span>
           <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
         </div>
       </div>
     </div>
 
-    <script type="module" src="js/theme.js"></script>
     <script type="module" src="js/command-deck.js"></script>
+    <script type="module" src="js/analytics.js"></script>
   </body>
 </html>

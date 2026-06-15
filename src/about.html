@@ -31,114 +31,95 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/command-deck.css" />
   </head>
-  <body>
-    <div class="grid-overlay"></div>
-    <div class="ambient-noise" aria-hidden="true"></div>
+  <body class="deck-page">
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link" href="index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link active" aria-current="page" href="about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link" href="tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
 
-    <div class="app-layout">
-      <aside class="sidebar">
-        <div class="sidebar-top">
-          <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-expanded="false" aria-label="Expand rail">
-            <span class="sidebar-toggle-icon" aria-hidden="true">›</span>
-          </button>
-          <div class="sidebar-brand">
-            <div class="sidebar-name">Andrae Williams</div>
-            <div class="badge">// online</div>
-          </div>
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./operator --origin <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // GUARDED</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">GRID 34.05N · SEC-001</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
         </div>
 
-        <nav class="sidebar-nav" aria-label="Primary">
-          <a href="index.html" class="nav-link" title="Home">
-            <span class="nav-dot"></span>
-            Home
-          </a>
-          <a href="about.html" class="nav-link active" aria-current="page" title="About">
-            <span class="nav-dot"></span>
-            About
-          </a>
-          <a href="tools.html" class="nav-link" title="Tools">
-            <span class="nav-dot"></span>
-            Tools
-          </a>
-        </nav>
+        <main class="deck-active deck-active--about">
+          <p class="deck-about-lede">
+            This is my domain, my lab, my playground — a sci-fi inspired workspace where I build
+            custom tools, apps, and experiments to sharpen real skills.
+          </p>
 
-        <div class="sidebar-bottom">
-          <div id="sidebar-theme" class="theme-control--sidebar" data-theme-mount></div>
-          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
-            GitHub →
-          </a>
-        </div>
-      </aside>
-
-      <main class="main-content">
-        <section id="about" class="section section--about">
-          <div class="section-header">
-            <h2>About</h2>
-            <span class="section-count">// origin story</span>
-          </div>
-
-          <div class="about-lede" data-reveal>
+          <section class="deck-panel deck-about-card" aria-labelledby="about-mission">
+            <span class="deck-about-label">01 · MISSION</span>
+            <h1 id="about-mission">Build in public</h1>
             <p>
-              This is my domain, my lab, my playground — a sci-fi inspired workspace
-              where I build custom tools, apps, and experiments to sharpen real skills.
+              andraewilliams.com is a living portfolio: proof of what I can do, documented step by
+              step. I start with static tools, then grow toward server-based apps as the concepts click.
             </p>
-          </div>
+          </section>
 
-          <div class="about-grid">
-            <article class="about-card" data-reveal>
-              <span class="about-card-label">01 · mission</span>
-              <h3>Build in public</h3>
-              <p>
-                andraewilliams.com is a living portfolio: proof of what I can do,
-                documented step by step. I start with static tools, then grow toward
-                server-based apps as the concepts click.
-              </p>
-            </article>
+          <section class="deck-panel deck-about-card" aria-labelledby="about-vibe">
+            <span class="deck-about-label">02 · VIBE</span>
+            <h2 id="about-vibe">Sci-fi, but real</h2>
+            <p>
+              Nostalgia for the tech I grew up admiring — command centers, glowing interfaces, the
+              feeling of a personal Batcave — built with today's stack and zero fluff.
+            </p>
+          </section>
 
-            <article class="about-card" data-reveal>
-              <span class="about-card-label">02 · vibe</span>
-              <h3>Sci-fi, but real</h3>
-              <p>
-                Nostalgia for the tech I grew up admiring — command centers, glowing
-                interfaces, the feeling of a personal Batcave — built with today's
-                stack and zero fluff.
-              </p>
-            </article>
+          <section class="deck-panel deck-about-card" aria-labelledby="about-constraints">
+            <span class="deck-about-label">03 · CONSTRAINTS</span>
+            <h2 id="about-constraints">Free tools only</h2>
+            <p>
+              MacBook, GitHub, Vercel free tiers. Every project has to work within that box until
+              there's a clear reason to expand.
+            </p>
+          </section>
 
-            <article class="about-card" data-reveal>
-              <span class="about-card-label">03 · constraints</span>
-              <h3>Free tools only</h3>
-              <p>
-                MacBook, GitHub, GitHub Pages, and free tiers. Every project has to
-                work within that box until there's a clear reason to expand.
-              </p>
-            </article>
+          <section class="deck-panel deck-about-card" aria-labelledby="about-path">
+            <span class="deck-about-label">04 · PATH FORWARD</span>
+            <h2 id="about-path">What's next</h2>
+            <p>
+              More tools in the library. Stronger interactions. Eventually access control and
+              server-backed apps — one small, working slice at a time.
+            </p>
+            <a href="tools.html">Browse the tools →</a>
+          </section>
+        </main>
 
-            <article class="about-card about-card--wide" data-reveal>
-              <span class="about-card-label">04 · path forward</span>
-              <h3>What's next</h3>
-              <p>
-                More tools in the library. Stronger interactions. Eventually access
-                control and server-backed apps — learning security and backend logic
-                the same way: one small, working slice at a time.
-              </p>
-              <a href="tools.html" class="about-link">Browse the tools →</a>
-            </article>
-          </div>
-        </section>
-      </main>
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> ORIGIN FILE OPEN &nbsp;·&nbsp; <span class="deck-ticker-accent">LAB STATUS NOMINAL</span> &nbsp;·&nbsp; CONSTRAINTS LOCKED &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> ORIGIN FILE OPEN &nbsp;·&nbsp; <span class="deck-ticker-accent">LAB STATUS NOMINAL</span> &nbsp;·&nbsp; CONSTRAINTS LOCKED &nbsp;·&nbsp;
+          </span>
+        </div>
+
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">PAGE SCROLL // DISABLED · KEYS h/a/t</span>
+          <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
+        </div>
+      </div>
     </div>
 
-    <footer class="site-footer">
-      <span>andraewilliams.com</span>
-    </footer>
-
-    <script type="module" src="js/sidebar.js"></script>
-    <script type="module" src="js/theme.js"></script>
-    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/command-deck.js"></script>
+    <script type="module" src="js/analytics.js"></script>
   </body>
 </html>

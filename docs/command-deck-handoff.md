@@ -7,9 +7,8 @@ command-center redesign with no prior conversation context.
 
 Converting andraewilliams.com from scrolling pages into a **no-scroll,
 single-screen tactical "command deck"** with an elite military/intel operator
-aesthetic (amber-on-black). **Phase 1 (frame + operator theme) is DONE and
-committed.** Remaining: wire data panels, then About/Tools, long-form pages,
-responsive, a11y, ship.
+aesthetic (amber-on-black). **Phases 2–8 shipped on `feat/command-deck`** — merge
+to `main` to deploy.
 
 ## Where things live
 
@@ -21,22 +20,18 @@ responsive, a11y, ship.
 
 ## Current state (committed on `feat/command-deck`)
 
-- `src/css/command-deck.css` — the whole frame: grid regions, rail, prompt,
-  hazard stripe, clearance banner, bento `.deck-active`, `.deck-panel`, dossier
-  chrome, radar, ticker, status bar, motion keyframes, `prefers-reduced-motion`
-  gate, mobile fallback. Fully tokenized (reads theme vars).
-- `src/js/command-deck.js` — Zulu clock (`#deck-clock`), reduced-motion gate
-  (`html[data-motion="reduce"]`), keyboard rail nav (h/a/t).
-- `src/css/themes.css` — added `[data-theme="operator"]` (amber `--primary
-  #f0a818`, green `--success #4ade80`, red `--danger #e0322f`, bone `--text
-  #d8d4c8`, bg `#070809`). Set as default.
-- `src/index.html` — restructured into the deck frame. Static panels filled
-  (DOSSIER, SCAN radar, SECURE.COMMS). **Three panels show `// STANDBY`
-  placeholders** awaiting data wiring (see Phase 2).
+- All phases 2–8 complete: data panels, About/Tools, long-form scroll, 404,
+  analytics, operator theme locked on deck pages, rail toggle, Tier B polish.
+- Build is green: `npm run build:site` → "Site verification passed."
 
-Build is green: `npm run build:site` → "Site verification passed."
+## Historical — Phase 1 snapshot
 
-## How to run / verify
+- `src/css/command-deck.css` — frame, panels, radar, ticker, status bar.
+- `src/js/command-deck.js` — clock, motion gate, keyboard nav, data loaders.
+- `src/css/themes.css` — `[data-theme="operator"]` palette.
+- `src/index.html` — deck frame with dossier, scan, comms, data hooks.
+
+## How to run / verify (obsolete section trimmed — see above)
 
 - Build the production tree: `npm run build:site` (must end "Site verification passed").
 - Local preview: `cd src && python3 -m http.server 8123` → open `localhost:8123`.

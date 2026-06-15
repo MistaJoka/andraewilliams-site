@@ -1,7 +1,7 @@
 {
-  "title": "Operator's Lab homepage",
+  "title": "Ship tactical command deck",
   "status": "active",
-  "summary": "Rebuilding the home into six sections with honest status and manifest-driven cards.",
-  "focus": ["homepage layout", "manifest cards", "field notes"],
-  "updated": "2026-05-25"
+  "summary": "Convert the site to a no-scroll operator command center — frame, data panels, then About/Tools and long-form pages.",
+  "focus": ["command deck", "data panels", "tier B polish"],
+  "updated": "2026-06-14"
 }

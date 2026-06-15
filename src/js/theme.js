@@ -3,6 +3,7 @@
  */
 
 export const THEMES = [
+  { slug: 'operator', name: 'Operator', vibe: 'Tactical command deck' },
   { slug: 'graphite-command-pro', name: 'Graphite Command Pro', vibe: 'Default command center' },
   { slug: 'graphite-command', name: 'Graphite Command', vibe: 'Modern technical sharp' },
   { slug: 'navy-forge', name: 'Navy Forge', vibe: 'Professional client-safe' },

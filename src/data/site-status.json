@@ -2,6 +2,6 @@
   "deployedAt": null,
   "commit": "local",
   "verify": "unknown",
-  "toolCount": 3,
+  "toolCount": 4,
   "stack": ["html", "css", "vanilla-js"]
 }

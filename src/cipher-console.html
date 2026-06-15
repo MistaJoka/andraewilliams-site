@@ -31,109 +31,104 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/command-deck.css" />
   </head>
-  <body>
-    <div class="grid-overlay"></div>
-    <div class="ambient-noise" aria-hidden="true"></div>
+  <body class="deck-page">
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link" href="index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link" href="about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link active" aria-current="page" href="tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
 
-    <div class="app-layout">
-      <aside class="sidebar">
-        <div class="sidebar-top">
-          <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-expanded="false" aria-label="Expand rail">
-            <span class="sidebar-toggle-icon" aria-hidden="true">›</span>
-          </button>
-          <div class="sidebar-brand">
-            <div class="sidebar-name">Andrae Williams</div>
-            <div class="badge">// online</div>
-          </div>
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./cipher --console <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // GUARDED</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">GRID 34.05N · SEC-001</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
         </div>
 
-        <nav class="sidebar-nav" aria-label="Primary">
-          <a href="index.html" class="nav-link" title="Home">
-            <span class="nav-dot"></span>
-            Home
-          </a>
-          <a href="about.html" class="nav-link" title="About">
-            <span class="nav-dot"></span>
-            About
-          </a>
-          <a href="tools.html" class="nav-link active" aria-current="page" title="Tools">
-            <span class="nav-dot"></span>
-            Tools
-          </a>
-        </nav>
+        <main class="deck-active deck-active--scroll" id="deck-active">
+          <section class="deck-panel deck-panel--scroll deck-longform cipher-section">
+            <a href="tools.html" class="writeup-back">← Tools</a>
 
-        <div class="sidebar-bottom">
-          <div id="sidebar-theme" class="theme-control--sidebar" data-theme-mount></div>
-          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
-            GitHub →
-          </a>
-        </div>
-      </aside>
+            <div class="tools-page-intro">
+              <p class="hero-eyebrow">// operator tool · python on vercel</p>
+              <h1 class="hero-title">Cipher Console</h1>
+              <p class="tools-page-lede">
+                Encode and decode text — Base64, Hex, ROT13, URL. Each transform runs on a
+                Python serverless function, not in the browser. Press <strong>EXECUTE</strong> to run.
+              </p>
+            </div>
 
-      <main class="main-content">
-        <section class="section cipher-section">
-          <a href="tools.html" class="writeup-back" data-reveal>← Tools</a>
-
-          <div class="tools-page-intro" data-reveal>
-            <p class="hero-eyebrow">// operator tool · python on vercel</p>
-            <h1 class="hero-title">Cipher Console</h1>
-            <p class="tools-page-lede">
-              Encode and decode text — Base64, Hex, ROT13, URL. Each transform runs on a
-              Python serverless function, not in the browser. Press <strong>EXECUTE</strong> to run.
-            </p>
-          </div>
-
-          <div class="cipher-console" data-reveal>
-            <div class="cipher-controls">
-              <div class="cipher-field">
-                <label class="cipher-label" for="cipher-op">operation</label>
-                <select id="cipher-op" class="cipher-select">
-                  <option value="base64">Base64</option>
-                  <option value="hex">Hex</option>
-                  <option value="rot13">ROT13</option>
-                  <option value="url">URL</option>
-                </select>
-              </div>
-              <div class="cipher-field" id="cipher-mode-field">
-                <span class="cipher-label">mode</span>
-                <div class="cipher-mode" role="group" aria-label="mode">
-                  <button type="button" class="cipher-mode-btn active" data-mode="encode" aria-pressed="true">encode</button>
-                  <button type="button" class="cipher-mode-btn" data-mode="decode" aria-pressed="false">decode</button>
+            <div class="cipher-console">
+              <div class="cipher-controls">
+                <div class="cipher-field">
+                  <label class="cipher-label" for="cipher-op">operation</label>
+                  <select id="cipher-op" class="cipher-select">
+                    <option value="base64">Base64</option>
+                    <option value="hex">Hex</option>
+                    <option value="rot13">ROT13</option>
+                    <option value="url">URL</option>
+                  </select>
+                </div>
+                <div class="cipher-field" id="cipher-mode-field">
+                  <span class="cipher-label">mode</span>
+                  <div class="cipher-mode" role="group" aria-label="mode">
+                    <button type="button" class="cipher-mode-btn active" data-mode="encode" aria-pressed="true">encode</button>
+                    <button type="button" class="cipher-mode-btn" data-mode="decode" aria-pressed="false">decode</button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <label class="cipher-label" for="cipher-input">input</label>
-            <textarea id="cipher-input" class="cipher-input" rows="5" spellcheck="false" placeholder="paste text to transform…"></textarea>
+              <label class="cipher-label" for="cipher-input">input</label>
+              <textarea id="cipher-input" class="cipher-input" rows="5" spellcheck="false" placeholder="paste text to transform…"></textarea>
 
-            <div class="cipher-actions">
-              <button type="button" id="cipher-execute" class="cipher-execute">EXECUTE →</button>
-              <span id="cipher-status" class="cipher-status" role="status" aria-live="polite"></span>
-            </div>
-
-            <div class="cipher-output-wrap">
-              <div class="cipher-output-head">
-                <span class="cipher-label">output</span>
-                <button type="button" id="cipher-copy" class="cipher-copy" hidden>copy</button>
+              <div class="cipher-actions">
+                <button type="button" id="cipher-execute" class="cipher-execute">EXECUTE →</button>
+                <span id="cipher-status" class="cipher-status" role="status" aria-live="polite"></span>
               </div>
-              <pre id="cipher-output" class="cipher-output" aria-live="polite"></pre>
+
+              <div class="cipher-output-wrap">
+                <div class="cipher-output-head">
+                  <span class="cipher-label">output</span>
+                  <button type="button" id="cipher-copy" class="cipher-copy" hidden>copy</button>
+                </div>
+                <pre id="cipher-output" class="cipher-output" aria-live="polite"></pre>
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+        </main>
+
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> CIPHER CHANNEL OPEN &nbsp;·&nbsp; <span class="deck-ticker-accent">PYTHON UPLINK</span> &nbsp;·&nbsp; EXECUTE READY &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> CIPHER CHANNEL OPEN &nbsp;·&nbsp; <span class="deck-ticker-accent">PYTHON UPLINK</span> &nbsp;·&nbsp; EXECUTE READY &nbsp;·&nbsp;
+          </span>
+        </div>
+
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">PANEL SCROLL // ENABLED · KEYS h/a/t</span>
+          <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
+        </div>
+      </div>
     </div>
 
-    <footer class="site-footer">
-      <span>andraewilliams.com</span>
-    </footer>
-
-    <script type="module" src="js/sidebar.js"></script>
-    <script type="module" src="js/theme.js"></script>
-    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/command-deck.js"></script>
+    <script type="module" src="js/analytics.js"></script>
     <script type="module" src="js/cipher-console.js"></script>
   </body>
 </html>

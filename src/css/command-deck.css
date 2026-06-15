@@ -110,6 +110,28 @@ body.deck-page {
   outline-offset: 2px;
 }
 
+.deck-rail-toggle:focus-visible {
+  outline: 1px solid var(--primary);
+  outline-offset: 2px;
+}
+
+html[data-sidebar='expanded'] .deck {
+  --rail-w: 108px;
+}
+
+html[data-sidebar='expanded'] .deck-rail-link {
+  flex-direction: row;
+  gap: 8px;
+  width: auto;
+  padding: 0 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+html[data-sidebar='expanded'] .deck-rail-link::after {
+  content: attr(title);
+}
+
 /* ---- chrome: prompt / hazard / banner ---- */
 .deck-prompt,
 .deck-banner,
@@ -256,6 +278,253 @@ body.deck-page {
 
 .deck-go {
   color: var(--success);
+}
+
+.deck-armory-link {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.deck-armory-link:hover {
+  color: var(--primary-hover);
+}
+
+.deck-panel--assets {
+  grid-row: 1 / span 2;
+}
+
+.deck-panel--comms {
+  grid-column: 2 / span 2;
+}
+
+/* ---- dossier content helpers ---- */
+.deck-dossier-head {
+  margin: 0;
+}
+
+.deck-dossier-file {
+  font-size: 9px;
+}
+
+.deck-dossier-identity {
+  display: flex;
+  gap: 11px;
+  margin: 14px 0 6px;
+}
+
+.deck-dossier-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.deck-dossier-name {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+
+.deck-dossier-role {
+  color: var(--primary);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  margin-top: 7px;
+}
+
+.deck-dossier-idrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.deck-dossier-id {
+  font-size: 9px;
+}
+
+.deck-dossier-op {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.deck-dossier-op-label {
+  margin: 0;
+  letter-spacing: 0.16em;
+}
+
+.deck-active-op-text {
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.deck-comms-head {
+  margin: 0;
+}
+
+.deck-comms-encrypted {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.deck-comms-links {
+  display: flex;
+  gap: 24px;
+  margin-top: 9px;
+  flex-wrap: wrap;
+}
+
+/* ---- about page panels ---- */
+.deck-active--about {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.deck-about-lede {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.deck-about-card h2 {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  margin: 6px 0 8px;
+  font-weight: 500;
+}
+
+.deck-about-card p {
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.deck-about-card a {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 10px;
+}
+
+.deck-about-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--primary);
+}
+
+/* ---- tools page tiles ---- */
+.deck-active--tools {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  gap: 8px;
+}
+
+.deck-tools-intro {
+  grid-column: 1 / -1;
+}
+
+.deck-tools-intro h1 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  margin: 4px 0 6px;
+  font-weight: 500;
+}
+
+.deck-tools-lede {
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.deck-tool-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-glass);
+  padding: 11px;
+  text-decoration: none;
+  color: inherit;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.deck-tool-tile:hover {
+  border-color: color-mix(in srgb, var(--primary) 50%, var(--border));
+}
+
+.deck-tool-tile:focus-visible {
+  outline: 1px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.deck-tool-index {
+  font-size: 9px;
+  color: var(--text-faint);
+}
+
+.deck-tool-type {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.deck-tool-name {
+  font-size: 12px;
+  color: var(--primary);
+  letter-spacing: 0.04em;
+}
+
+.deck-tool-status {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.deck-tools-grid {
+  display: contents;
+}
+
+.deck-tools-loading {
+  grid-column: 1 / -1;
+}
+
+/* ---- long-form scroll panel ---- */
+.deck-longform {
+  border: none;
+  background: transparent;
+  padding: 0;
+  min-height: 0;
+}
+
+.deck-longform .section,
+.deck-longform .cipher-section,
+.deck-longform .section--writeup {
+  padding: 10px 14px 24px;
+}
+
+.deck-404 {
+  max-width: 520px;
+  margin: 24px auto;
+}
+
+.deck-404-code {
+  font-size: 48px;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  margin: 12px 0;
+  font-weight: 500;
+}
+
+.deck-404-text {
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 16px;
 }
 
 /* ---- dossier ---- */
@@ -429,6 +698,14 @@ body.deck-page {
   letter-spacing: 0.1em;
 }
 
+.deck-ticker-accent {
+  color: var(--primary);
+}
+
+.deck-ticker-alert {
+  color: var(--danger);
+}
+
 /* ---- status bar ---- */
 .deck-status {
   padding: 6px 13px;
@@ -503,8 +780,24 @@ html[data-motion='reduce'] .deck-ticker-track {
     overflow: visible;
   }
 
-  .deck-dossier {
+  .deck-active--about,
+  .deck-active--tools {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .deck-about-lede,
+  .deck-tools-intro {
+    grid-column: auto;
+  }
+
+  .deck-dossier,
+  .deck-panel--assets {
     grid-row: auto;
+  }
+
+  .deck-panel--comms {
+    grid-column: auto;
   }
 
   .deck-radar,

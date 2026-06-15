@@ -9,6 +9,7 @@ TOOLS_HTML="$ROOT/src/tools.html"
 missing=0
 for path in \
   "index.html" \
+  "404.html" \
   "tools.html" \
   "about.html" \
   "CNAME" \

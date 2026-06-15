@@ -31,193 +31,64 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-    <script>document.documentElement.dataset.theme=localStorage.getItem('site-theme')||'graphite-command-pro';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/command-deck.css" />
   </head>
-  <body>
-    <div class="grid-overlay"></div>
-    <div class="ambient-noise" aria-hidden="true"></div>
+  <body class="deck-page">
+    <!-- // 4 live builds -->
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link" href="index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link" href="about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link active" aria-current="page" href="tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
 
-    <div class="app-layout">
-      <aside class="sidebar">
-        <div class="sidebar-top">
-          <button type="button" class="sidebar-toggle" data-sidebar-toggle aria-expanded="false" aria-label="Expand rail">
-            <span class="sidebar-toggle-icon" aria-hidden="true">›</span>
-          </button>
-          <div class="sidebar-brand">
-            <div class="sidebar-name">Andrae Williams</div>
-            <div class="badge">// online</div>
-          </div>
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./operator --armory <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // GUARDED</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">GRID 34.05N · SEC-001</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
         </div>
 
-        <nav class="sidebar-nav" aria-label="Primary">
-          <a href="index.html" class="nav-link" title="Home">
-            <span class="nav-dot"></span>
-            Home
-          </a>
-          <a href="about.html" class="nav-link" title="About">
-            <span class="nav-dot"></span>
-            About
-          </a>
-          <a href="tools.html" class="nav-link active" aria-current="page" title="Tools">
-            <span class="nav-dot"></span>
-            Tools
-          </a>
-        </nav>
-
-        <div class="sidebar-bottom">
-          <div id="sidebar-theme" class="theme-control--sidebar" data-theme-mount></div>
-          <a href="https://github.com/MistaJoka" target="_blank" rel="noopener" class="sidebar-link">
-            GitHub →
-          </a>
-        </div>
-      </aside>
-
-      <main class="main-content">
-        <section id="tools" class="section">
-          <div class="tools-page-intro" data-reveal>
-            <p class="hero-eyebrow">Project library</p>
-            <div class="section-header">
-              <h2>Tools</h2>
-              <span class="section-count">// 4 live builds</span>
-            </div>
-            <p class="tools-lede">
-              Each project is a working slice of the portfolio: small enough to
-              understand, real enough to show decisions, tradeoffs, and growth.
+        <main class="deck-active deck-active--tools" id="deck-tools-active">
+          <div class="deck-tools-intro">
+            <span class="deck-label deck-label--primary">ASSET ARMORY <span class="deck-dim">// 4 live builds</span></span>
+            <h1>Tools</h1>
+            <p class="deck-tools-lede">
+              Each project is a working slice of the portfolio: small enough to understand, real
+              enough to show decisions, tradeoffs, and growth.
             </p>
           </div>
+          <span class="deck-dim deck-tools-loading">// LOADING</span>
+        </main>
 
-          <div class="tools-grid">
-            <a
-              class="tool-card tool-card-link"
-              href="writeups/pretext-layout-lab.html"
-              aria-label="Read Pretext Layout Lab case study"
-              data-reveal
-            >
-              <span class="tool-card-index" aria-hidden="true">01</span>
-              <span class="tool-type">Layout engineering</span>
-              <div class="tool-card-header">
-                <span class="tool-name">Pretext Layout Lab</span>
-                <span class="status-badge active">live</span>
-              </div>
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> ARMORY ONLINE &nbsp;·&nbsp; <span class="deck-ticker-accent">4 ASSETS LIVE</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> ARMORY ONLINE &nbsp;·&nbsp; <span class="deck-ticker-accent">4 ASSETS LIVE</span> &nbsp;·&nbsp; INTEGRITY PASS &nbsp;·&nbsp;
+          </span>
+        </div>
 
-              <p class="tool-desc">
-                A browser text-measurement lab that predicts multiline card height,
-                line count, and overflow risk before layout. Eight interactive demos
-                plus site-wide text-aware project cards — measure first, render with confidence.
-              </p>
-
-              <div class="tool-card-meta">
-                <span>Vite</span>
-                <span>Pretext</span>
-                <span>Static</span>
-              </div>
-
-              <div class="tool-card-cta">
-                Read case study →
-              </div>
-            </a>
-            <a
-              class="tool-card tool-card-link"
-              href="writeups/smoke-playground.html"
-              aria-label="Read smoke playground case study"
-              data-reveal
-            >
-              <span class="tool-card-index" aria-hidden="true">02</span>
-              <span class="tool-type">Visual systems</span>
-              <div class="tool-card-header">
-                <span class="tool-name">Smoke playground</span>
-                <span class="status-badge active">live</span>
-              </div>
-
-              <p class="tool-desc">
-                Canvas particle smoke with a control panel — tune motion, density,
-                trails, and hue while the preview updates live. Case study covers
-                the shared engine, tradeoffs, and source links.
-              </p>
-
-              <div class="tool-card-meta">
-                <span>Canvas</span>
-                <span>Case study</span>
-                <span>Static</span>
-              </div>
-
-              <div class="tool-card-cta">
-                Read case study →
-              </div>
-            </a>
-            <a
-              class="tool-card tool-card-link"
-              href="https://promptbook.andraewilliams.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open DOPE Prompt Book"
-              data-reveal
-            >
-              <span class="tool-card-index" aria-hidden="true">03</span>
-              <span class="tool-type">Product app</span>
-              <div class="tool-card-header">
-                <span class="tool-name">DOPE Prompt Book</span>
-                <span class="status-badge active">live</span>
-              </div>
-
-              <p class="tool-desc">
-                Local-first prompt library and composer for building, organizing,
-                filtering, editing, and assembling reusable prompts. A larger app
-                that connects the portfolio to a real workflow.
-              </p>
-
-              <div class="tool-card-meta">
-                <span>Next.js</span>
-                <span>TypeScript</span>
-                <span>Tailwind</span>
-                <span>Prompt Composer</span>
-              </div>
-
-              <div class="tool-card-cta">
-                Launch app →
-              </div>
-            </a>
-            <a
-              class="tool-card tool-card-link"
-              href="cipher-console.html"
-              aria-label="Open Cipher Console"
-              data-reveal
-            >
-              <span class="tool-card-index" aria-hidden="true">04</span>
-              <span class="tool-type">Operator tool</span>
-              <div class="tool-card-header">
-                <span class="tool-name">Cipher Console</span>
-                <span class="status-badge active">live</span>
-              </div>
-
-              <p class="tool-desc">
-                Encode and decode text — Base64, Hex, ROT13, URL — executed by a
-                Python serverless function on Vercel. The first Python-on-Vercel
-                build: press EXECUTE to run a transform.
-              </p>
-
-              <div class="tool-card-meta">
-                <span>Python</span>
-                <span>Vercel</span>
-                <span>Serverless</span>
-              </div>
-
-              <div class="tool-card-cta">
-                Open console →
-              </div>
-            </a>
-          </div>
-        </section>
-      </main>
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">PAGE SCROLL // DISABLED · KEYS h/a/t</span>
+          <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
+        </div>
+      </div>
     </div>
 
-    <footer class="site-footer">
-      <span>andraewilliams.com</span>
-    </footer>
-    <script type="module" src="js/sidebar.js"></script>
-    <script type="module" src="js/theme.js"></script>
-    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/command-deck.js"></script>
+    <script type="module" src="js/analytics.js"></script>
   </body>
 </html>
