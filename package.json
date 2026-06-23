@@ -11,7 +11,7 @@
     "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080"
   },
   "dependencies": {
-    "@chenglou/pretext": "^0.0.4"
+    "@chenglou/pretext": "^0.0.8"
   },
   "devDependencies": {
     "sharp": "^0.35.2",
