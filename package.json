@@ -12,10 +12,10 @@
     "test": "python3 -m unittest discover -s tests"
   },
   "dependencies": {
-    "@chenglou/pretext": "^0.0.4"
+    "@chenglou/pretext": "^0.0.8"
   },
   "devDependencies": {
-    "sharp": "^0.35.1",
-    "vite": "^6.3.5"
+    "sharp": "^0.35.2",
+    "vite": "^8.0.16"
   }
 }
