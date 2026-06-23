@@ -19,7 +19,14 @@ for path in \
   "data/mission.json" \
   "data/field-notes.json" \
   "data/lab.json" \
-  "data/decisions.md"
+  "data/decisions.md" \
+  "level-0/index.html" \
+  "level-0/about.html" \
+  "level-0/showcase.html" \
+  "level-0/contact.html" \
+  "level-0/style.css" \
+  "level-0/script.js" \
+  "level-0/data/site.json"
 do
   if [[ ! -f "$SITE/$path" ]]; then
     echo "Missing required site file: $path" >&2

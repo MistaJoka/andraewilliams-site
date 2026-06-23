@@ -1,6 +1,6 @@
 # andraewilliams.com
 
-Personal site and project hub: static HTML and CSS on the main pages, plus a small Vite-built **Pretext** demo at `/pretext-smoke/`. Deployed with GitHub Pages.
+Personal site and project hub: static HTML and CSS on the main pages, plus a small Vite-built **Pretext** demo at `/pretext-smoke/`. Built and deployed on Vercel (see [Deploy](#deploy)).
 
 **Live site:** [andraewilliams.com](https://andraewilliams.com) (custom domain via `src/CNAME`)
 

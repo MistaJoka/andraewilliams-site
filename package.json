@@ -8,7 +8,8 @@
     "build:cards": "vite build --config vite.cards.config.js",
     "build:pretext": "vite build",
     "build:site": "bash scripts/assemble-site.sh && bash scripts/verify-site.sh",
-    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080"
+    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080",
+    "test": "python3 -m unittest discover -s tests"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.4"
