@@ -1,0 +1,36 @@
+@import url('../level-1/style.css');
+
+:root {
+  --bg: #fffbeb;
+  --surface: #ffffff;
+  --text: #451a03;
+  --text-soft: #78350f;
+  --muted: #a16207;
+  --accent: #b45309;
+  --accent-hover: #92400e;
+  --accent-soft: #fef3c7;
+  --line: #fde68a;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-ui: "Work Sans", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c1917;
+    --surface: #292524;
+    --text: #fef3c7;
+    --text-soft: #fcd34d;
+    --accent: #fbbf24;
+    --accent-soft: #451a03;
+    --line: #78350f;
+  }
+}
+
+.product-card {
+  padding: 1.25rem; background: var(--surface);
+  border: 2px solid var(--accent); border-radius: var(--radius);
+}
+.product-card h3 { margin: 0 0 0.5rem; font-family: var(--font-display); }
+.product-card p { margin: 0 0 0.5rem; color: var(--text-soft); }
+
+.catalog td, .catalog th { vertical-align: top; }

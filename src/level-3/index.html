@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <meta name="description" content="Level 3 — Memory. Database persistence via Supabase and serverless API." />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <title>Level 3 · Memory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="index">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/" aria-current="page">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow"><p class="site-badge">Persist · Supabase</p><p class="site-label">level3.andraewilliams.com</p></div>
+          <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        </div>
+        <h1 class="site-title">Level&nbsp;3 · Memory</h1>
+        <p class="site-tagline">Data that survives page reloads — API plus database, with a demo fallback.</p>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="guestbook.html" data-nav="guestbook">Guestbook</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <ul class="stats">
+        <li><strong>3</strong><span>pages</span></li>
+        <li><strong>1</strong><span>API + DB</span></li>
+        <li><strong>2</strong><span>modes</span></li>
+      </ul>
+      <section class="section">
+        <div class="section__head"><span class="section__index">01</span><h2>What Level&nbsp;3 adds</h2></div>
+        <p class="section__lede">Level&nbsp;2 could compute but not remember. Level&nbsp;3 stores guestbook notes in Supabase when configured, or in the browser during demo mode.</p>
+        <div class="card-grid">
+          <article class="card"><h3>Live mode</h3><p>Supabase Postgres with RLS — shared notes across visitors.</p></article>
+          <article class="card"><h3>Demo mode</h3><p>Works without env vars; new notes stay in localStorage.</p></article>
+          <article class="card"><h3>Same UI</h3><p>One guestbook page detects mode from the API response.</p></article>
+        </div>
+      </section>
+      <section class="section">
+        <p class="section__lede"><a href="guestbook.html">Open the guestbook →</a></p>
+      </section>
+    </main>
+    <footer class="site-footer"><p>Level 3 · Memory</p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

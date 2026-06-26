@@ -1,0 +1,50 @@
+      <ul class="stats" aria-label="Site facts">
+        <li><strong>3</strong><span>pages</span></li>
+        <li><strong>4</strong><span>partials</span></li>
+        <li><strong>1</strong><span>build script</span></li>
+      </ul>
+
+      <section class="section" aria-labelledby="intro-heading">
+        <div class="section__head">
+          <span class="section__index">01</span>
+          <h2 id="intro-heading">What Level&nbsp;1 adds</h2>
+        </div>
+        <p class="section__lede">
+          Level&nbsp;0 proved the browser can carry a whole site. Level&nbsp;1 adds <strong>assembly</strong>:
+          shared partials, repeatable page shells, and metadata generated at build time.
+        </p>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Partials</h3>
+            <p>Header, footer, and head live once in <code>_partials/</code>. Pages only hold unique body content.</p>
+          </article>
+          <article class="card">
+            <h3>Build script</h3>
+            <p><code>scripts/build-level-1.mjs</code> stitches partials + pages into deployable HTML.</p>
+          </article>
+          <article class="card">
+            <h3>Generated JSON</h3>
+            <p><code>data/site-meta.json</code> records build time, git commit, and page list — proof the pipeline ran.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="meta-heading">
+        <div class="section__head">
+          <span class="section__index">02</span>
+          <h2 id="meta-heading">Live build metadata</h2>
+        </div>
+        <p class="section__lede">Fetched from generated JSON — same pattern Level&nbsp;0 used, but the file is produced by the build.</p>
+        <pre class="code-block" id="meta-output" aria-live="polite">Loading site-meta.json…</pre>
+      </section>
+
+      <section class="section" aria-labelledby="next-heading">
+        <div class="section__head">
+          <span class="section__index">03</span>
+          <h2 id="next-heading">Next on the ladder</h2>
+        </div>
+        <p class="section__lede">
+          Level&nbsp;2 adds <a href="https://www.andraewilliams.com/level-2/">serverless functions</a> at the edge —
+          your static site can call an API without running a server.
+        </p>
+      </section>

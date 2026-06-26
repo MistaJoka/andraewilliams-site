@@ -13,7 +13,6 @@ for path in \
   "tools.html" \
   "about.html" \
   "CNAME" \
-  "pretext-smoke/index.html" \
   "data/site-status.json" \
   "data/tools.manifest.json" \
   "data/mission.json" \
@@ -40,7 +39,7 @@ if [[ -f "$MANIFEST" && -f "$TOOLS_HTML" ]] && command -v node >/dev/null 2>&1; 
     const manifest = JSON.parse(fs.readFileSync('$MANIFEST', 'utf8'));
     const toolsHtml = fs.readFileSync('$TOOLS_HTML', 'utf8');
     const count = manifest.tools.length;
-    const match = toolsHtml.match(/\\/\\/\\s*(\\d+)\\s+live\\s+builds/i);
+    const match = toolsHtml.match(/\\/\\/\\s*(\\d+)\\s+live\\s+builds?/i);
     if (!match) {
       console.error('tools.html missing live build count comment');
       process.exit(1);

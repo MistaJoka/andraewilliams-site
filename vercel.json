@@ -6,13 +6,28 @@
   "rewrites": [
     {
       "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "level0.andraewilliams.com"
-        }
-      ],
+      "has": [{ "type": "host", "value": "level0.andraewilliams.com" }],
       "destination": "/level-0/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "level1.andraewilliams.com" }],
+      "destination": "/level-1/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "level2.andraewilliams.com" }],
+      "destination": "/level-2/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "level3.andraewilliams.com" }],
+      "destination": "/level-3/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "level4.andraewilliams.com" }],
+      "destination": "/level-4/:path*"
     }
   ]
 }

@@ -2,11 +2,43 @@
   "items": [
     {
       "id": "level-0",
-      "name": "Level 0 Website",
+      "name": "Level 0 · Surface",
       "status": "live",
-      "note": "Full Level 0 range — forms, fetch, dialog, tabs, storage, a11y. Zero dependencies.",
+      "note": "Full static web range — forms, fetch, dialog, tabs, storage, a11y. Zero dependencies.",
       "tags": ["html", "css", "javascript"],
       "href": "https://www.andraewilliams.com/level-0/"
+    },
+    {
+      "id": "level-1",
+      "name": "Level 1 · Assembly",
+      "status": "live",
+      "note": "Partials, build script, generated site-meta.json — first step beyond hand-written pages.",
+      "tags": ["build", "node", "partials"],
+      "href": "https://www.andraewilliams.com/level-1/"
+    },
+    {
+      "id": "level-2",
+      "name": "Level 2 · Edge",
+      "status": "live",
+      "note": "Serverless Python echo API — static pages calling /api/level-2/echo on Vercel.",
+      "tags": ["serverless", "api", "python"],
+      "href": "https://www.andraewilliams.com/level-2/"
+    },
+    {
+      "id": "level-3",
+      "name": "Level 3 · Memory",
+      "status": "live",
+      "note": "Guestbook with Supabase persistence (live) or localStorage demo mode.",
+      "tags": ["database", "supabase", "api"],
+      "href": "https://www.andraewilliams.com/level-3/"
+    },
+    {
+      "id": "level-4",
+      "name": "Level 4 · Product",
+      "status": "live",
+      "note": "Product portal — links to full apps on their own subdomain (DOPE Prompt Book).",
+      "tags": ["product", "subdomain"],
+      "href": "https://www.andraewilliams.com/level-4/"
     }
   ]
 }

@@ -3,19 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:pretext": "vite",
     "og": "node scripts/generate-og.mjs",
-    "build:cards": "vite build --config vite.cards.config.js",
-    "build:pretext": "vite build",
-    "build:site": "bash scripts/assemble-site.sh && bash scripts/verify-site.sh",
-    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080",
-    "test": "python3 -m unittest discover -s tests"
-  },
-  "dependencies": {
-    "@chenglou/pretext": "^0.0.8"
+    "build:level-1": "node scripts/build-level-1.mjs",
+    "build:site": "node scripts/build-level-1.mjs && bash scripts/assemble-site.sh && bash scripts/verify-site.sh",
+    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080"
   },
   "devDependencies": {
-    "sharp": "^0.35.2",
-    "vite": "^8.0.16"
+    "sharp": "^0.35.2"
   }
 }

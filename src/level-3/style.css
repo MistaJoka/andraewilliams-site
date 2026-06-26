@@ -1,0 +1,51 @@
+@import url('../level-1/style.css');
+
+:root {
+  --bg: #f5f3ff;
+  --surface: #ffffff;
+  --text: #2e1065;
+  --text-soft: #4c1d95;
+  --muted: #7c3aed;
+  --accent: #6d28d9;
+  --accent-hover: #5b21b6;
+  --accent-soft: #ede9fe;
+  --line: #ddd6fe;
+  --font-ui: "Literata", Georgia, serif;
+  --font-mono: "Source Code Pro", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1e1b4b;
+    --surface: #312e81;
+    --text: #ede9fe;
+    --text-soft: #c4b5fd;
+    --accent: #a78bfa;
+    --accent-soft: #2e1065;
+    --line: #4c1d95;
+  }
+}
+
+.btn, .form textarea { font-family: var(--font-ui); }
+.btn {
+  font: inherit; padding: 0.5rem 1rem; border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--surface); cursor: pointer;
+}
+.btn--primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.form label { display: block; margin-bottom: 0.35rem; font-weight: 600; }
+.form textarea {
+  width: 100%; padding: 0.65rem; border: 1px solid var(--line);
+  border-radius: var(--radius); margin-bottom: 0.75rem; background: var(--surface);
+}
+
+.banner {
+  padding: 0.75rem 1rem; margin-bottom: 1rem;
+  background: var(--accent-soft); border: 1px solid var(--line); border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.note-list { list-style: none; padding: 0; margin: 0; }
+.note-list li {
+  padding: 0.75rem 0; border-bottom: 1px solid var(--line);
+}
+.note-list time { display: block; font-size: 0.75rem; color: var(--muted); font-family: var(--font-mono); }

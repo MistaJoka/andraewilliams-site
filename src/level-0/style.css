@@ -180,6 +180,34 @@ code {
   top: 0;
 }
 
+.ladder-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  padding: 0.5rem var(--gutter);
+  font-size: 0.75rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.ladder-nav__label {
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ladder-nav a {
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+.ladder-nav a:hover,
+.ladder-nav a[aria-current="page"] {
+  color: var(--accent);
+}
+
 /* Shell */
 .site-header {
   padding: calc(var(--gutter) * 1.35) var(--gutter) var(--gutter);

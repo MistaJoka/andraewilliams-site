@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <title>Level 4 · Catalog</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="catalog">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/" aria-current="page">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        <h1 class="site-title">Product catalog</h1>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="catalog.html" data-nav="catalog">Catalog</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <table class="matrix catalog">
+        <thead>
+          <tr><th>Product</th><th>URL</th><th>Stack</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DOPE Prompt Book</strong></td>
+            <td><a href="https://promptbook.andraewilliams.com" target="_blank" rel="noopener noreferrer">promptbook.andraewilliams.com ↗</a></td>
+            <td>Separate repo · Vite · local-first</td>
+            <td>Live</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="section__lede">Case file on the portfolio: <a href="https://www.andraewilliams.com/writeups/dope-promptbook.html">DOPE Prompt Book writeup</a>.</p>
+    </main>
+    <footer class="site-footer"><p>Level 4 · Product</p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <meta name="description" content="Level 2 — Edge. Serverless functions and environment-aware APIs." />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <title>Level 2 · Edge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="index">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/" aria-current="page">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow">
+            <p class="site-badge">Live · serverless</p>
+            <p class="site-label">level2.andraewilliams.com</p>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        </div>
+        <h1 class="site-title">Level&nbsp;2 · Edge</h1>
+        <p class="site-tagline">Static pages plus serverless functions — compute at the edge without running a server.</p>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="api-demo.html" data-nav="api-demo">API demo</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <ul class="stats">
+        <li><strong>3</strong><span>pages</span></li>
+        <li><strong>1</strong><span>API route</span></li>
+        <li><strong>0</strong><span>servers to manage</span></li>
+      </ul>
+      <section class="section">
+        <div class="section__head"><span class="section__index">01</span><h2>What Level&nbsp;2 adds</h2></div>
+        <p class="section__lede">Your site stays static, but <code>/api/level-2/echo</code> runs Python on Vercel when the browser calls it.</p>
+        <div class="card-grid">
+          <article class="card"><h3>Serverless</h3><p>Functions spin up on demand — no always-on server bill.</p></article>
+          <article class="card"><h3>Env-aware</h3><p>Responses include region and timestamps from the runtime.</p></article>
+          <article class="card"><h3>Validation</h3><p>POST bodies are parsed and validated before echoing back.</p></article>
+        </div>
+      </section>
+      <section class="section">
+        <div class="section__head"><span class="section__index">02</span><h2>Try it</h2></div>
+        <p class="section__lede"><a href="api-demo.html">Open the API demo</a> to POST a message and see the edge response.</p>
+      </section>
+    </main>
+    <footer class="site-footer"><p>Level 2 · Edge · <a href="https://www.andraewilliams.com/">andraewilliams.com</a></p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

@@ -157,4 +157,4 @@ A lightweight log of key decisions and why they were made.
 - Keeps one repo and one deploy; no separate build for four static files.
 - Level 0 stays readable as a standalone site at the domain root, not a nested path.
 
-**Manual step:** Add `level0.andraewilliams.com` in Vercel Domains; CNAME `level0` in GoDaddy to Vercel.
+**Manual step:** Add `level0.andraewilliams.com` in Vercel Domains (done 2026-06-15 via CLI). In GoDaddy DNS add **A** record: host `level0` → `76.76.21.21` (Vercel’s recommended target for this subdomain).

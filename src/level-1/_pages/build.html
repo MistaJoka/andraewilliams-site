@@ -1,0 +1,49 @@
+      <section class="section" aria-labelledby="tree-heading">
+        <div class="section__head">
+          <span class="section__index">01</span>
+          <h2 id="tree-heading">Project tree</h2>
+        </div>
+        <pre class="code-block"><code>src/level-1/
+├── _partials/
+│   ├── shell-start.html
+│   └── shell-end.html
+├── _pages/
+│   ├── index.html
+│   ├── build.html
+│   └── about.html
+├── data/
+│   └── site-meta.json    ← generated
+├── index.html            ← assembled output
+├── build.html
+├── about.html
+├── base-path.js
+├── style.css
+└── script.js
+
+scripts/build-level-1.mjs</code></pre>
+      </section>
+
+      <section class="section" aria-labelledby="flow-heading">
+        <div class="section__head">
+          <span class="section__index">02</span>
+          <h2 id="flow-heading">Build flow</h2>
+        </div>
+        <ol class="flow-list">
+          <li>Read partials from <code>_partials/</code></li>
+          <li>For each file in <code>_pages/</code>, inject body between shell start and end</li>
+          <li>Write assembled HTML to <code>src/level-1/*.html</code></li>
+          <li>Emit <code>data/site-meta.json</code> with timestamp and git commit</li>
+          <li><code>assemble-site.sh</code> copies everything to <code>_site/</code> for deploy</li>
+        </ol>
+      </section>
+
+      <section class="section" aria-labelledby="run-heading">
+        <div class="section__head">
+          <span class="section__index">03</span>
+          <h2 id="run-heading">Run locally</h2>
+        </div>
+        <pre class="code-block"><code>node scripts/build-level-1.mjs
+npm run build:site
+npm run preview:site</code></pre>
+        <p class="section__lede">Edit <code>_pages/</code> or partials, rebuild, refresh. No framework required.</p>
+      </section>

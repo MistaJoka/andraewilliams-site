@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <title>Level 2 · About</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="about">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/" aria-current="page">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow"><p class="site-badge">Python · Vercel</p></div>
+          <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        </div>
+        <h1 class="site-title">About Level&nbsp;2</h1>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="api-demo.html" data-nav="api-demo">API demo</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <section class="section">
+        <table class="matrix">
+          <thead><tr><th>Capability</th><th>L0</th><th>L1</th><th>L2</th></tr></thead>
+          <tbody>
+            <tr><td>Static site</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Build assembly</td><td>—</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Serverless API</td><td>—</td><td>—</td><td>✓</td></tr>
+            <tr><td>Database</td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="section">
+        <pre class="code-block"><code>api/level-2/echo.py   ← Vercel serverless function
+src/level-2/          ← static pages that call it</code></pre>
+      </section>
+    </main>
+    <footer class="site-footer"><p>Next: <a href="https://www.andraewilliams.com/level-3/">Level 3 · Memory</a></p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

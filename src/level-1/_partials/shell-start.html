@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <meta name="description" content="Level 1 — Assembly. Partials, build scripts, and generated metadata before server code." />
+    <meta name="author" content="Andrae Williams" />
+    <meta name="theme-color" content="#2b4c7e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href="https://level1.andraewilliams.com/" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="{{PAGE_SLUG}}">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div id="live-region" class="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/" aria-current="page">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/">4 Product</a>
+    </nav>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow">
+            <p class="site-badge">Built · partials</p>
+            <p class="site-label">level1.andraewilliams.com</p>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">Dark mode</button>
+        </div>
+        <h1 class="site-title">Level&nbsp;1 · Assembly</h1>
+        <p class="site-tagline">Partials, a build script, and generated JSON — the first step beyond hand-written pages.</p>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="build.html" data-nav="build">Build</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main" id="main">

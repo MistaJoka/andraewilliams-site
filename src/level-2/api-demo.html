@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <title>Level 2 · API demo</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="api-demo">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/" aria-current="page">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow"><p class="site-badge">POST · JSON</p><p class="site-label">/api/level-2/echo</p></div>
+          <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        </div>
+        <h1 class="site-title">API demo</h1>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="api-demo.html" data-nav="api-demo">API demo</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <section class="section">
+        <div class="section__head"><span class="section__index">01</span><h2>Health check</h2></div>
+        <button type="button" class="btn" id="health-btn">GET /api/level-2/echo</button>
+        <pre class="code-block" id="health-output" aria-live="polite">Click to fetch API info…</pre>
+      </section>
+      <section class="section">
+        <div class="section__head"><span class="section__index">02</span><h2>Echo message</h2></div>
+        <form id="echo-form" class="form">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="3" maxlength="500" required placeholder="Hello from the edge"></textarea>
+          <button type="submit" class="btn btn--primary">POST echo</button>
+        </form>
+        <pre class="code-block" id="echo-output" aria-live="polite"></pre>
+      </section>
+    </main>
+    <footer class="site-footer"><p>Level 2 · Edge</p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

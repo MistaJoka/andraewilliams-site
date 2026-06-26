@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Case file: DOPE Prompt Book — local-first prompt library and composer on promptbook.andraewilliams.com."
+    />
+    <link rel="canonical" href="https://andraewilliams.com/writeups/dope-promptbook.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://andraewilliams.com/writeups/dope-promptbook.html" />
+    <meta property="og:title" content="DOPE Prompt Book — case file" />
+    <meta
+      property="og:description"
+      content="Why a prompt library belongs in its own app, how the composer works, and what I'd change next."
+    />
+    <meta property="og:site_name" content="Andrae Williams" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DOPE Prompt Book — case file" />
+    <meta name="view-transition" content="same-origin" />
+    <title>DOPE Prompt Book — case file · Andrae Williams</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script>document.documentElement.dataset.theme='operator';document.documentElement.dataset.sidebar=localStorage.getItem('site-sidebar')||'collapsed';</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/command-deck.css" />
+  </head>
+  <body class="deck-page">
+    <div class="deck">
+      <nav class="deck-rail" aria-label="Primary">
+        <button type="button" class="deck-rail-toggle" aria-expanded="false" aria-label="Expand rail">›</button>
+        <span class="deck-rail-mark" aria-hidden="true"></span>
+        <div class="deck-rail-nav">
+          <a class="deck-rail-link" href="../index.html" title="Home"><span class="deck-dot" aria-hidden="true"></span>H</a>
+          <a class="deck-rail-link" href="../about.html" title="About"><span class="deck-dot" aria-hidden="true"></span>A</a>
+          <a class="deck-rail-link" href="../tools.html" title="Tools"><span class="deck-dot" aria-hidden="true"></span>T</a>
+        </div>
+      </nav>
+
+      <div class="deck-main">
+        <div class="deck-prompt" aria-hidden="true">
+          <span><span class="deck-prompt-user">root@command-deck</span><span class="deck-prompt-path">:~$</span> ./operator --case dope-promptbook <span class="deck-cursor">█</span></span>
+          <span class="deck-threat">THREAT // GUARDED</span>
+        </div>
+        <div class="deck-hazard" aria-hidden="true"></div>
+        <div class="deck-banner">
+          <span class="deck-clearance">CLEARANCE: OPERATOR <span class="deck-coords">// EYES ONLY</span></span>
+          <span class="deck-coords">FILE PB-001 · CASE</span>
+          <span class="deck-clock"><span id="deck-clock">--:--:--</span><span class="deck-clock-z">Z</span></span>
+        </div>
+
+        <main class="deck-active deck-active--scroll">
+          <article class="deck-panel deck-longform section--writeup">
+            <a href="../tools.html" class="writeup-back">← Armory</a>
+
+            <header class="writeup-header">
+              <span class="deck-label deck-label--primary">CASE FILE // PB-001</span>
+              <h1 class="writeup-title">DOPE Prompt Book</h1>
+              <p class="writeup-lede">
+                A standalone prompt library and composer — not a page on this site. Snips, recipes,
+                and kits assemble into a working prompt you can copy or reuse. The portfolio links
+                here; the app owns its UX.
+              </p>
+              <div class="writeup-actions">
+                <a href="https://promptbook.andraewilliams.com" class="hero-cta" target="_blank" rel="noopener noreferrer">Open live app ↗</a>
+              </div>
+              <dl class="writeup-meta">
+                <div>
+                  <dt>Status</dt>
+                  <dd>Live · public read-only demo</dd>
+                </div>
+                <div>
+                  <dt>Host</dt>
+                  <dd>promptbook.andraewilliams.com</dd>
+                </div>
+                <div>
+                  <dt>Stack</dt>
+                  <dd>Next.js · TypeScript · Vercel</dd>
+                </div>
+                <div>
+                  <dt>Type</dt>
+                  <dd>Product app (external)</dd>
+                </div>
+              </dl>
+            </header>
+
+            <section class="writeup-block" aria-labelledby="pb-problem">
+              <h2 id="pb-problem">Problem</h2>
+              <p>
+                Reusable AI prompts live everywhere — notes apps, gists, chat history, random docs.
+                None of that scales when you want to <strong>find</strong>, <strong>filter</strong>,
+                and <strong>compose</strong> prompts the same way every session. Copy-paste from
+                scattered files is slow; editing in-place loses version context.
+              </p>
+              <p>
+                DOPE is the answer on my side of the keyboard: a dedicated surface for prompt
+                pieces (snips), structured bundles (recipes), and reusable assemblies (kits), with
+                a composer that stacks them into one output.
+              </p>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="pb-approach">
+              <h2 id="pb-approach">Approach</h2>
+              <p>
+                Split the portfolio from the product. andraewilliams.com stays static and
+                operator-themed — proof, status, case files. The prompt book runs as its own
+                Next.js app on a subdomain so it can grow (auth, storage, search) without dragging
+                the main site into a framework.
+              </p>
+              <ul class="writeup-list">
+                <li><strong>Library</strong> — browse and filter prompt pieces by type and recency.</li>
+                <li><strong>Composer</strong> — stack selected pieces; empty state tells you to open the library.</li>
+                <li><strong>Snips / Recipes / Kits</strong> — three layers of reuse from atomic text to full workflows.</li>
+                <li><strong>Search</strong> — desktop shortcut <code>/</code> for fast lookup without leaving flow.</li>
+                <li><strong>Public demo</strong> — read-only mode so visitors can explore without signing in.</li>
+              </ul>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="pb-architecture">
+              <h2 id="pb-architecture">Architecture (high level)</h2>
+              <p>
+                Client-heavy UI with Next.js App Router. Prompt entities are modeled as typed
+                pieces the library can sort (recently edited, recently used, most used,
+                alphabetical) and filter. The composer holds an ordered list of references to those
+                pieces and renders the combined prompt for copy/export.
+              </p>
+              <div class="writeup-callout">
+                <p>
+                  Local-first is the target posture: your library should survive offline and sync
+                  when connected. The public demo is read-only today; private write paths are the
+                  next maturity step.
+                </p>
+              </div>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="pb-tradeoffs">
+              <h2 id="pb-tradeoffs">Tradeoffs</h2>
+              <ul class="writeup-list">
+                <li>
+                  <strong>Subdomain vs embedded iframe</strong> — separate deploy and DNS, but clean
+                  boundaries and independent release cadence.
+                </li>
+                <li>
+                  <strong>Read-only demo</strong> — safe for public traffic; hides the full create/edit
+                  loop until auth and persistence are ready.
+                </li>
+                <li>
+                  <strong>Next.js on Vercel</strong> — not free-tier-zero forever at scale, but fits
+                  the “real app” bar this project sets for itself.
+                </li>
+              </ul>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="pb-next">
+              <h2 id="pb-next">What I'd change next</h2>
+              <ul class="writeup-list">
+                <li>Authenticated write path — private library sync, not just demo browsing.</li>
+                <li>Export formats — markdown bundle, JSON kit, clipboard with metadata.</li>
+                <li>Case file screenshots — capture library + composer states for this writeup.</li>
+                <li>Link back to portfolio mission status when a prompt ships a site feature.</li>
+              </ul>
+            </section>
+
+            <section class="writeup-block" aria-labelledby="pb-links">
+              <h2 id="pb-links">Links</h2>
+              <ul class="writeup-files">
+                <li>
+                  <a href="https://promptbook.andraewilliams.com" target="_blank" rel="noopener noreferrer">promptbook.andraewilliams.com ↗</a>
+                </li>
+                <li>
+                  <a href="../tools.html">Armory entry →</a>
+                </li>
+              </ul>
+            </section>
+          </article>
+        </main>
+
+        <div class="deck-ticker" aria-hidden="true">
+          <span class="deck-ticker-track">
+            <span class="deck-go">▶</span> CASE FILE PB-001 &nbsp;·&nbsp; <span class="deck-ticker-accent">DOPE PROMPT BOOK</span> &nbsp;·&nbsp; EXTERNAL ASSET &nbsp;·&nbsp;
+            <span class="deck-go">▶</span> CASE FILE PB-001 &nbsp;·&nbsp; <span class="deck-ticker-accent">DOPE PROMPT BOOK</span> &nbsp;·&nbsp; EXTERNAL ASSET &nbsp;·&nbsp;
+          </span>
+        </div>
+
+        <div class="deck-status">
+          <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
+          <span class="deck-dim">PAGE SCROLL // ENABLED · KEYS h/a/t</span>
+          <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../js/command-deck.js"></script>
+    <script type="module" src="../js/analytics.js"></script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <title>Level 3 · Guestbook</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="guestbook">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/" aria-current="page">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__top">
+          <div class="site-eyebrow"><p class="site-badge" id="mode-badge">Loading…</p></div>
+          <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        </div>
+        <h1 class="site-title">Guestbook</h1>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="guestbook.html" data-nav="guestbook">Guestbook</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <p class="banner" id="mode-banner" hidden></p>
+      <form id="note-form" class="form">
+        <label for="body">Leave a note</label>
+        <textarea id="body" name="body" rows="3" maxlength="1000" required></textarea>
+        <button type="submit" class="btn btn--primary">Save note</button>
+      </form>
+      <section class="section" aria-labelledby="notes-heading">
+        <h2 id="notes-heading">Notes</h2>
+        <ul class="note-list" id="note-list" aria-live="polite"></ul>
+      </section>
+    </main>
+    <footer class="site-footer"><p>API: <code>/api/level-3/notes</code></p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 {
-  "title": "Ship tactical command deck",
+  "title": "Phase 1 polish — writeup + platform CSS",
   "status": "active",
-  "summary": "Convert the site to a no-scroll operator command center — frame, data panels, then About/Tools and long-form pages.",
-  "focus": ["command deck", "data panels", "tier B polish"],
-  "updated": "2026-06-14"
+  "summary": "DOPE case file shipped. Next: view transitions live, solo armory layout, first new on-site tool.",
+  "focus": ["DOPE writeup", "view transitions", "tool #2 spec"],
+  "updated": "2026-06-15"
 }

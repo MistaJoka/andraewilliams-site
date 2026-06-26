@@ -2,7 +2,18 @@
    COMMAND DECK — no-scroll tactical frame. Theme-agnostic: reads tokens
    from themes.css (operator theme is the default). Visual source of truth:
    the locked v5.1 mockup.
+   Layer: deck (overrides base/components from style.css when linked after).
    ===================================================================== */
+
+@layer deck {
+
+@view-transition {
+  navigation: auto;
+}
+
+html[data-motion='reduce'] ::view-transition-group(root) {
+  animation: none !important;
+}
 
 .deck-page {
   --rail-w: 52px;
@@ -233,6 +244,8 @@ html[data-sidebar='expanded'] .deck-rail-link::after {
   position: relative;
   overflow: hidden;
   min-height: 0;
+  container-type: inline-size;
+  container-name: deck-panel;
 }
 
 .deck-panel--scroll {
@@ -254,6 +267,14 @@ html[data-sidebar='expanded'] .deck-rail-link::after {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+@container deck-panel (max-width: 220px) {
+  .deck-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
 }
 
 .deck-stack {
@@ -424,6 +445,35 @@ html[data-sidebar='expanded'] .deck-rail-link::after {
   gap: 8px;
 }
 
+.deck-active--tools-solo {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+}
+
+.deck-active--tools-solo .deck-tool-tile--hero {
+  grid-column: 1 / -1;
+  min-height: 148px;
+  padding: 14px 16px;
+}
+
+.deck-active--tools-solo .deck-tool-desc {
+  max-width: 42ch;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.deck-tool-slot {
+  border: 1px dashed var(--border);
+  padding: 11px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  opacity: 0.65;
+}
+
 .deck-tools-intro {
   grid-column: 1 / -1;
 }
@@ -453,6 +503,43 @@ html[data-sidebar='expanded'] .deck-rail-link::after {
   color: inherit;
   min-height: 0;
   overflow: hidden;
+  container-type: inline-size;
+}
+
+.deck-tool-desc {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.deck-tool-tags {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.deck-tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.deck-tool-actions a {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.deck-tool-actions a:hover {
+  color: color-mix(in srgb, var(--primary) 80%, var(--text));
+}
+
+@container (min-width: 360px) {
+  .deck-tool-tile--hero .deck-tool-name {
+    font-size: 14px;
+  }
 }
 
 .deck-tool-tile:hover {
@@ -805,3 +892,5 @@ html[data-motion='reduce'] .deck-ticker-track {
     display: none;
   }
 }
+
+} /* @layer deck */

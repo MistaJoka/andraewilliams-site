@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="base-path.js"></script>
+    <title>Level 4 · About</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="about">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <nav class="ladder-nav" aria-label="Level ladder">
+      <span class="ladder-nav__label">Ladder</span>
+      <a href="https://www.andraewilliams.com/level-0/">0 Surface</a>
+      <a href="https://www.andraewilliams.com/level-1/">1 Assembly</a>
+      <a href="https://www.andraewilliams.com/level-2/">2 Edge</a>
+      <a href="https://www.andraewilliams.com/level-3/">3 Memory</a>
+      <a href="https://www.andraewilliams.com/level-4/" aria-current="page">4 Product</a>
+    </nav>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <button type="button" class="theme-toggle" data-theme-toggle>Dark mode</button>
+        <h1 class="site-title">About Level&nbsp;4</h1>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html" data-nav="index">Home</a>
+          <a href="catalog.html" data-nav="catalog">Catalog</a>
+          <a href="about.html" data-nav="about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="site-main" id="main">
+      <section class="section">
+        <table class="matrix">
+          <thead><tr><th>Level</th><th>Label</th><th>New capability</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>Surface</td><td>Browser-only static files</td></tr>
+            <tr><td>1</td><td>Assembly</td><td>Build step, partials, generated JSON</td></tr>
+            <tr><td>2</td><td>Edge</td><td>Serverless functions</td></tr>
+            <tr><td>3</td><td>Memory</td><td>Database persistence</td></tr>
+            <tr><td>4</td><td>Product</td><td>Full app on own subdomain</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <p class="section__lede">This portal page lives in the portfolio repo. Products live in their own repos.</p>
+    </main>
+    <footer class="site-footer"><p><a href="https://www.andraewilliams.com/level-0/">← Start at Level 0</a></p></footer>
+    <script src="script.js" defer></script>
+  </body>
+</html>

@@ -4,9 +4,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-npm run build:cards
-npm run build:pretext
-
 mkdir -p src/data
 cp docs/decisions.md src/data/decisions.md
 
@@ -14,12 +11,7 @@ cp docs/decisions.md src/data/decisions.md
 # Start clean so stale files from a previous build don't linger.
 rm -rf _site
 mkdir -p _site
-cp -R src/. _site/                 # copy src/ contents (incl. dotfiles)
-rm -rf _site/pretext-smoke         # drop the Vite source; built output goes in below
-mkdir -p _site/js
-cp dist-card-system/pretext-card-system.js _site/js/
-mkdir -p _site/pretext-smoke
-cp -R dist-pretext/. _site/pretext-smoke/
+cp -R src/. _site/
 
 mkdir -p _site/data
 cp src/data/tools.manifest.json _site/data/

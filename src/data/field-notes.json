@@ -9,28 +9,36 @@
       "href": null
     },
     {
-      "id": "cipher-console",
-      "date": "2026-06-14",
-      "title": "Cipher Console live",
-      "summary": "First Python-on-Vercel tool — Base64, Hex, ROT13, URL via serverless function.",
-      "tags": ["python", "vercel"],
-      "href": "writeups/cipher-console.html"
-    },
-    {
-      "id": "pretext-layout-lab",
-      "date": "2026-06-14",
-      "title": "Pretext Layout Lab writeup",
-      "summary": "Case study for the text-measurement lab and site-wide Pretext cards.",
-      "tags": ["pretext", "vite"],
-      "href": "writeups/pretext-layout-lab.html"
-    },
-    {
       "id": "stack-decision",
       "date": "2026-03-07",
       "title": "HTML + CSS + vanilla JS",
       "summary": "Zero build tooling for the main site — instant feedback, honest static deploy on Vercel.",
       "tags": ["stack", "vercel"],
       "href": "https://github.com/MistaJoka/andraewilliams-site/blob/main/docs/decisions.md"
+    },
+    {
+      "id": "dope-writeup",
+      "date": "2026-06-15",
+      "title": "DOPE Prompt Book case file",
+      "summary": "Case study for the flagship external app — library, composer, snips/recipes/kits, read-only demo.",
+      "tags": ["nextjs", "product"],
+      "href": "writeups/dope-promptbook.html"
+    },
+    {
+      "id": "tool-reset",
+      "date": "2026-06-15",
+      "title": "Armory reset",
+      "summary": "Cleared lab tools from catalog — DOPE Prompt Book remains the sole live asset while the site is rebuilt.",
+      "tags": ["tools", "reset"],
+      "href": "tools.html"
+    },
+    {
+      "id": "level-0-site",
+      "date": "2026-06-15",
+      "title": "Level 0 Website shipped",
+      "summary": "Complete four-file static site at level0.andraewilliams.com — baseline HTML, CSS, and JS.",
+      "tags": ["html", "lab"],
+      "href": "writeups/level-0-website.html"
     }
   ]
 }

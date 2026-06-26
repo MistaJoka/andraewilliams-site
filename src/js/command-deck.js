@@ -56,6 +56,47 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+function initViewTransitions() {
+  if (reduceMq.matches || !document.startViewTransition) return;
+
+  document.querySelectorAll('.deck-rail-link[href]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const href = link.getAttribute('href');
+      if (!href || link.classList.contains('active')) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+        return;
+      }
+      event.preventDefault();
+      document.startViewTransition(() => {
+        location.href = href;
+      });
+    });
+  });
+}
+
+function initSpeculation() {
+  const primed = new Set();
+
+  document.querySelectorAll('.deck-rail-link[href]').forEach((link) => {
+    const url = link.getAttribute('href');
+    if (!url) return;
+
+    const prime = () => {
+      if (primed.has(url)) return;
+      primed.add(url);
+      const script = document.createElement('script');
+      script.type = 'speculationrules';
+      script.textContent = JSON.stringify({
+        prefetch: [{ source: 'list', urls: [url] }],
+      });
+      document.head.appendChild(script);
+    };
+
+    link.addEventListener('mouseenter', prime, { once: true });
+    link.addEventListener('focus', prime, { once: true });
+  });
+}
+
 function formatZuluDate(isoDate) {
   const d = new Date(`${isoDate}T12:00:00Z`);
   const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
@@ -119,18 +160,28 @@ async function loadAssets() {
     tools.forEach((tool, index) => {
       const num = String(index + 1).padStart(2, '0');
       const name = document.createElement('a');
-      name.href = tool.href || '#';
-      if (tool.external) {
+      name.href = tool.writeup || tool.href || '#';
+      if (tool.external && !tool.writeup) {
         name.target = '_blank';
         name.rel = 'noopener noreferrer';
       }
-      name.textContent = `${num} ${tool.name}`;
+      const label = tool.external ? `${tool.name} ↗` : tool.name;
+      name.textContent = `${num} ${label}`;
       const status =
         tool.status === 'live'
           ? '<span class="deck-go">●</span>'
           : '<span class="deck-dim">○</span>';
       el.appendChild(deckRow(name, status));
     });
+    if (tools.length < 6) {
+      const slotNum = String(tools.length + 1).padStart(2, '0');
+      el.appendChild(
+        deckRow(
+          `<span class="deck-dim">${slotNum} NEXT SLOT // UNASSIGNED</span>`,
+          '<span class="deck-dim">○</span>'
+        )
+      );
+    }
     const footer = document.createElement('a');
     footer.className = 'deck-armory-link';
     footer.href = 'tools.html';
@@ -194,18 +245,9 @@ async function loadOpsLog() {
   }
 }
 
-function renderToolTile(tool, index) {
+function renderToolTile(tool, index, solo) {
   const num = String(index + 1).padStart(2, '0');
-  const href = tool.writeup || tool.href || '#';
-  const external = Boolean(tool.external) && !tool.writeup;
-  const tile = document.createElement('a');
-  tile.className = 'deck-tool-tile';
-  tile.href = href;
-  if (external) {
-    tile.target = '_blank';
-    tile.rel = 'noopener noreferrer';
-  }
-  tile.setAttribute('aria-label', `Open ${tool.name}`);
+  const heroClass = solo ? 'deck-tool-tile deck-tool-tile--hero' : 'deck-tool-tile';
 
   const indexSpan = document.createElement('span');
   indexSpan.className = 'deck-tool-index';
@@ -228,7 +270,46 @@ function renderToolTile(tool, index) {
   desc.className = 'deck-tool-desc';
   desc.textContent = tool.description || tool.purpose || '';
 
-  tile.append(indexSpan, type, name, status, desc);
+  const parts = [indexSpan, type, name, status, desc];
+
+  if (tool.tags?.length) {
+    const tags = document.createElement('span');
+    tags.className = 'deck-dim deck-tool-tags';
+    tags.textContent = tool.tags.join(' · ');
+    parts.push(tags);
+  }
+
+  if (tool.writeup && tool.href) {
+    const wrap = document.createElement('article');
+    wrap.className = heroClass;
+
+    const actions = document.createElement('div');
+    actions.className = 'deck-tool-actions';
+    const caseLink = document.createElement('a');
+    caseLink.href = tool.writeup;
+    caseLink.textContent = 'Case file →';
+    const liveLink = document.createElement('a');
+    liveLink.href = tool.href;
+    if (tool.external) {
+      liveLink.target = '_blank';
+      liveLink.rel = 'noopener noreferrer';
+    }
+    liveLink.textContent = tool.external ? 'Live app ↗' : 'Open →';
+    actions.append(caseLink, liveLink);
+    parts.push(actions);
+    wrap.append(...parts);
+    return wrap;
+  }
+
+  const tile = document.createElement('a');
+  tile.className = heroClass;
+  tile.href = tool.writeup || tool.href || '#';
+  if (tool.external) {
+    tile.target = '_blank';
+    tile.rel = 'noopener noreferrer';
+  }
+  tile.setAttribute('aria-label', `Open ${tool.name}`);
+  tile.append(...parts);
   return tile;
 }
 
@@ -240,7 +321,18 @@ async function loadToolsGrid() {
     const data = await fetchJson('data/tools.manifest.json');
     const tools = data.tools || [];
     if (loading) loading.remove();
-    host.append(...tools.map(renderToolTile));
+    if (tools.length === 1) {
+      host.classList.add('deck-active--tools-solo');
+    }
+    host.append(...tools.map((tool, index) => renderToolTile(tool, index, tools.length === 1)));
+
+    if (tools.length < 4) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'deck-tool-slot deck-dim';
+      placeholder.setAttribute('aria-hidden', 'true');
+      placeholder.textContent = `// SLOT ${String(tools.length + 1).padStart(2, '0')} UNASSIGNED`;
+      host.appendChild(placeholder);
+    }
   } catch {
     if (loading) loading.textContent = '// fetch failed';
   }
@@ -256,6 +348,8 @@ function initHomePanels() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initDeckRail();
+  initViewTransitions();
+  initSpeculation();
   initHomePanels();
   loadToolsGrid();
 });

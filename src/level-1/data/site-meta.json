@@ -1,0 +1,16 @@
+{
+  "level": 1,
+  "label": "Assembly",
+  "builtAt": "2026-06-26T03:19:41.872Z",
+  "commit": "6d48151",
+  "pages": [
+    "about",
+    "build",
+    "index"
+  ],
+  "partials": [
+    "shell-end.html",
+    "shell-start.html"
+  ],
+  "generator": "scripts/build-level-1.mjs"
+}
