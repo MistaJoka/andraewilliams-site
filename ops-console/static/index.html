@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPS CONSOLE</title>
+  <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+  <header id="banner" class="banner state-ok">
+    <span id="banner-text">CONNECTING…</span>
+    <span id="heartbeat" class="heartbeat"></span>
+  </header>
+  <main class="grid">
+    <section class="panel" id="panel-health"><h2>SITE HEALTH</h2><div class="rows"></div></section>
+    <section class="panel" id="panel-deploys"><h2>DEPLOYS</h2><div class="rows"></div></section>
+    <section class="panel" id="panel-repo"><h2>REPO</h2><div class="rows"></div></section>
+    <section class="panel" id="panel-incidents"><h2>INCIDENT LOG</h2><div class="rows"></div></section>
+  </main>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

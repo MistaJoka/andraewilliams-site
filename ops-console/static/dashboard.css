@@ -1,0 +1,28 @@
+:root {
+  --bg: #0a0a0a; --panel: #121212; --line: #2a2a2a;
+  --amber: #ffb000; --amber-dim: #8a5f00;
+  --ok: #3ad17a; --warn: #ffb000; --crit: #ff3b3b; --unknown: #888;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--amber);
+  font-family: var(--mono); letter-spacing: .02em; }
+.banner { padding: .75rem 1rem; font-weight: 700; border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center; }
+.banner.state-ok { color: var(--ok); }
+.banner.state-warn { color: var(--warn); }
+.banner.state-crit { color: var(--crit); background: #200; }
+.banner.state-unknown { color: var(--unknown); }
+.heartbeat { font-size: .75rem; color: var(--amber-dim); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1rem; }
+.panel h2 { margin: 0 0 .75rem; font-size: .8rem; color: var(--amber-dim);
+  border-bottom: 1px solid var(--line); padding-bottom: .5rem; }
+.row { display: flex; align-items: center; gap: .6rem; padding: .35rem 0;
+  border-bottom: 1px dotted var(--line); font-size: .85rem; }
+.dot { width: .7rem; height: .7rem; border-radius: 50%; flex: 0 0 auto; }
+.dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); }
+.dot.crit { background: var(--crit); } .dot.unknown { background: var(--unknown); }
+.row .label { flex: 0 0 9rem; }
+.row .detail { color: #ccc; flex: 1; }
+.row .val { color: var(--amber-dim); }
