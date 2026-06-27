@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import unittest
 import unittest.mock
@@ -40,7 +42,8 @@ class TestServer(unittest.TestCase):
         crit_collector = FakeCollector("h", [CheckResult(key="h.x", label="x", state=CRIT)])
         with unittest.mock.patch.object(server, "register_default_collectors",
                                         return_value=[crit_collector]):
-            code = server.run_once(cfg)
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = server.run_once(cfg)
         self.assertEqual(code, 1)
 
     def test_run_once_exit_code_ok(self):
@@ -49,7 +52,8 @@ class TestServer(unittest.TestCase):
         ok_collector = FakeCollector("h", [CheckResult(key="h.x", label="x", state=OK)])
         with unittest.mock.patch.object(server, "register_default_collectors",
                                         return_value=[ok_collector]):
-            code = server.run_once(cfg)
+            with contextlib.redirect_stdout(io.StringIO()):
+                code = server.run_once(cfg)
         self.assertEqual(code, 0)
 
 
