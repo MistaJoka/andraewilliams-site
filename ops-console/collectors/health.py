@@ -2,6 +2,7 @@ import math
 import ssl
 import socket
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from urllib.parse import urlparse
@@ -52,7 +53,10 @@ def _default_cert_probe(host):
         with ctx.wrap_socket(sock, server_hostname=host) as ssock:
             cert = ssock.getpeercert()
     not_after = cert["notAfter"]
-    dt = datetime.strptime(not_after, "%b %d %H:%M:%S %Y %Z").replace(tzinfo=timezone.utc)
+    # getpeercert notAfter looks like "Jun 25 12:00:00 2026 GMT"; %Z is platform-fragile,
+    # so drop the trailing tz token and treat the timestamp as UTC.
+    ts = not_after.rsplit(" ", 1)[0]
+    dt = datetime.strptime(ts, "%b %d %H:%M:%S %Y").replace(tzinfo=timezone.utc)
     return dt.timestamp()
 
 

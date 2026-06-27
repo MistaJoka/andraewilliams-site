@@ -1,6 +1,6 @@
 import unittest
 from collectors import health
-from model import OK, WARN, CRIT
+from model import OK, WARN, CRIT, UNKNOWN
 
 
 class TestClassifyHttp(unittest.TestCase):
@@ -48,6 +48,25 @@ class TestHealthCollector(unittest.TestCase):
         self.assertEqual(www.state, OK)
         self.assertEqual(www.value, 42.0)
         self.assertEqual(www.history_key, "health.www.latency")
+        self.assertIn("health.cert", keys)
+        cert = next(r for r in results if r.key == "health.cert")
+        self.assertEqual(cert.state, OK)
+
+    def test_run_isolates_per_target_failure(self):
+        targets = [
+            {"name": "bad", "url": "https://bad.example.com", "expect_status": 200},
+            {"name": "good", "url": "https://good.example.com", "expect_status": 200},
+        ]
+        def flaky_fetch(url):
+            if "bad" in url:
+                raise RuntimeError("boom")
+            return (200, "<html>", 10.0)
+        c = health.HealthCollector(
+            targets, now=lambda: 1000.0, fetch=flaky_fetch,
+            cert_probe=lambda host: 1000.0 + 86400 * 30)
+        results = {r.key: r for r in c.run()}
+        self.assertEqual(results["health.bad"].state, CRIT)
+        self.assertEqual(results["health.good"].state, OK)
 
 
 if __name__ == "__main__":
