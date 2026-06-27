@@ -22,3 +22,7 @@ def reconcile_incidents(store, results, now):
             store.open_incident(r.key, r.label, now)
         elif r.state == OK:
             store.resolve_incident(r.key, now)
+
+
+def worst_states(states):
+    return worst(states)
