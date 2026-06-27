@@ -1,0 +1,4 @@
+[
+  { "number": 8, "title": "bump vite", "author": { "login": "app/dependabot" }, "isDraft": false },
+  { "number": 12, "title": "new tool", "author": { "login": "MistaJoka" }, "isDraft": false }
+]
