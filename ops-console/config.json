@@ -1,0 +1,18 @@
+{
+  "host": "127.0.0.1",
+  "port": 7878,
+  "poll_interval_default": 30,
+  "repo": "MistaJoka/andraewilliams-site",
+  "site_origin": "https://www.andraewilliams.com",
+  "targets": [
+    { "name": "apex",   "url": "https://andraewilliams.com",        "expect_status": 308 },
+    { "name": "www",    "url": "https://www.andraewilliams.com",    "expect_status": 200, "expect_contains": "<html" },
+    { "name": "level0", "url": "https://level0.andraewilliams.com", "expect_status": 200 },
+    { "name": "level1", "url": "https://level1.andraewilliams.com", "expect_status": 200 },
+    { "name": "level2", "url": "https://level2.andraewilliams.com", "expect_status": 200 },
+    { "name": "level3", "url": "https://level3.andraewilliams.com", "expect_status": 200 },
+    { "name": "level4", "url": "https://level4.andraewilliams.com", "expect_status": 200 },
+    { "name": "api-echo",  "url": "https://www.andraewilliams.com/api/level-2/echo",  "expect_status": 200 },
+    { "name": "api-notes", "url": "https://www.andraewilliams.com/api/level-3/notes", "expect_status": 200 }
+  ]
+}

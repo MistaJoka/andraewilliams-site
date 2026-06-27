@@ -11,6 +11,9 @@ _site/
 # Python
 __pycache__/
 *.pyc
+ops-console/data.db
+ops-console/__pycache__/
+ops-console/**/__pycache__/
 
 # Local agent config + env
 .claude/
