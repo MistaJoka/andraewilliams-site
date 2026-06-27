@@ -6,7 +6,8 @@
     "og": "node scripts/generate-og.mjs",
     "build:level-1": "node scripts/build-level-1.mjs",
     "build:site": "node scripts/build-level-1.mjs && bash scripts/assemble-site.sh && bash scripts/verify-site.sh",
-    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080"
+    "preview:site": "npm run build:site && cd _site && python3 -m http.server 8080",
+    "console": "python3 ops-console/server.py"
   },
   "devDependencies": {
     "sharp": "^0.35.2"
