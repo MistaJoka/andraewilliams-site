@@ -7,7 +7,6 @@ class Poller:
     def __init__(self, store, collectors, now=time.time):
         self.store = store
         self.collectors = collectors
-        self.now = now
         self._last_run = {}
         self.last_cycle_at = None
 

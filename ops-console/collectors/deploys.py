@@ -57,7 +57,7 @@ class DeployCollector:
                 key="deploys.latest", label="latest deploy", state=UNKNOWN,
                 detail=f"unavailable: {e}", observed_at=observed))
         try:
-            ahead = int(self.git(["rev-list", "--count", "origin/main...HEAD"]).strip() or "0")
+            ahead = int(self.git(["rev-list", "--count", "origin/main..HEAD"]).strip() or "0")
             d_state, d_detail = classify_drift(ahead)
             results.append(CheckResult(
                 key="deploys.drift", label="deploy drift", state=d_state,

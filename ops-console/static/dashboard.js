@@ -1,5 +1,12 @@
 const KIND = { health: "panel-health", deploys: "panel-deploys", repo: "panel-repo" };
 
+let pollingStarted = false;
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
 function render(state) {
   const banner = document.getElementById("banner");
   banner.className = "banner state-" + state.overall;
@@ -20,9 +27,9 @@ function render(state) {
     row.className = "row";
     const val = c.value == null ? "" : Math.round(c.value);
     row.innerHTML =
-      `<span class="dot ${c.state}"></span>` +
-      `<span class="label">${c.label}</span>` +
-      `<span class="detail">${c.detail}</span>` +
+      `<span class="dot ${esc(c.state)}"></span>` +
+      `<span class="label">${esc(c.label)}</span>` +
+      `<span class="detail">${esc(c.detail)}</span>` +
       `<span class="val">${val}</span>`;
     panel.querySelector(".rows").appendChild(row);
   }
@@ -35,8 +42,8 @@ function render(state) {
     const open = i.resolved_at ? "resolved" : "OPEN";
     row.innerHTML =
       `<span class="dot ${i.resolved_at ? "ok" : "crit"}"></span>` +
-      `<span class="label">${i.label}</span>` +
-      `<span class="detail">${open} · ${new Date(i.opened_at * 1000).toLocaleString()}</span>`;
+      `<span class="label">${esc(i.label)}</span>` +
+      `<span class="detail">${esc(open)} · ${new Date(i.opened_at * 1000).toLocaleString()}</span>`;
     inc.appendChild(row);
   }
 
@@ -56,6 +63,7 @@ function start() {
 }
 
 function pollFallback() {
+  if (pollingStarted) return; pollingStarted = true;
   const tick = () =>
     fetch("/api/state").then((r) => r.json()).then(render).catch(() => {});
   tick();

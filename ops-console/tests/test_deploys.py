@@ -1,8 +1,7 @@
-import json
 import os
 import unittest
 from collectors import deploys
-from model import OK, WARN, CRIT
+from model import OK, WARN, CRIT, UNKNOWN
 
 FIX = os.path.join(os.path.dirname(__file__), "fixtures")
 
@@ -13,6 +12,7 @@ class TestDeploys(unittest.TestCase):
         self.assertEqual(deploys.map_status("pending"), WARN)
         self.assertEqual(deploys.map_status("failure"), CRIT)
         self.assertEqual(deploys.map_status("error"), CRIT)
+        self.assertEqual(deploys.map_status("whatever_unknown"), UNKNOWN)
 
     def test_classify_drift(self):
         self.assertEqual(deploys.classify_drift(0)[0], OK)

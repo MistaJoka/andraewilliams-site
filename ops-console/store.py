@@ -79,6 +79,7 @@ class Store:
             return 100.0
         return (row["ok"] or 0) / row["total"] * 100.0
 
+    # single-writer assumption: only the poller thread writes incidents
     def open_incident(self, key, label, opened_at):
         existing = self.conn.execute(
             "SELECT id FROM incidents WHERE key=? AND resolved_at IS NULL", (key,)
@@ -101,14 +102,14 @@ class Store:
     def open_incidents(self):
         rows = self.conn.execute(
             "SELECT key,label,opened_at FROM incidents WHERE resolved_at IS NULL"
-            " ORDER BY opened_at DESC"
+            " ORDER BY opened_at DESC, id DESC"
         ).fetchall()
         return [dict(r) for r in rows]
 
     def recent_incidents(self, limit):
         rows = self.conn.execute(
             "SELECT key,label,opened_at,resolved_at FROM incidents"
-            " ORDER BY opened_at DESC LIMIT ?",
+            " ORDER BY opened_at DESC, id DESC LIMIT ?",
             (limit,),
         ).fetchall()
         return [dict(r) for r in rows]

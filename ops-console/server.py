@@ -94,7 +94,8 @@ def serve(cfg):
                 with open(os.path.join(STATIC, "index.html"), "rb") as f:
                     return self._send(200, f.read(), "text/html")
             if self.path.startswith("/static/"):
-                name = os.path.basename(self.path)
+                path = self.path.split("?", 1)[0]
+                name = os.path.basename(path)
                 fp = os.path.join(STATIC, name)
                 if os.path.isfile(fp):
                     ctype = "text/css" if name.endswith(".css") else "application/javascript"

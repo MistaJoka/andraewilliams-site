@@ -10,6 +10,13 @@ from urllib.parse import urlparse
 from model import CheckResult, OK, WARN, CRIT, UNKNOWN
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+_no_redirect_opener = urllib.request.build_opener(_NoRedirect)
+
+
 def classify_http(target, status, body, latency_ms, latency_warn_ms=1500.0):
     expect = target.get("expect_status", 200)
     if status != expect:
@@ -38,7 +45,7 @@ def _default_fetch(url):
     start = time.perf_counter()
     req = urllib.request.Request(url, headers={"User-Agent": "ops-console"})
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with _no_redirect_opener.open(req, timeout=10) as resp:
             body = resp.read(4096).decode("utf-8", "replace")
             status = resp.status
     except urllib.error.HTTPError as e:
@@ -87,7 +94,7 @@ class HealthCollector:
             except Exception as e:  # network/dns/timeout — degrade this check only
                 results.append(CheckResult(
                     key=key, label=name, state=CRIT, value=None,
-                    detail=f"unreachable: {e}", observed_at=observed,
+                    detail=f"unreachable: {e or type(e).__name__}", observed_at=observed,
                     history_key=f"{key}.latency", meta={"url": t["url"]}))
         # one cert check for the primary site host
         host = urlparse(self.targets[0]["url"]).hostname if self.targets else None
