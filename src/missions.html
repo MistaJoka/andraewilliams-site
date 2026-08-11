@@ -63,15 +63,15 @@
           <section class="dossier-wall" aria-label="Mission dossiers">
             <header class="dossier-head">
               <h1>MISSION DOSSIERS</h1>
-              <p id="dossier-count" class="dossier-count">// loading</p>
+              <p id="dossier-count" class="dossier-count" aria-live="polite">// loading</p>
               <div class="dossier-filters" id="dossier-filters" role="group" aria-label="Filter by class">
-                <button type="button" class="dossier-filter active" data-class="all">ALL</button>
-                <button type="button" class="dossier-filter" data-class="ai">AI</button>
-                <button type="button" class="dossier-filter" data-class="cyber">CYBER</button>
-                <button type="button" class="dossier-filter" data-class="iot">IOT</button>
-                <button type="button" class="dossier-filter" data-class="game">GAME</button>
-                <button type="button" class="dossier-filter" data-class="client">CLIENT</button>
-                <button type="button" class="dossier-filter" data-class="learning">LEARNING</button>
+                <button type="button" class="dossier-filter active" data-class="all" aria-pressed="true">ALL</button>
+                <button type="button" class="dossier-filter" data-class="ai" aria-pressed="false">AI</button>
+                <button type="button" class="dossier-filter" data-class="cyber" aria-pressed="false">CYBER</button>
+                <button type="button" class="dossier-filter" data-class="iot" aria-pressed="false">IOT</button>
+                <button type="button" class="dossier-filter" data-class="game" aria-pressed="false">GAME</button>
+                <button type="button" class="dossier-filter" data-class="client" aria-pressed="false">CLIENT</button>
+                <button type="button" class="dossier-filter" data-class="learning" aria-pressed="false">LEARNING</button>
               </div>
             </header>
             <div id="featured-grid" class="dossier-grid dossier-grid-featured"></div>
@@ -88,7 +88,7 @@
 
         <div class="deck-status">
           <span><span class="deck-uplink-dot">●</span> SECURE UPLINK</span>
-          <span class="deck-dim">PAGE SCROLL // DISABLED · KEYS h/a/t</span>
+          <span class="deck-dim">PAGE SCROLL // DISABLED · KEYS h/a/t/m</span>
           <span>STATUS <span class="deck-go">OPERATIONAL</span></span>
         </div>
       </div>

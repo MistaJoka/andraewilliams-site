@@ -21,4 +21,7 @@ cp src/data/lab.json _site/data/
 cp docs/decisions.md _site/data/decisions.md
 bash scripts/generate-site-status.sh _site/data/site-status.json
 
+# Build inputs, not client data: the client reads only data/dossiers.json.
+rm -f _site/data/projects.json _site/data/dossier-cache.json
+
 echo "Assembled site at _site/"

@@ -45,7 +45,7 @@ function initDeckRail() {
   sync();
 }
 
-const DEST = { h: 'index.html', a: 'about.html', t: 'tools.html' };
+const DEST = { h: 'index.html', a: 'about.html', t: 'tools.html', m: 'missions.html' };
 document.addEventListener('keydown', (event) => {
   if (event.metaKey || event.ctrlKey || event.altKey) return;
   const tag = (event.target && event.target.tagName) || '';

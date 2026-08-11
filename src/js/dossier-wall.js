@@ -58,7 +58,10 @@ function render(filterClass) {
   const visible = all.filter((d) => filterClass === 'all' || d.class === filterClass);
   featured.replaceChildren(...visible.filter((d) => d.tier === 'featured').map(card));
   listed.replaceChildren(...visible.filter((d) => d.tier === 'listed').map(card));
-  if (countEl) countEl.textContent = `// ${visible.length} dossiers on file`;
+  if (countEl) {
+    const noun = visible.length === 1 ? 'dossier' : 'dossiers';
+    countEl.textContent = `// ${visible.length} ${noun} on file`;
+  }
 }
 
 async function init() {
@@ -74,10 +77,17 @@ async function init() {
     if (countEl) countEl.textContent = '// dossier retrieval failed';
     return;
   }
+  document.querySelectorAll('.dossier-filter').forEach((b) =>
+    b.setAttribute('aria-pressed', b.classList.contains('active') ? 'true' : 'false')
+  );
   document.getElementById('dossier-filters').addEventListener('click', (e) => {
     const btn = e.target.closest('.dossier-filter');
     if (!btn) return;
-    document.querySelectorAll('.dossier-filter').forEach((b) => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.dossier-filter').forEach((b) => {
+      const active = b === btn;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
     render(btn.dataset.class);
   });
 }
