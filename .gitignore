@@ -18,5 +18,6 @@ ops-console/**/__pycache__/
 
 # Local agent config + env
 .claude/
+.superpowers/
 .env
 .env.*
