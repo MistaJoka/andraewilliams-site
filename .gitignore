@@ -7,6 +7,7 @@ node_modules/
 dist-pretext/
 dist-card-system/
 _site/
+src/data/dossiers.json
 
 # Python
 __pycache__/
