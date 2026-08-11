@@ -33,6 +33,7 @@ Goal: Use the site as a testing ground for new skills.
 - [x] Interactive command deck: status panel, tool registry, ops log, mission
 - [x] Tactical command-deck redesign (no-scroll operator frame)
 - [x] Python serverless tool (Cipher Console)
+- [x] Dossier wall: full-repo mission library with build-time GitHub sync (see docs/superpowers/specs/2026-08-10-dossier-wall-design.md)
 - [ ] Consider migrating to Vue.js if complexity grows
 - [ ] Add a notes or blog section
 - [ ] Experiment with animations or advanced CSS

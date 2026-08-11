@@ -18,6 +18,8 @@ for path in \
   "data/mission.json" \
   "data/field-notes.json" \
   "data/lab.json" \
+  "missions.html" \
+  "data/dossiers.json" \
   "data/decisions.md" \
   "level-0/index.html" \
   "level-0/about.html" \
@@ -49,6 +51,20 @@ if [[ -f "$MANIFEST" && -f "$TOOLS_HTML" ]] && command -v node >/dev/null 2>&1; 
       process.exit(1);
     }
     console.log('Manifest drift check passed (' + count + ' tools).');
+  " || missing=$((missing + 1))
+fi
+
+if command -v node >/dev/null 2>&1; then
+  node -e "
+    const fs = require('fs');
+    const emitted = JSON.parse(fs.readFileSync('$SITE/data/dossiers.json', 'utf8'));
+    const overlay = JSON.parse(fs.readFileSync('$ROOT/src/data/projects.json', 'utf8'));
+    const expected = overlay.projects.filter(p => p.tier !== 'hidden').length;
+    if (emitted.count !== expected || emitted.dossiers.length !== expected) {
+      console.error('Dossier drift: emitted ' + emitted.dossiers.length + ', overlay expects ' + expected);
+      process.exit(1);
+    }
+    console.log('Dossier drift check passed (' + expected + ' dossiers).');
   " || missing=$((missing + 1))
 fi
 
