@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+.env
+.env.*
+
+# Local agent config
+.claude/
+.superpowers/
+CLAUDE.md
+AGENTS.md
