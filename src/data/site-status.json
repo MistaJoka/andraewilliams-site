@@ -1,7 +1,0 @@
-{
-  "deployedAt": null,
-  "commit": "local",
-  "verify": "unknown",
-  "toolCount": 1,
-  "stack": ["html", "css", "vanilla-js"]
-}
