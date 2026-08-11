@@ -49,3 +49,34 @@ export function validateProjects(data) {
   }
   return errors;
 }
+
+export function mergeDossier(entry, apiData) {
+  const meta = apiData
+    ? { language: apiData.language ?? null, pushedAt: apiData.pushed_at ?? null, archived: Boolean(apiData.archived) }
+    : {};
+  return { ...entry, links: { ...(entry.links || {}) }, meta };
+}
+
+/**
+ * fetchResults: Map<id, {ok, data}> for source:"github-api" entries only.
+ * Returns dossiers (hidden excluded), fresh cache of successful fetches, warnings.
+ */
+export function buildDossierList(projects, fetchResults) {
+  const dossiers = [];
+  const cache = {};
+  const warnings = [];
+  for (const entry of projects) {
+    let apiData = null;
+    if (entry.source === 'github-api') {
+      const result = fetchResults.get(entry.id);
+      if (result && result.ok) {
+        apiData = result.data;
+        cache[entry.id] = result.data;
+      } else if (result) {
+        warnings.push(`${entry.id}: GitHub fetch failed, no cache entry — building from overlay only`);
+      }
+    }
+    if (entry.tier !== 'hidden') dossiers.push(mergeDossier(entry, apiData));
+  }
+  return { dossiers, cache, warnings };
+}
