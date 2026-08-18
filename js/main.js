@@ -21,8 +21,7 @@ function init() {
   let pipeline;
   try {
     pipeline = new AsciiPipeline(canvas, scenes, {
-      textColor: hexToRgbFloat('#eeeeee'),
-      bgColor: hexToRgbFloat('#111111'),
+      bgColor: hexToRgbFloat('#070b12'),
     });
   } catch (err) {
     console.warn('ASCII pipeline unavailable, falling back to static content:', err);

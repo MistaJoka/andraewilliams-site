@@ -1,8 +1,10 @@
 // Each scene is a GLSL snippet defining:
-//   vec3 sceneColor(vec2 uv, float t)
-// uv is 0..1, aspect-corrected on x. Injected into the ASCII compositor
-// shader as-is, so this is the only thing that changes between scenes —
-// the compositor, font atlas, and driver stay identical.
+//   float sceneField(vec2 uv, float t)
+// Returns a raw 0..1 scalar — the compositor picks glyph density AND
+// color (via the shared tacticalRamp) from this one value. uv is 0..1,
+// aspect-corrected on x. Injected into the ASCII compositor shader as-is,
+// so this is the only thing that changes between scenes — the compositor,
+// font atlas, and driver stay identical.
 
 const noise = `
 float hash21(vec2 p) {
@@ -33,17 +35,17 @@ float fbm(vec2 p) {
   return v;
 }
 
-vec3 sceneColor(vec2 uv, float t) {
+float sceneField(vec2 uv, float t) {
   vec2 p = uv * 3.0;
   float n = fbm(p + vec2(t * 0.15, t * 0.1));
-  return vec3(n);
+  return clamp(n, 0.0, 1.0);
 }
 `;
 
 const particles = `
 float hash1(float n) { return fract(sin(n) * 43758.5453123); }
 
-vec3 sceneColor(vec2 uv, float t) {
+float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
   float v = 0.0;
   for (int i = 0; i < 24; i++) {
@@ -55,12 +57,12 @@ vec3 sceneColor(vec2 uv, float t) {
     float d = length(p - center);
     v += 0.0025 / (d * d + 0.0006);
   }
-  return vec3(clamp(v, 0.0, 1.0));
+  return clamp(v, 0.0, 1.0);
 }
 `;
 
 const metaballs = `
-vec3 sceneColor(vec2 uv, float t) {
+float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
   float v = 0.0;
   for (int i = 0; i < 6; i++) {
@@ -73,8 +75,7 @@ vec3 sceneColor(vec2 uv, float t) {
     float d2 = dot(p - center, p - center);
     v += 0.05 / (d2 + 0.01);
   }
-  float field = smoothstep(0.6, 1.4, v);
-  return vec3(field);
+  return smoothstep(0.6, 1.4, v);
 }
 `;
 
@@ -88,7 +89,7 @@ float mapScene(vec3 p) {
   return sdTorus(p, vec2(0.9, 0.35));
 }
 
-vec3 sceneColor(vec2 uv, float t) {
+float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
   vec3 ro = vec3(0.0, 0.0, 3.0);
   float ang = t * 0.4;
@@ -108,7 +109,7 @@ vec3 sceneColor(vec2 uv, float t) {
     if (dist > 8.0) break;
   }
 
-  if (hit < 0.5) return vec3(0.0);
+  if (hit < 0.5) return 0.0;
 
   vec2 e = vec2(0.001, 0.0);
   vec3 n = normalize(vec3(
@@ -117,20 +118,19 @@ vec3 sceneColor(vec2 uv, float t) {
     mapScene(pos + e.yyx) - mapScene(pos - e.yyx)
   ));
   vec3 lightDir = normalize(vec3(0.6, 0.7, 0.5));
-  float diff = clamp(dot(n, lightDir), 0.0, 1.0);
-  return vec3(diff);
+  return clamp(dot(n, lightDir), 0.0, 1.0);
 }
 `;
 
 const plasma = `
-vec3 sceneColor(vec2 uv, float t) {
+float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
   float v = sin(p.x * 6.0 + t);
   v += sin(p.y * 5.0 - t * 1.3);
   v += sin((p.x + p.y) * 4.0 + t * 0.7);
   v += sin(length(p) * 8.0 - t * 1.6);
   v = v * 0.25 + 0.5;
-  return vec3(v);
+  return clamp(v, 0.0, 1.0);
 }
 `;
 
