@@ -6,18 +6,25 @@
   <title>andraewilliams.com</title>
   <style>
     html, body { height: 100%; margin: 0; }
-    body {
-      display: flex; align-items: center; justify-content: center;
-      font-family: system-ui, sans-serif; background: #111; color: #eee;
+    body { background: #111; color: #eee; font-family: system-ui, sans-serif; }
+    .hidden { display: none !important; }
+    #ascii-canvas { display: block; width: 100%; height: 100vh; }
+    #fallback-content {
+      height: 100%; display: flex;
+      align-items: center; justify-content: center;
       text-align: center; padding: 1rem;
     }
-    p { color: #888; font-size: 0.95rem; }
+    #fallback-content p { color: #888; font-size: 0.95rem; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>andraewilliams.com</h1>
-    <p>Rebuilding from a clean slate. Something new is coming.</p>
+  <canvas id="ascii-canvas" class="hidden"></canvas>
+  <main id="fallback-content">
+    <div>
+      <h1>andraewilliams.com</h1>
+      <p>Rebuilding from a clean slate. Something new is coming.</p>
+    </div>
   </main>
+  <script type="module" src="/js/main.js"></script>
 </body>
 </html>
