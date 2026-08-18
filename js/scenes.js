@@ -134,4 +134,84 @@ float sceneField(vec2 uv, float t) {
 }
 `;
 
-export const scenes = { noise, particles, metaballs, raymarch, plasma };
+// A pure energy-flare abstraction — no figure, no silhouette, no
+// character reference. Jagged radial spikes at several angular
+// frequencies, each with its own phase jitter, so the burst reads as
+// unstable/surging rather than a clean static starburst; a fast inner
+// shimmer keeps the core from going flat between pulses.
+const aura = `
+float hashA(float n) { return fract(sin(n) * 43758.5453123); }
+
+float sceneField(vec2 uv, float t) {
+  vec2 p = uv * 2.0 - 1.0;
+  float r = length(p);
+  float ang = atan(p.y, p.x);
+
+  float spikes = 0.0;
+  for (int i = 0; i < 5; i++) {
+    float fi = float(i);
+    float freq = 5.0 + fi * 3.0;
+    float speed = 0.6 + fi * 0.31;
+    float jitter = hashA(fi * 12.9) * 6.2831853;
+    spikes += (0.5 + 0.5 * sin(ang * freq + t * speed + jitter)) / (fi + 1.0);
+  }
+  spikes /= 2.3;
+
+  float edge = 0.28 + spikes * 0.55;
+  float pulse = 0.85 + 0.15 * sin(t * 3.0);
+  float core = smoothstep(edge * pulse, 0.0, r);
+
+  float shimmer = 0.5 + 0.5 * sin(r * 18.0 - t * 6.0 + spikes * 6.0);
+  return clamp(core * (0.7 + 0.3 * shimmer), 0.0, 1.0);
+}
+`;
+
+// A single decisive diagonal cut, not a blade or figure — anticipation,
+// a fast sweep, a held beat, then a fade, repeating on its own cycle.
+// Perpendicular width is perturbed by 1D noise along the stroke for
+// bled/torn ink edges, plus sparse drip streaks hanging off the line.
+const inkSlash = `
+float hashB(vec2 p) {
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+
+float noise1(float x) {
+  float i = floor(x);
+  float f = smoothstep(0.0, 1.0, fract(x));
+  return mix(hashB(vec2(i, 0.0)), hashB(vec2(i + 1.0, 0.0)), f);
+}
+
+float sceneField(vec2 uv, float t) {
+  vec2 p = uv * 2.0 - 1.0;
+
+  float ang = -0.55;
+  mat2 rot = mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
+  vec2 q = rot * p; // q.x runs along the stroke, q.y is perpendicular to it
+
+  float period = 3.2;
+  float cycle = floor(t / period);
+  float phase = fract(t / period);
+
+  float sweep = smoothstep(0.08, 0.4, phase);
+  float reach = mix(-1.8, 1.8, sweep);
+  float fade = 1.0 - smoothstep(0.55, 1.0, phase);
+  float tipStart = smoothstep(-1.8, -1.6, q.x);
+  float inFront = 1.0 - smoothstep(reach - 0.05, reach + 0.02, q.x);
+
+  float bleed = noise1(q.x * 8.0 + cycle * 17.3) * 0.06;
+  float width = 0.045 + bleed;
+  float core = 1.0 - smoothstep(width * 0.5, width, abs(q.y));
+
+  float dripSeed = noise1(q.x * 10.0 + cycle * 9.1 + 50.0);
+  float drip = smoothstep(0.82, 1.0, dripSeed) * (1.0 - smoothstep(0.0, 0.3, -q.y)) * step(q.y, 0.0);
+
+  float stroke = core * inFront * tipStart * fade;
+  stroke = max(stroke, drip * inFront * tipStart * fade * 0.6);
+
+  return clamp(stroke, 0.0, 1.0);
+}
+`;
+
+export const scenes = { noise, particles, metaballs, raymarch, plasma, aura, inkSlash };

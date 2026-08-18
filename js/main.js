@@ -1,5 +1,6 @@
 import { AsciiPipeline } from './ascii-pipeline.js';
 import { Gallery } from './gallery.js';
+import { initGalleryView } from './gallery-view.js';
 import { scenes } from './scenes.js';
 
 function hexToRgbFloat(hex) {
@@ -12,33 +13,47 @@ function hexToRgbFloat(hex) {
 }
 
 function init() {
-  const canvas = document.getElementById('ascii-canvas');
+  const heroCanvas = document.getElementById('ascii-canvas');
   const fallback = document.getElementById('fallback-content');
-  if (!canvas) return;
+  const galleryCanvas = document.getElementById('gallery-canvas');
+  const galleryOverlay = document.getElementById('gallery-grid-overlay');
+  const galleryBack = document.getElementById('gallery-back');
+  const gallerySection = document.getElementById('gallery-section');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bgColor = hexToRgbFloat('#070b12');
 
-  let pipeline;
-  try {
-    pipeline = new AsciiPipeline(canvas, scenes, {
-      bgColor: hexToRgbFloat('#070b12'),
-    });
-  } catch (err) {
-    console.warn('ASCII pipeline unavailable, falling back to static content:', err);
-    return;
+  let heroPipeline = null;
+  if (heroCanvas) {
+    try {
+      heroPipeline = new AsciiPipeline(heroCanvas, scenes, { bgColor });
+      heroCanvas.classList.remove('hidden');
+      if (fallback) fallback.classList.add('hidden');
+    } catch (err) {
+      console.warn('Hero ASCII pipeline unavailable, falling back to static content:', err);
+    }
   }
 
-  canvas.classList.remove('hidden');
-  if (fallback) fallback.classList.add('hidden');
+  let heroGallery = null;
+  if (heroPipeline) {
+    const sceneNames = Object.keys(scenes);
+    heroGallery = new Gallery(heroPipeline, sceneNames, { intervalMs: 12000, autoplay: !reduceMotion });
+    heroGallery.start();
+  }
 
-  const sceneNames = Object.keys(scenes);
-  const gallery = new Gallery(pipeline, sceneNames, { intervalMs: 12000, autoplay: !reduceMotion });
-  gallery.start();
+  let galleryView = null;
+  if (galleryCanvas && galleryOverlay && galleryBack) {
+    galleryView = initGalleryView(galleryCanvas, galleryOverlay, galleryBack, scenes, { bgColor, reduceMotion });
+    if (!galleryView && gallerySection) gallerySection.classList.add('hidden');
+  }
 
-  window.addEventListener('resize', () => pipeline.resize());
+  window.addEventListener('resize', () => {
+    if (heroPipeline) heroPipeline.resize();
+  });
 
   function loop() {
-    pipeline.render(reduceMotion);
+    if (heroPipeline) heroPipeline.render(reduceMotion);
+    if (galleryView) galleryView.tick(reduceMotion);
     if (!reduceMotion) requestAnimationFrame(loop);
   }
   loop();

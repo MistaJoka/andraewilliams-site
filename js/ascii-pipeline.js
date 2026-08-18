@@ -83,32 +83,37 @@ export class AsciiPipeline {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.triBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, tri, gl.STATIC_DRAW);
 
-    this.programCache = new Map();
+    this.programCache = new Map(); // name -> { program, locations }
     this.setScene(Object.keys(scenes)[0]);
     this.sceneStartTime = performance.now();
+    this.gridStartTime = performance.now();
+  }
+
+  _ensureProgram(name) {
+    if (!this.programCache.has(name)) {
+      const gl = this.gl;
+      const program = createProgram(gl, VERT_SRC, FRAG_TEMPLATE(this.scenes[name]));
+      const locations = {
+        aPosition: gl.getAttribLocation(program, 'aPosition'),
+        uResolution: gl.getUniformLocation(program, 'uResolution'),
+        uCell: gl.getUniformLocation(program, 'uCell'),
+        uTime: gl.getUniformLocation(program, 'uTime'),
+        uAspect: gl.getUniformLocation(program, 'uAspect'),
+        uAtlas: gl.getUniformLocation(program, 'uAtlas'),
+        uRampLen: gl.getUniformLocation(program, 'uRampLen'),
+        uBgColor: gl.getUniformLocation(program, 'uBgColor'),
+      };
+      this.programCache.set(name, { program, locations });
+    }
+    return this.programCache.get(name);
   }
 
   setScene(name) {
-    const gl = this.gl;
-    if (!this.programCache.has(name)) {
-      const src = FRAG_TEMPLATE(this.scenes[name]);
-      this.programCache.set(name, createProgram(gl, VERT_SRC, src));
-    }
+    const { program, locations } = this._ensureProgram(name);
     this.activeScene = name;
-    this.program = this.programCache.get(name);
+    this.program = program;
+    this.locations = locations;
     this.sceneStartTime = performance.now();
-
-    gl.useProgram(this.program);
-    this.locations = {
-      aPosition: gl.getAttribLocation(this.program, 'aPosition'),
-      uResolution: gl.getUniformLocation(this.program, 'uResolution'),
-      uCell: gl.getUniformLocation(this.program, 'uCell'),
-      uTime: gl.getUniformLocation(this.program, 'uTime'),
-      uAspect: gl.getUniformLocation(this.program, 'uAspect'),
-      uAtlas: gl.getUniformLocation(this.program, 'uAtlas'),
-      uRampLen: gl.getUniformLocation(this.program, 'uRampLen'),
-      uBgColor: gl.getUniformLocation(this.program, 'uBgColor'),
-    };
   }
 
   resize() {
@@ -120,33 +125,60 @@ export class AsciiPipeline {
       this.canvas.width = w;
       this.canvas.height = h;
     }
-    gl.viewport(0, 0, w, h);
+    return { w, h, dpr };
+  }
+
+  _drawScene(program, locations, w, h, timeSeconds) {
+    const gl = this.gl;
+    gl.useProgram(program);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.triBuffer);
+    gl.enableVertexAttribArray(locations.aPosition);
+    gl.vertexAttribPointer(locations.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.atlas.texture);
+    gl.uniform1i(locations.uAtlas, 0);
+
+    gl.uniform2f(locations.uResolution, w, h);
+    gl.uniform2f(locations.uCell, this.atlas.cellWidth, this.atlas.cellHeight);
+    gl.uniform1f(locations.uAspect, w / h);
+    gl.uniform1f(locations.uRampLen, this.atlas.rampLength);
+    gl.uniform3fv(locations.uBgColor, this.bgColor);
+    gl.uniform1f(locations.uTime, timeSeconds);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
   render(frozen = false) {
     const gl = this.gl;
-    this.resize();
-    gl.useProgram(this.program);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.triBuffer);
-    gl.enableVertexAttribArray(this.locations.aPosition);
-    gl.vertexAttribPointer(this.locations.aPosition, 2, gl.FLOAT, false, 0, 0);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.atlas.texture);
-    gl.uniform1i(this.locations.uAtlas, 0);
-
-    const w = this.canvas.width;
-    const h = this.canvas.height;
-    gl.uniform2f(this.locations.uResolution, w, h);
-    gl.uniform2f(this.locations.uCell, this.atlas.cellWidth, this.atlas.cellHeight);
-    gl.uniform1f(this.locations.uAspect, w / h);
-    gl.uniform1f(this.locations.uRampLen, this.atlas.rampLength);
-    gl.uniform3fv(this.locations.uBgColor, this.bgColor);
-
+    const { w, h } = this.resize();
+    gl.viewport(0, 0, w, h);
     const t = frozen ? 0 : (performance.now() - this.sceneStartTime) / 1000;
-    gl.uniform1f(this.locations.uTime, t);
+    this._drawScene(this.program, this.locations, w, h, t);
+  }
 
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  // cellRects: [{ name, x, y, w, h }] in CSS pixels, top-left origin,
+  // relative to the canvas's own box — as returned by getBoundingClientRect().
+  renderGrid(cellRects, frozen = false) {
+    const gl = this.gl;
+    const { h: canvasH, dpr } = this.resize();
+    gl.enable(gl.SCISSOR_TEST);
+    const t = frozen ? 0 : (performance.now() - this.gridStartTime) / 1000;
+
+    for (const cell of cellRects) {
+      const gx = Math.round(cell.x * dpr);
+      const gw = Math.round(cell.w * dpr);
+      const gh = Math.round(cell.h * dpr);
+      const gy = Math.round(canvasH - (cell.y + cell.h) * dpr); // flip to WebGL's bottom-left origin
+
+      gl.viewport(gx, gy, gw, gh);
+      gl.scissor(gx, gy, gw, gh);
+
+      const { program, locations } = this._ensureProgram(cell.name);
+      this._drawScene(program, locations, gw, gh, t);
+    }
+
+    gl.disable(gl.SCISSOR_TEST);
   }
 }
