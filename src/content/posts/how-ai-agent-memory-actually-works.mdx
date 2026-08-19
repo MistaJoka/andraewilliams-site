@@ -11,18 +11,26 @@ seriesOrder: 4
 featured: true
 status: WORKING
 ---
+import { Tldr, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from '@blocks';
 
-## TL;DR
 
+<Tldr>
 "Give the agent memory" sounds like one feature. It is four, and they fail
 differently.
 
-An agent's memory is a stack: the context window it can see right now,
-a vector store it can search, an event log of what it did, and a
-structured store of facts it has committed to. Confusing them is why
-agents forget things you told them thirty seconds ago while confidently
-recalling something from last week.
+An agent's memory is a stack: the context window it can see right now, a
+vector store it can search, an event log of what it did, and a structured
+store of facts it has committed to. Confusing them is why agents forget
+things you told them thirty seconds ago while confidently recalling
+something from last week.
+</Tldr>
 
+<WhyItMatters>
+Every "our agent has memory" claim is really a claim about one of these
+four layers. Knowing which one tells you what it will forget.
+</WhyItMatters>
+
+<HowItWorks>
 ## The four layers
 
 **Short-term memory** is the context window. It is not storage — it is
@@ -47,6 +55,8 @@ that?"
 a graph, a plain JSON file. Not "here's a chunk of text that mentions the
 database URL," but `database.url = ...`. Exact, updateable, and not
 subject to retrieval luck.
+
+</HowItWorks>
 
 ## Retrieval is the hard part
 
@@ -74,8 +84,7 @@ Three things move the needle more than swapping embedding models:
    failures. Narrow by project, date, or type first, then rank within
    that.
 
-## Where it breaks
-
+<FailureModes>
 - **Context poisoning.** One bad retrieved chunk anchors the model for the
   rest of the run. Retrieved content should be visibly marked as
   retrieved, not blended into the instructions.
@@ -84,9 +93,9 @@ Three things move the needle more than swapping embedding models:
   both and retrieving whichever embeds closer.
 - **Unbounded growth.** Every run appends. Without a compaction step,
   retrieval quality degrades exactly as the archive becomes valuable.
+</FailureModes>
 
-## What I learned
-
+<WhatILearned>
 Reach for the simplest layer that answers the question. Most of what
 people build a vector store for is a lookup — a key and a value they
 already know the name of. Semantic memory in a JSON file answers it
@@ -94,3 +103,4 @@ exactly, every time, for free.
 
 Use the vector store for the genuinely fuzzy case: "have I seen anything
 like this before?" That is the question it is actually good at.
+</WhatILearned>

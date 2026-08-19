@@ -7,7 +7,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "check:links": "node scripts/check-links.mjs",
+    "verify": "npm run build && npm run check && npm run check:links"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.3.7",

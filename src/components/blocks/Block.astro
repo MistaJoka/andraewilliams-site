@@ -8,27 +8,30 @@ interface Props {
   emphasis?: boolean;
 }
 const { label, tone = 'neutral', emphasis = false } = Astro.props;
-const TONES: Record<string, string> = {
-  neutral: 'var(--line-bright)',
-  accent: 'var(--accent)',
-  warn: 'var(--status-testing)',
-  crit: 'var(--status-broken)',
-  ok: 'var(--status-working)',
+// Rail and label are separate: --line-bright reads correctly as a 2px
+// rule but fails contrast as text, so the neutral block keeps the quiet
+// rail and gets a readable label.
+const TONES: Record<string, { rail: string; label: string }> = {
+  neutral: { rail: 'var(--line-bright)', label: 'var(--text-1)' },
+  accent: { rail: 'var(--accent)', label: 'var(--accent)' },
+  warn: { rail: 'var(--status-testing)', label: 'var(--status-testing)' },
+  crit: { rail: 'var(--status-broken)', label: 'var(--status-broken)' },
+  ok: { rail: 'var(--status-working)', label: 'var(--status-working)' },
 };
 ---
-<section class:list={['block', { emphasis }]} style={`--block-accent: ${TONES[tone]}`}>
+<section class:list={['block', { emphasis }]} style={`--block-rail: ${TONES[tone].rail}; --block-label: ${TONES[tone].label}`}>
   <p class="eyebrow block-label">{label}</p>
   <div class="block-body"><slot /></div>
 </section>
 
 <style>
   .block {
-    border-left: 2px solid var(--block-accent);
+    border-left: 2px solid var(--block-rail);
     padding: var(--sp-3) 0 var(--sp-3) var(--sp-4);
     margin: 0 0 var(--sp-5);
   }
-  .block.emphasis { background: var(--bg-1); border: 1px solid var(--line); border-left: 3px solid var(--block-accent); padding: var(--sp-4); }
-  .block-label { color: var(--block-accent); margin-bottom: var(--sp-2); }
+  .block.emphasis { background: var(--bg-1); border: 1px solid var(--line); border-left: 3px solid var(--block-rail); padding: var(--sp-4); }
+  .block-label { color: var(--block-label); margin-bottom: var(--sp-2); }
   .block-body > :global(:last-child) { margin-bottom: 0; }
   .block-body :global(p) { max-width: 68ch; }
 </style>
