@@ -78,14 +78,19 @@
       color: var(--text-1); font-size: 0.75rem; text-align: center;
     }
 
+    /* ELI5: a "glitch" = briefly showing the wrong slice in the wrong
+       place. clip-path cuts a thin band, transform nudges it sideways,
+       hue-rotate shifts its color. */
     @keyframes glitch-cut {
-      0% { clip-path: inset(0 0 0 0); transform: translate(0, 0); filter: hue-rotate(0deg); }
-      10% { clip-path: inset(10% 0 60% 0); transform: translate(-2%, 0); filter: hue-rotate(15deg); }
-      20% { clip-path: inset(60% 0 5% 0); transform: translate(2%, 0); filter: hue-rotate(-20deg); }
-      30% { clip-path: inset(30% 0 40% 0); transform: translate(-1%, 0); filter: hue-rotate(0deg); }
-      40% { clip-path: inset(5% 0 70% 0); transform: translate(1%, 0); }
-      100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); filter: hue-rotate(0deg); }
+      0% { clip-path: inset(0 0 0 0); transform: translate(0, 0); filter: hue-rotate(0deg); }       /* rest state */
+      10% { clip-path: inset(10% 0 60% 0); transform: translate(-2%, 0); filter: hue-rotate(15deg); } /* band torn near top, shifted left */
+      20% { clip-path: inset(60% 0 5% 0); transform: translate(2%, 0); filter: hue-rotate(-20deg); }  /* band torn near bottom, shifted right */
+      30% { clip-path: inset(30% 0 40% 0); transform: translate(-1%, 0); filter: hue-rotate(0deg); }  /* mid band, smaller shift */
+      40% { clip-path: inset(5% 0 70% 0); transform: translate(1%, 0); }                              /* another top-heavy band */
+      100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); filter: hue-rotate(0deg); }       /* settle back to rest */
     }
+    /* steps(2, end): jump between keyframes instantly instead of
+       interpolating — that's what sells a "cut" instead of a fade. */
     #ascii-canvas.glitching { animation: glitch-cut 220ms steps(2, end); }
     .gallery-tile:hover { animation: glitch-cut 220ms steps(2, end); }
 
@@ -99,6 +104,11 @@
     <span class="wordmark">andraewilliams.com</span>
   </header>
 
+  <!-- ELI5: the canvas starts hidden and a plain-text fallback shows
+       instead. js/main.js only removes the "hidden" class once WebGL has
+       actually initialized successfully — so on a browser/device without
+       WebGL support, visitors see readable text instead of a blank canvas
+       or a JS error. -->
   <section id="hero-section">
     <canvas id="ascii-canvas" class="hidden"></canvas>
     <main id="fallback-content">
@@ -114,13 +124,13 @@
     <div id="gallery-stage">
       <canvas id="gallery-canvas"></canvas>
       <div id="gallery-grid-overlay">
-        <button class="gallery-tile" type="button" data-scene="noise"><span>Noise</span></button>
         <button class="gallery-tile" type="button" data-scene="particles"><span>Particles</span></button>
-        <button class="gallery-tile" type="button" data-scene="metaballs"><span>Metaballs</span></button>
-        <button class="gallery-tile" type="button" data-scene="raymarch"><span>Torus</span></button>
-        <button class="gallery-tile" type="button" data-scene="plasma"><span>Plasma</span></button>
         <button class="gallery-tile" type="button" data-scene="aura"><span>Aura</span></button>
+        <button class="gallery-tile" type="button" data-scene="fire"><span>Fire</span></button>
         <button class="gallery-tile" type="button" data-scene="inkSlash"><span>Ink Slash</span></button>
+        <button class="gallery-tile" type="button" data-scene="mechaHud"><span>Mecha HUD</span></button>
+        <button class="gallery-tile" type="button" data-scene="rule30"><span>Rule 30</span></button>
+        <button class="gallery-tile" type="button" data-scene="life"><span>Life</span></button>
       </div>
       <button id="gallery-back" class="hidden" type="button">&larr; Back to grid</button>
     </div>
