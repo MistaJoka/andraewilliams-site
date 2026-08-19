@@ -275,4 +275,28 @@ float sceneField(vec2 uv, float t) {
 }
 `;
 
-export const scenes = { particles, aura, fire, inkSlash, mechaHud, rule30, life };
+// ELI5: the pattern is not drawn here at all — js/reaction-sim.js grows
+// it in a texture, and this scene just reads how much of the "eater"
+// chemical (V) ended up at each point. The 16-bit value is split across
+// two channels, so it is reassembled before use.
+const reaction = `
+float reactionV(vec2 uv) {
+  vec4 s = texture2D(uReactionTexture, fract(uv));
+  return s.b + s.a / 255.0; // rejoin the coarse + leftover halves
+}
+
+float sceneField(vec2 uv, float t) {
+  // The compositor widens uv by the aspect ratio so scenes keep square
+  // cells; here that would push x past 0..1 and wrap the dish, showing
+  // the same motif two or three times across a wide canvas. Undoing it
+  // fits exactly one dish to the canvas — the corridors stretch a little
+  // instead of repeating.
+  vec2 dish = vec2((uv.x - 0.5) / uAspect + 0.5, uv.y);
+
+  // V lives in roughly 0..0.4; stretch that across the glyph ramp so the
+  // pattern uses the full sparse -> dense range instead of the bottom third.
+  return smoothstep(0.04, 0.30, reactionV(dish));
+}
+`;
+
+export const scenes = { particles, aura, fire, inkSlash, mechaHud, rule30, life, reaction };

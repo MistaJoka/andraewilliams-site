@@ -106,6 +106,18 @@ export const projects = [
     model: 'Claude Opus 5',
     source: `${REPO}/js/game-of-life-sim.js`,
   },
+  {
+    slug: 'reaction',
+    title: 'Reaction',
+    blurb: 'Two imaginary chemicals — one feeds, one eats — obeying three rules per cell until they chase each other into a maze nobody drew.',
+    kind: 'scene',
+    scene: 'reaction',
+    date: '2026-08-19',
+    tools: ['WebGL', 'GLSL', 'FBO', 'Gray-Scott'],
+    built: 'Wrote the Gray-Scott sim, packed both chemicals to 16-bit across RGBA to stop 8-bit rounding freezing the reaction, and swept feed/kill by measurement to find the maze regime.',
+    model: 'Claude Opus 5',
+    source: `${REPO}/js/reaction-sim.js`,
+  },
 ];
 
 export function findProject(slug) {
