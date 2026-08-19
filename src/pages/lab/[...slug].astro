@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusLight from '../../components/ui/StatusLight.astro';
+import AsciiStage from '../../components/lab/AsciiStage.astro';
+import { getCollection, getEntries, render } from 'astro:content';
+import { formatDate } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const lab = await getCollection('lab', ({ data }) => !data.draft);
+  return lab.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const topics = await getEntries(entry.data.topics);
+---
+<BaseLayout title={entry.data.title} description={entry.data.description} type="article" publishedTime={entry.data.date}>
+  <header class="page-head">
+    <p class="eyebrow">Lab</p>
+    <div class="titlerow">
+      <h1>{entry.data.title}</h1>
+      <StatusLight status={entry.data.status} />
+    </div>
+    <p class="lede">{entry.data.description}</p>
+  </header>
+
+  {entry.data.scene && (
+    <AsciiStage
+      scene={entry.data.scene}
+      title={entry.data.title}
+      fallback={entry.data.description}
+      height="24rem"
+    />
+  )}
+
+  <div class="prose"><Content /></div>
+
+  <dl class="spec">
+    <dt>Ran</dt><dd><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></dd>
+    <dt>Outcome</dt><dd>{entry.data.outcome}</dd>
+    <dt>Stack</dt><dd>{entry.data.tools.join(' · ')}</dd>
+    {entry.data.built && <><dt>Built</dt><dd>{entry.data.built}</dd></>}
+    {entry.data.model && <><dt>Model</dt><dd>{entry.data.model}</dd></>}
+    {entry.data.source && <><dt>Source</dt><dd><a href={entry.data.source} rel="noopener noreferrer" target="_blank">View source →</a></dd></>}
+  </dl>
+
+  <p class="topics">
+    {topics.map((t: any) => <a href={`/topics/${t.data.id}/`} style={`--t: var(${t.data.accent})`}>{t.data.label}</a>)}
+  </p>
+</BaseLayout>
+<style>
+  .page-head { padding: var(--sp-6) 0 var(--sp-5); margin-bottom: var(--sp-5); }
+  .titlerow { display: flex; gap: var(--sp-4); align-items: center; flex-wrap: wrap; }
+  h1 { font-size: var(--step-3); margin: var(--sp-3) 0; }
+  .lede { color: var(--text-1); font-size: var(--step-1); max-width: 62ch; }
+  .prose { max-width: 72ch; }
+  .spec { display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-2) var(--sp-5); margin: var(--sp-6) 0 var(--sp-4); border-top: 1px solid var(--line); padding-top: var(--sp-4); font-size: var(--step--1); }
+  .spec dt { font-family: var(--font-mono); color: var(--text-2); text-transform: uppercase; letter-spacing: 0.1em; }
+  .spec dd { margin: 0; color: var(--text-1); }
+  .topics { display: flex; gap: var(--sp-3); }
+  .topics a { color: var(--t); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-decoration: none; border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+  @media (max-width: 40rem) { .spec { grid-template-columns: 1fr; gap: var(--sp-1); } .spec dd { margin-bottom: var(--sp-2); } }
+</style>

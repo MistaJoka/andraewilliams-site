@@ -1,0 +1,16 @@
+---
+title: "Mecha HUD"
+description: "Targeting reticles, sweep lines and scan bars composed from primitives — a cockpit display with no images in it."
+date: 2026-08-17
+status: WORKING
+outcome: CONFIRMED
+topics: [ai]
+tags: [webgl, glsl, ascii]
+tools: [WebGL, GLSL, HUD]
+scene: mechaHud
+built: "Composed the ring, crosshair and sweep primitives into one layered field."
+model: "Claude Opus 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/ascii/scenes.js
+---
+
+Every element is a distance function: a grid from fract(), a crosshair with a centre gap and a range cutoff, four L-brackets, and a radar sweep whose trail is `exp(-abs(angDiff)*1.8)`. No sprite sheet, no texture — the whole cockpit is arithmetic.

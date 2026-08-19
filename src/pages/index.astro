@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FeaturedPost from '../components/feed/FeaturedPost.astro';
 import Feed from '../components/feed/Feed.astro';
+import AsciiStage from '../components/lab/AsciiStage.astro';
 import { getCollection } from 'astro:content';
 import '../styles/cards.css';
 
@@ -45,6 +46,20 @@ const featuredSeries = featured.data.series ? seriesById[featured.data.series.id
       </span>
     </div>
     <p class="tagline">A living technical feed and digital laboratory.</p>
+
+    <!-- The one decorative canvas on the site. Deferred until on screen,
+         one static frame under prefers-reduced-motion, and it falls back
+         to the caption if WebGL is unavailable. -->
+    <AsciiStage
+      scene="aura"
+      title="Aura"
+      autoplay
+      height="11rem"
+      fallback="A corona rendered live as ASCII — see it in the lab."
+    />
+    <p class="stage-note">
+      Rendered live in your browser as ASCII. <a href="/lab/">See how it works →</a>
+    </p>
   </section>
 
   <FeaturedPost post={featured} series={featuredSeries} />
@@ -68,7 +83,14 @@ const featuredSeries = featured.data.series ? seriesById[featured.data.series.id
   }
   .status-label { color: var(--status-working); }
   .status-sep { color: var(--line-bright); }
+  /* The separator only makes sense while both halves share a line. */
+  @media (max-width: 34rem) { .status-sep { display: none; } }
   .currently b { color: var(--accent); font-weight: 400; }
-  .tagline { margin: var(--sp-4) 0 0; color: var(--text-1); font-size: var(--step-1); max-width: 54ch; }
+  .tagline { margin: var(--sp-4) 0 var(--sp-5); color: var(--text-1); font-size: var(--step-1); max-width: 54ch; }
+  .stage-note {
+    margin: calc(var(--sp-5) * -1 + var(--sp-2)) 0 0;
+    font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.08em; color: var(--text-2);
+  }
   .section-heading { margin-bottom: var(--sp-4); }
 </style>

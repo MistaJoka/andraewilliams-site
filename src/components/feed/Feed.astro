@@ -44,7 +44,9 @@ const filterCss = filters
         >
           <Card
             post={post}
-            series={s && { title: s.title, order: post.data.seriesOrder, total: s.plannedParts }}
+            series={s && post.data.seriesOrder != null
+              ? { title: s.title, order: post.data.seriesOrder, total: s.plannedParts }
+              : undefined}
           />
         </li>
       );

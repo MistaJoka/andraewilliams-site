@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="About" description="Who this is and what this site is for.">
+  <header class="page-head">
+    <p class="eyebrow">About</p>
+    <h1>Andrae Williams</h1>
+    <p class="lede">AI · Software · Cyber · Risk · Systems</p>
+  </header>
+  <div class="prose">
+    <p>
+      This site is a technical second brain kept in public. It is where I work
+      things out — what I am learning, what I am building, what broke, and what
+      I would do differently.
+    </p>
+    <h2>What is here</h2>
+    <p>
+      Posts are organised by <a href="/topics/">topic</a> and, where they form a
+      sequence, by <a href="/feed/">series</a>. The <a href="/lab/">lab</a> holds
+      live experiments; <a href="/projects/">projects</a> holds things that
+      actually shipped. <a href="/resources/">Resources</a> is the reference
+      library I actually reach for.
+    </p>
+    <h2>How it is written</h2>
+    <p>
+      Every entry aims to do at least one of: learn, build, explain, test,
+      analyse, visualise, reference, or connect. This is a growing map, not a
+      publishing treadmill — so there is no schedule, and older entries get
+      updated rather than replaced.
+    </p>
+    <h2>Provenance</h2>
+    <p>
+      Projects and lab entries record what was built by AI and which model wrote
+      it. Posts are mine. That distinction is deliberate and it is visible on
+      every entry that has one.
+    </p>
+  </div>
+</BaseLayout>
+<style>
+  .page-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+  h1 { font-size: var(--step-3); margin: var(--sp-3) 0; }
+  .lede { color: var(--text-1); font-family: var(--font-mono); letter-spacing: 0.08em; }
+  .prose { max-width: 68ch; }
+  .prose h2 { font-size: var(--step-1); margin-top: var(--sp-6); }
+</style>

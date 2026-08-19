@@ -1,0 +1,16 @@
+---
+title: "Aura"
+description: "A corona in three layers: a molten core dissolving at a turbulent rim, streamers thrown off it, and shock rings expanding outward."
+date: 2026-08-19
+status: WORKING
+outcome: CONFIRMED
+topics: [ai]
+tags: [webgl, glsl, ascii]
+tools: [WebGL, GLSL, fBm]
+scene: aura
+built: "Rebuilt from a single wobbling circle: fbm sampled in polar coordinates so the turbulence wraps the rim rather than sliding across it, plus windowed streamers and expanding shells."
+model: "Claude Opus 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/ascii/scenes.js
+---
+
+The first version was a circle with noise added to its radius, which slides sideways and reads as a wobble rather than a burn. Sampling the noise in polar coordinates — angle on one axis, radius on the other — makes the turbulence wrap the rim instead of translating across it.

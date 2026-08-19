@@ -1,0 +1,16 @@
+---
+title: "Ink Slash"
+description: "Three brush strokes on staggered clocks, each a distance-to-a-line-segment with pressure-tapered width, a chewed dry-brush edge and spatter past the tip."
+date: 2026-08-19
+status: WORKING
+outcome: CONFIRMED
+topics: [ai]
+tags: [webgl, glsl, ascii]
+tools: [WebGL, GLSL, SDF]
+scene: inkSlash
+built: "Rewritten after measurement showed the single stroke left the frame empty for a third of every cycle: three offset strokes, ink that runs dry from the tail forward, and noise-roughened edges."
+model: "Claude Opus 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/ascii/scenes.js
+---
+
+A stroke is a signed distance to a line segment, thresholded. Everything that makes it read as ink rather than a rectangle is the modulation: width tapered by `sin(along*π)` for pressure, a 1D-noise edge for dry brush, and opacity draining from the tail forward so the stroke runs out.

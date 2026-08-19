@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Feed from '../components/feed/Feed.astro';
+import { getCollection } from 'astro:content';
+import '../styles/cards.css';
+
+const [posts, seriesList, topics] = await Promise.all([
+  getCollection('posts', ({ data }) => !data.draft),
+  getCollection('series'),
+  getCollection('topics'),
+]);
+const seriesById = Object.fromEntries(
+  seriesList.map((s) => [s.id, { title: s.data.title, plannedParts: s.data.plannedParts }]),
+);
+const byDate = [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const filters = [
+  ...[...topics].sort((a, b) => a.data.order - b.data.order).map((t) => ({ id: t.data.id, label: t.data.label })),
+  { id: 'tldr', label: 'TLDR' },
+  { id: 'eli5', label: 'ELI5' },
+  { id: 'visual', label: 'VISUAL' },
+];
+---
+<BaseLayout title="Feed" description="Everything, newest first — posts, builds, experiments and notes across AI, cyber, homelab, risk, MMA and anime.">
+  <header class="page-head">
+    <p class="eyebrow">Feed</p>
+    <h1>Everything, newest first</h1>
+    <p class="lede">{posts.length} entries. Filter by topic or format.</p>
+  </header>
+  <Feed posts={byDate} seriesById={seriesById} filters={filters} />
+</BaseLayout>
+<style>
+  .page-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+  h1 { font-size: var(--step-3); margin: var(--sp-3) 0; }
+  .lede { color: var(--text-1); }
+</style>

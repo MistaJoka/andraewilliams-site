@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const [topics, posts] = await Promise.all([getCollection('topics'), getCollection('posts', ({ data }) => !data.draft)]);
+const count = (id: string) => posts.filter((p) => p.data.topics.some((r: any) => r.id === id)).length;
+const ordered = [...topics].sort((a, b) => a.data.order - b.data.order);
+---
+<BaseLayout title="Topics" description="The map of what I work on — AI, cyber, homelab, risk, MMA and anime.">
+  <header class="page-head">
+    <p class="eyebrow">Topics</p>
+    <h1>The map</h1>
+    <p class="lede">Six hubs. Everything on the site belongs to at least one.</p>
+  </header>
+  <ul class="topic-grid">
+    {ordered.map((t) => (
+      <li style={`--t: var(${t.data.accent})`}>
+        <a href={`/topics/${t.data.id}/`}>
+          <span class="glyph" aria-hidden="true">{t.data.glyph}</span>
+          <span class="label">{t.data.label}</span>
+          <span class="blurb">{t.data.blurb}</span>
+          <span class="count">{count(t.data.id)} post{count(t.data.id) === 1 ? '' : 's'}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+<style>
+  .page-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+  h1 { font-size: var(--step-3); margin: var(--sp-3) 0; }
+  .lede { color: var(--text-1); }
+  .topic-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: var(--sp-4); }
+  .topic-grid a { display: grid; gap: var(--sp-2); padding: var(--sp-4); border: 1px solid var(--line); border-top: 3px solid var(--t); text-decoration: none; background: var(--bg-1); height: 100%; }
+  .topic-grid a:hover { background: var(--bg-2); border-color: var(--t); border-top-color: var(--t); }
+  .glyph { font-size: var(--step-2); color: var(--t); line-height: 1; }
+  .label { font-family: var(--font-mono); letter-spacing: 0.1em; color: var(--t); }
+  .blurb { color: var(--text-1); font-size: var(--step-0); }
+  .count { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; margin-top: auto; }
+</style>
