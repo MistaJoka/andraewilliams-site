@@ -124,6 +124,22 @@ canvas; nothing loads until the reader asks for it.
 
 ---
 
+### Social preview images
+
+Every post, project and lab entry gets a 1200x630 OG card generated at
+build time from the site's own design language (accent rail, corner
+bracket, mono eyebrow). Nothing to author — add content and it gets a
+card. Routes without a content entry fall back to `/og/default.png`.
+
+Rendered by `satori` + `@resvg/resvg-js`, both devDependencies: they run
+during the build and ship nothing to the browser. Template lives in
+[`src/lib/og.ts`](src/lib/og.ts). Note satori accepts `.ttf`/`.otf`/
+`.woff` but **not** `.woff2`, which is why the font paths point at
+Fontsource's `.woff` files.
+
+`node scripts/check-links.mjs` fails the build if any page references an
+og:image that does not exist.
+
 ## Architecture notes
 
 - **`src/lib/integrity.ts` is load-bearing.** Astro's `reference()`

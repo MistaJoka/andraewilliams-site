@@ -43,7 +43,26 @@ for (const page of pages) {
   }
 }
 
+// og:image is an absolute URL in a content= attribute, so the href/src
+// sweep above never sees it. A card that 404s is worse than no card at
+// all — the scraper shows a broken preview rather than falling back.
+const ogProblems = [];
+for (const page of pages) {
+  const html = await readFile(page, 'utf8');
+  const from = '/' + relative(DIST, page);
+  const m = html.match(/property="og:image" content="([^"]+)"/);
+  if (!m) { ogProblems.push(`${from} -> no og:image`); continue; }
+  const path = m[1].replace(/^https?:\/\/[^/]+/, '');
+  if (!routes.has(path)) ogProblems.push(`${from} -> og:image missing ${path}`);
+}
+
 console.log(`checked ${pages.length} pages, ${routes.size} known routes`);
+if (ogProblems.length) {
+  console.error(`\n${ogProblems.length} og:image problem(s):`);
+  for (const p of ogProblems) console.error('  ' + p);
+  process.exit(1);
+}
+console.log(`every page has a resolvable og:image`);
 if (problems.length) {
   console.error(`\n${problems.length} broken internal link(s):`);
   for (const p of problems) console.error('  ' + p);

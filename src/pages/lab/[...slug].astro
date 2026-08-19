@@ -14,7 +14,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const topics = await getEntries(entry.data.topics);
 ---
-<BaseLayout title={entry.data.title} description={entry.data.description} type="article" publishedTime={entry.data.date}>
+<BaseLayout title={entry.data.title} description={entry.data.description} type="article" ogImage={`/og/lab/${entry.id}.png`} publishedTime={entry.data.date}>
   <header class="page-head">
     <p class="eyebrow">Lab</p>
     <div class="titlerow">

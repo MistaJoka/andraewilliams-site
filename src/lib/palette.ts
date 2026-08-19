@@ -23,3 +23,27 @@ export const hexToRgbFloat = (hex: string): [number, number, number] => {
     parseInt(c.slice(4, 6), 16) / 255,
   ];
 };
+
+/**
+ * Resolves a design token name (e.g. "--topic-ai") to its hex value by
+ * reading tokens.css at build time.
+ *
+ * OG cards are rasterised by satori, which has no CSS custom properties,
+ * so it needs literal hex. Parsing the stylesheet rather than duplicating
+ * a colour map keeps tokens.css the single source — the same reason the
+ * GLSL ramp is generated rather than hand-copied.
+ *
+ * Build-time only: uses node:fs.
+ */
+export async function resolveToken(name: string, fallback = '#56a8ff'): Promise<string> {
+  const { readFile } = await import('node:fs/promises');
+  if (!tokenCache) {
+    const css = await readFile('src/styles/tokens.css', 'utf8');
+    tokenCache = new Map(
+      [...css.matchAll(/(--[a-z0-9-]+):\s*(#[0-9a-fA-F]{3,8})\s*;/g)].map((m) => [m[1]!, m[2]!]),
+    );
+  }
+  return tokenCache.get(name) ?? fallback;
+}
+
+let tokenCache: Map<string, string> | null = null;

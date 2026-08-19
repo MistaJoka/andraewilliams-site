@@ -17,7 +17,7 @@ const topics = await getEntries(project.data.topics);
 // The reverse edge — computed, never authored on both sides.
 const posts = await postsForProject(project.id);
 ---
-<BaseLayout title={project.data.title} description={project.data.description} type="article" publishedTime={project.data.date}>
+<BaseLayout title={project.data.title} description={project.data.description} type="article" ogImage={`/og/projects/${project.id}.png`} publishedTime={project.data.date}>
   <header class="page-head">
     <p class="eyebrow">Project</p>
     <div class="titlerow">
