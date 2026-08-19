@@ -3,7 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>andraewilliams.com</title>
+  <title>andraewilliams.com — AI-built projects, rendered in ASCII</title>
+  <meta name="description" content="A gallery of small projects written by AI and rendered live in the browser as WebGL ASCII art.">
+  <meta name="theme-color" content="#070b12">
+  <link rel="canonical" href="https://www.andraewilliams.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.andraewilliams.com/">
+  <meta property="og:title" content="andraewilliams.com — AI-built projects, rendered in ASCII">
+  <meta property="og:description" content="A gallery of small projects written by AI and rendered live in the browser as WebGL ASCII art.">
+  <!-- summary, not summary_large_image: there is no og:image yet. Add a
+       captured still of the hero and upgrade this line then. -->
+  <meta name="twitter:card" content="summary">
   <style>
     :root {
       --navy: #070b12;
@@ -64,6 +74,39 @@
     .gallery-tile:hover, .gallery-tile:focus-visible {
       border-color: var(--teal); color: var(--teal); outline: none;
     }
+    .tile-title { pointer-events: none; }
+
+    #project-embed {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border: 0; background: var(--navy);
+    }
+
+    #project-detail {
+      border: 1px solid var(--line); border-top: none;
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+    #project-detail:focus { outline: none; }
+    #project-detail:focus-visible { outline: 1px solid var(--teal); outline-offset: -1px; }
+    .detail-title {
+      margin: 0 0 0.5rem; font-size: 1rem; color: var(--teal);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .detail-blurb { margin: 0 0 1rem; color: var(--text-0); font-size: 0.85rem; line-height: 1.6; max-width: 62ch; }
+    .detail-meta {
+      display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1.25rem;
+      margin: 0 0 1rem; font-size: 0.75rem;
+    }
+    .detail-meta dt { color: var(--text-1); text-transform: uppercase; letter-spacing: 0.08em; }
+    .detail-meta dd { margin: 0; color: var(--text-0); }
+    .detail-source { color: var(--amber); font-size: 0.75rem; text-decoration: none; letter-spacing: 0.06em; }
+    .detail-source:hover, .detail-source:focus-visible { text-decoration: underline; }
+
+    /* Off-screen but still announced by screen readers — how mode
+       changes are narrated without showing a status line to everyone. */
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+    }
 
     #gallery-back {
       position: absolute; top: 0.75rem; left: 0.75rem; z-index: 2;
@@ -123,17 +166,15 @@
     <h2 class="section-title">Gallery</h2>
     <div id="gallery-stage">
       <canvas id="gallery-canvas"></canvas>
-      <div id="gallery-grid-overlay">
-        <button class="gallery-tile" type="button" data-scene="particles"><span>Particles</span></button>
-        <button class="gallery-tile" type="button" data-scene="aura"><span>Aura</span></button>
-        <button class="gallery-tile" type="button" data-scene="fire"><span>Fire</span></button>
-        <button class="gallery-tile" type="button" data-scene="inkSlash"><span>Ink Slash</span></button>
-        <button class="gallery-tile" type="button" data-scene="mechaHud"><span>Mecha HUD</span></button>
-        <button class="gallery-tile" type="button" data-scene="rule30"><span>Rule 30</span></button>
-        <button class="gallery-tile" type="button" data-scene="life"><span>Life</span></button>
-      </div>
+      <!-- Tiles are built from js/projects.js — the single source of
+           truth for what exists. Nothing project-specific is written
+           into this file. -->
+      <div id="gallery-grid-overlay"></div>
+      <iframe id="project-embed" class="hidden" title="Embedded project"></iframe>
       <button id="gallery-back" class="hidden" type="button">&larr; Back to grid</button>
     </div>
+    <article id="project-detail" class="hidden" tabindex="-1"></article>
+    <p id="gallery-status" class="visually-hidden" role="status" aria-live="polite"></p>
   </section>
 
   <footer class="site-footer">

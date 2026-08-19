@@ -15,10 +15,15 @@ function hexToRgbFloat(hex) {
 function init() {
   const heroCanvas = document.getElementById('ascii-canvas');
   const fallback = document.getElementById('fallback-content');
-  const galleryCanvas = document.getElementById('gallery-canvas');
-  const galleryOverlay = document.getElementById('gallery-grid-overlay');
-  const galleryBack = document.getElementById('gallery-back');
   const gallerySection = document.getElementById('gallery-section');
+  const galleryEls = {
+    canvas: document.getElementById('gallery-canvas'),
+    overlay: document.getElementById('gallery-grid-overlay'),
+    backButton: document.getElementById('gallery-back'),
+    embed: document.getElementById('project-embed'),
+    detail: document.getElementById('project-detail'),
+    status: document.getElementById('gallery-status'),
+  };
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const bgColor = hexToRgbFloat('#070b12');
@@ -42,8 +47,8 @@ function init() {
   }
 
   let galleryView = null;
-  if (galleryCanvas && galleryOverlay && galleryBack) {
-    galleryView = initGalleryView(galleryCanvas, galleryOverlay, galleryBack, scenes, { bgColor, reduceMotion });
+  if (Object.values(galleryEls).every(Boolean)) {
+    galleryView = initGalleryView(galleryEls, scenes, { bgColor, reduceMotion });
     if (!galleryView && gallerySection) gallerySection.classList.add('hidden');
   }
 
