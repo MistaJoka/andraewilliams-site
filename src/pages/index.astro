@@ -1,5 +1,9 @@
 ---
 // Scaffold smoke test — replaced in Phase 4 by the real homepage.
+// The integrity gate runs here for now; it moves to BaseLayout once that
+// exists, so every route pays for it exactly once.
+import { assertContentIntegrity } from '../lib/integrity';
+await assertContentIntegrity();
 ---
 <html lang="en"><head><meta charset="utf-8"><title>scaffold</title></head>
 <body><h1>scaffold ok</h1></body></html>

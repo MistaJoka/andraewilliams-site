@@ -1,0 +1,39 @@
+# Topics are DATA, not an enum: adding a seventh hub is a row here, not a
+# code change. `accent` names a CSS custom property from tokens.css so a
+# topic can never introduce an off-palette colour.
+- id: ai
+  label: AI
+  accent: "--topic-ai"
+  glyph: "◈"
+  blurb: Agents, models, retrieval, and the parts that quietly do not work.
+  order: 1
+- id: cyber
+  label: CYBER
+  accent: "--topic-cyber"
+  glyph: "▚"
+  blurb: Offense, defense, and the gap between what is documented and what is true.
+  order: 2
+- id: homelab
+  label: HOMELAB
+  accent: "--topic-homelab"
+  glyph: "▤"
+  blurb: Racks, hypervisors, local inference, and the electricity bill.
+  order: 3
+- id: risk
+  label: RISK
+  accent: "--topic-risk"
+  glyph: "⚠"
+  blurb: Fraud, controls, and the fintech signals that actually catch things.
+  order: 4
+- id: mma
+  label: MMA
+  accent: "--topic-mma"
+  glyph: "✕"
+  blurb: Fight IQ — angles, distance, timing, and reading intent.
+  order: 5
+- id: anime
+  label: ANIME
+  accent: "--topic-anime"
+  glyph: "✦"
+  blurb: Interface design, HUD language, and typography worth stealing.
+  order: 6
