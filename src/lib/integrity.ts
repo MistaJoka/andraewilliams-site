@@ -50,20 +50,27 @@ async function check(): Promise<void> {
     }
   }
 
-  // Series positions must be a contiguous 1..N with no duplicates, or
-  // "04 / 09" and the prev/next links are lies.
+  // Series positions must be unique and within the declared length, or
+  // the "04 / 09" counter and the prev/next links are lying. Positions
+  // deliberately need NOT be contiguous: part 4 may publish while part 3
+  // is still being written.
   const positions = new Map<string, number[]>();
   for (const post of await getCollection('posts')) {
     const ref = post.data.series;
     if (!ref || post.data.seriesOrder == null) continue;
     positions.set(ref.id, [...(positions.get(ref.id) ?? []), post.data.seriesOrder]);
   }
-  for (const [id, orders] of positions) {
-    const sorted = [...orders].sort((a, b) => a - b);
-    if (new Set(sorted).size !== sorted.length) {
-      errors.push(`series/${id} → duplicate seriesOrder among [${sorted.join(', ')}]`);
-    } else if (sorted.some((n, i) => n !== i + 1)) {
-      errors.push(`series/${id} → seriesOrder must be 1..${sorted.length}, got [${sorted.join(', ')}]`);
+  for (const s of await getCollection('series')) {
+    const orders = positions.get(s.id) ?? [];
+    const dupes = orders.filter((n, i) => orders.indexOf(n) !== i);
+    if (dupes.length) {
+      errors.push(`series/${s.id} → duplicate seriesOrder ${[...new Set(dupes)].join(', ')}`);
+    }
+    const over = orders.filter((n) => n > s.data.plannedParts);
+    if (over.length) {
+      errors.push(
+        `series/${s.id} → seriesOrder ${over.join(', ')} exceeds plannedParts ${s.data.plannedParts}`,
+      );
     }
   }
 

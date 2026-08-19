@@ -31,6 +31,10 @@ const series = defineCollection({
     description: z.string().max(200),
     topics: z.array(reference('topics')).min(1),
     status: z.enum(['ONGOING', 'COMPLETE', 'ABANDONED']).default('ONGOING'),
+    // How many parts the series is planned to run to. This is what the
+    // "04 / 09" counter divides by, so a part can publish before every
+    // earlier part exists without the position becoming a lie.
+    plannedParts: z.number().int().positive(),
     started: z.coerce.date(),
     featured: z.boolean().default(false),
   }),
