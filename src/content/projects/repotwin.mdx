@@ -1,0 +1,29 @@
+---
+title: RepoTwin
+description: A repo intelligence twin that maps, indexes, embeds and answers questions across an entire codebase.
+date: 2026-08-17
+status: TESTING
+topics: [ai]
+tags: [agents, indexing, search]
+tools: [Python, Tree-sitter, SQLite, Ollama]
+repo: https://github.com/MistaJoka/repotwin
+built: Wrote the incremental indexer, the tree-sitter symbol extractor, and the hybrid keyword-plus-vector retrieval layer.
+model: Claude Opus 5
+---
+
+## What it is
+
+A local service that keeps a live model of a codebase — files, symbols,
+call edges, and embeddings — and answers questions against it without
+sending the source anywhere.
+
+## Why
+
+Every "chat with your repo" tool I tried either re-indexed from scratch on
+every run or shipped the code to someone else's GPU. I wanted neither.
+
+## Where it is
+
+Indexing and retrieval work. The answer quality is good on "where is X
+defined" and mediocre on "why is X built this way" — which is the gap
+between a symbol graph and actual intent. That's the next problem.

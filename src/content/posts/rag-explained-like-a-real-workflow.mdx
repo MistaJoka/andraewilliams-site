@@ -1,0 +1,44 @@
+---
+title: RAG Explained Like a Real Workflow
+description: Retrieval-augmented generation is a research assistant with a filing cabinet. The failures are filing failures, not thinking failures.
+type: ELI5
+difficulty: ELI5
+date: 2026-08-18
+topics: [ai]
+tags: [rag, retrieval, embeddings]
+related:
+  posts: [how-ai-agent-memory-actually-works]
+---
+
+## The analogy
+
+You ask a colleague a question. They do not know the answer from memory,
+so they walk to the filing cabinet, pull the three folders that look
+relevant, skim them, and answer using what they found.
+
+That is RAG. The model is the colleague. The vector store is the cabinet.
+Retrieval is the walk.
+
+## Why it goes wrong
+
+Notice where the failure lives. If they come back with the wrong folders,
+it does not matter how smart they are — the answer is built on the wrong
+paper.
+
+Almost every disappointing RAG system is a filing problem:
+
+- **The folders are labelled badly.** Chunks get embedded as raw text, so
+  they retrieve by how they *sound*, not what they *answer*.
+- **The cabinet is never weeded.** Last year's decision sits beside this
+  year's, and nothing marks which is current.
+- **They grab three folders when they needed one drawer.** No filtering by
+  project or date before ranking.
+
+## The fix
+
+Improve the filing before you improve the colleague. Write a one-line
+summary on the front of each folder and file by that. Throw out
+superseded paper. Narrow to the right drawer before you rank anything
+inside it.
+
+Swapping to a bigger model does not help someone reading the wrong page.

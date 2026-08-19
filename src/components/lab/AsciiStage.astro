@@ -1,0 +1,83 @@
+---
+import { BG, RAMP, hexToRgbFloat } from '../../lib/palette';
+interface Props {
+  scene: string;
+  title: string;
+  /** Homepage identity canvas runs on its own; lab demos wait for a click. */
+  autoplay?: boolean;
+  /** Static sentence shown when WebGL is unavailable or JS is off. */
+  fallback: string;
+  height?: string;
+}
+const { scene, title, autoplay = false, fallback, height = '18rem' } = Astro.props;
+const config = JSON.stringify({ bgColor: hexToRgbFloat(BG), ramp: RAMP });
+---
+<figure
+  class="ascii-stage"
+  data-scene={scene}
+  data-autoplay={autoplay ? 'true' : undefined}
+  data-config={config}
+  style={`--stage-h: ${height}`}
+>
+  <canvas hidden aria-hidden="true"></canvas>
+  <figcaption class="fallback">{fallback}</figcaption>
+  {!autoplay && (
+    <button type="button" class="run">▶ Run “{title}” <span>WebGL</span></button>
+  )}
+</figure>
+
+<script>
+  const stages = document.querySelectorAll<HTMLElement>('.ascii-stage');
+  if (stages.length) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const boot = async (stage: HTMLElement) => {
+      // ~40KB of pipeline + GLSL arrives ONLY here. Reading routes carry
+      // no ascii chunk at all, and a lab page carries none until asked.
+      const [{ AsciiPipeline }, { scenes }, { mount }] = await Promise.all([
+        import('../../scripts/ascii/ascii-pipeline.js'),
+        import('../../scripts/ascii/scenes.js'),
+        import('../../scripts/ascii/mount.js'),
+      ]);
+      const cfg = JSON.parse(stage.dataset.config || '{}');
+      mount(stage, AsciiPipeline, scenes, { ...cfg, reduce });
+    };
+
+    for (const stage of stages) {
+      const btn = stage.querySelector<HTMLButtonElement>('.run');
+      if (stage.dataset.autoplay) {
+        // Deferred by the dynamic import, not by an observer. Gating the
+        // first boot on IntersectionObserver meant no canvas at all
+        // wherever the callback is delayed or never delivered.
+        boot(stage);
+      } else if (btn) {
+        btn.addEventListener('click', () => { btn.remove(); boot(stage); }, { once: true });
+      }
+    }
+  }
+</script>
+
+<style>
+  .ascii-stage {
+    position: relative; margin: 0 0 var(--sp-5);
+    height: var(--stage-h); border: 1px solid var(--line);
+    background: var(--bg-1); overflow: hidden;
+  }
+  .ascii-stage canvas { display: block; width: 100%; height: 100%; }
+  .fallback {
+    position: absolute; inset: 0; display: grid; place-content: center;
+    padding: var(--sp-5); text-align: center; color: var(--text-2);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em;
+  }
+  .ascii-stage[data-state='running'] .fallback,
+  .ascii-stage[data-state='static'] .fallback { display: none; }
+  .run {
+    position: absolute; left: 50%; bottom: var(--sp-4); transform: translateX(-50%);
+    background: var(--bg-2); border: 1px solid var(--accent); color: var(--accent);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em;
+    padding: var(--sp-2) var(--sp-4); cursor: pointer; z-index: 2;
+  }
+  .run:hover { background: var(--accent); color: var(--bg-0); }
+  .run span { color: var(--text-2); margin-left: var(--sp-2); }
+  .run:hover span { color: var(--bg-0); }
+</style>

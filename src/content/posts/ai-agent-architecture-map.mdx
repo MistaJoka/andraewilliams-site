@@ -1,0 +1,41 @@
+---
+title: AI Agent Architecture Map
+description: One diagram of how the pieces of a modern agent fit together — loop, tools, memory, evaluation, and the guardrails between them.
+type: VISUAL
+difficulty: BEGINNER
+date: 2026-08-16
+topics: [ai]
+tags: [architecture, map, agents]
+related:
+  posts: [how-ai-agent-memory-actually-works]
+---
+
+The whole system on one page. Everything below the loop is optional at
+first and mandatory eventually.
+
+```text
+                        ┌──────────────┐
+        user input ────▶│              │
+      observations ────▶│  AGENT LOOP  │◀──── tool results
+       environment ────▶│              │
+                        └──────┬───────┘
+                               │
+        ┌──────────────┬───────┴───────┬──────────────┐
+        ▼              ▼               ▼              ▼
+    ┌────────┐   ┌──────────┐   ┌───────────┐  ┌────────────┐
+    │ TOOLS  │   │  MEMORY  │   │ GUARDRAIL │  │ EVALUATION │
+    └────────┘   └────┬─────┘   └───────────┘  └────────────┘
+                      │
+       ┌──────────┬───┴────┬────────────┐
+       ▼          ▼        ▼            ▼
+    short-    long-term  episodic   semantic
+     term      (vector)   (log)      (facts)
+```
+
+Read it as three questions. What can it *do* (tools). What can it
+*remember* (memory). How do you know it *worked* (evaluation). Guardrails
+sit between the loop and the world because that is the only place they
+can actually stop anything.
+
+The part most people skip is the episodic log, and it is the only branch
+that can answer "why did it do that" after the fact.

@@ -1,0 +1,44 @@
+---
+import { seriesCounter } from '../../lib/format';
+interface Props {
+  series: { id: string; title: string; plannedParts: number };
+  order: number;
+  prev?: { id: string; title: string; order: number };
+  next?: { id: string; title: string; order: number };
+}
+const { series, order, prev, next } = Astro.props;
+---
+<nav class="series-nav" aria-label="Series navigation">
+  <p class="eyebrow">
+    <a href={`/series/${series.id}/`}>{series.title}</a>
+    <span class="count">{seriesCounter(order, series.plannedParts)}</span>
+  </p>
+  <div class="links">
+    {prev ? (
+      <a class="step prev" href={`/posts/${prev.id}/`}>
+        <span class="dir">← Previous</span><span class="t">{prev.title}</span>
+      </a>
+    ) : <span class="step empty">← Start of series</span>}
+    {next ? (
+      <a class="step next" href={`/posts/${next.id}/`}>
+        <span class="dir">Next →</span><span class="t">{next.title}</span>
+      </a>
+    ) : <span class="step empty">Latest part →</span>}
+  </div>
+</nav>
+
+<style>
+  .series-nav { border: 1px solid var(--line); padding: var(--sp-4); margin: var(--sp-6) 0; background: var(--bg-1); }
+  .eyebrow { display: flex; gap: var(--sp-3); align-items: baseline; margin-bottom: var(--sp-4); }
+  .eyebrow a { color: var(--text-1); text-decoration: none; }
+  .eyebrow a:hover { color: var(--accent); }
+  .count { color: var(--accent); }
+  .links { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+  .step { display: grid; gap: var(--sp-1); padding: var(--sp-3); border: 1px solid var(--line); text-decoration: none; }
+  a.step:hover { border-color: var(--accent); }
+  .next { text-align: right; }
+  .dir { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; }
+  .t { color: var(--text-0); font-weight: 500; }
+  .empty { color: var(--text-2); border-style: dashed; align-content: center; font-family: var(--font-mono); font-size: var(--step--1); }
+  @media (max-width: 40rem) { .links { grid-template-columns: 1fr; } .next { text-align: left; } }
+</style>

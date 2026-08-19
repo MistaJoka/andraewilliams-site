@@ -1,0 +1,33 @@
+---
+import Difficulty from '../ui/Difficulty.astro';
+import StatusLight from '../ui/StatusLight.astro';
+import { formatDate, seriesCounter } from '../../lib/format';
+import type { MetaField } from '../../lib/card-spec';
+
+interface Props {
+  fields: MetaField[];
+  date: Date;
+  difficulty?: string;
+  status?: string;
+  series?: { title: string; order: number; total: number };
+  readingTime?: number;
+}
+const { fields, date, difficulty, status, series, readingTime } = Astro.props;
+---
+<div class="meta">
+  {fields.includes('date') && <time datetime={date.toISOString()}>{formatDate(date)}</time>}
+  {fields.includes('readingTime') && readingTime && <span>{readingTime} MIN</span>}
+  {fields.includes('difficulty') && difficulty && <Difficulty level={difficulty} />}
+  {fields.includes('status') && status && <StatusLight status={status} />}
+  {fields.includes('series') && series && (
+    <span class="series">{series.title} <b>{seriesCounter(series.order, series.total)}</b></span>
+  )}
+</div>
+<style>
+  .meta {
+    display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); align-items: center;
+    font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.08em; color: var(--text-2); text-transform: uppercase;
+  }
+  .series b { color: var(--text-1); font-weight: 400; }
+</style>

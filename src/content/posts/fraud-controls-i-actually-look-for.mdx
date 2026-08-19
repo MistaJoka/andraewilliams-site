@@ -1,0 +1,51 @@
+---
+title: Fraud Controls I Actually Look For
+description: The signals, rules and reviews that catch real fraud — and the theatrical ones that mostly generate work.
+type: ARCHITECTURE
+difficulty: INTERMEDIATE
+date: 2026-08-15
+topics: [risk]
+tags: [fraud, aml, controls]
+status: PRODUCTION
+---
+
+## TL;DR
+
+Most fraud controls fail in one of two ways: they fire on everything, or
+they fire on last year's pattern. The ones that work are narrow, cheap to
+review, and have an owner.
+
+## What actually catches things
+
+**Velocity against the account's own history**, not against a global
+threshold. "Three transactions in an hour" is meaningless. "Three
+transactions in an hour from an account that averages three a month" is a
+signal.
+
+**Device and identity linkage.** One device, many accounts is far more
+predictive than any single transaction attribute — and it survives an
+attacker varying amounts and timing.
+
+**Change-then-transact sequences.** A password reset, then a new payee,
+then a payment is a shape, not three events. Rules that look at single
+events cannot see it.
+
+## What mostly generates work
+
+Round-number thresholds everyone has learned. Static blocklists nobody
+prunes. Any rule whose alerts are cleared at above ~95% — that is not a
+control, it is a tax on the review queue.
+
+## The part people skip
+
+Every rule needs a named owner and a review date. An unowned rule is
+never tuned and never retired, so the alert volume only ratchets upward
+until reviewers start clearing on autopilot. At that point the control is
+worse than nothing, because it *looks* like coverage.
+
+## Failure modes
+
+- **Alert fatigue** — the control works, the humans stopped reading.
+- **Drift** — the rule is tuned to a pattern that has moved on.
+- **Feedback starvation** — confirmed-fraud outcomes never make it back
+  to the people writing rules, so nothing improves.

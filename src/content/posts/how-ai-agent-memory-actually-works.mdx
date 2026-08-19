@@ -1,0 +1,106 @@
+---
+title: How AI Agent Memory Actually Works
+description: Memory in AI agents isn't one thing. It's a stack of storage, indexing, and retrieval systems that fail in different ways.
+type: ARCHITECTURE
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [ai]
+tags: [agents, memory, rag]
+series: building-an-ai-agent
+seriesOrder: 4
+featured: true
+status: WORKING
+---
+import { Tldr, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from '@blocks';
+
+
+<Tldr>
+"Give the agent memory" sounds like one feature. It is four, and they fail
+differently.
+
+An agent's memory is a stack: the context window it can see right now, a
+vector store it can search, an event log of what it did, and a structured
+store of facts it has committed to. Confusing them is why agents forget
+things you told them thirty seconds ago while confidently recalling
+something from last week.
+</Tldr>
+
+<WhyItMatters>
+Every "our agent has memory" claim is really a claim about one of these
+four layers. Knowing which one tells you what it will forget.
+</WhyItMatters>
+
+<HowItWorks>
+## The four layers
+
+**Short-term memory** is the context window. It is not storage — it is
+attention. Everything in it is equally visible to the model and equally
+expensive. It disappears completely between runs unless you write it
+somewhere.
+
+**Long-term memory** is a vector store. You embed text, and later
+retrieve by similarity. This is the layer people mean when they say
+"memory," and it is the one that most often disappoints, because
+similarity is not relevance. "What did I decide about auth?" and "auth
+decisions" embed close together; "what did I decide about auth?" and the
+actual decision — written six weeks ago in a paragraph that never uses
+the word "decide" — do not.
+
+**Episodic memory** is an append-only log of events: what the agent did,
+what it got back, what failed. It is boring, cheap, and the layer that
+most agents skip. It is also the only one that can answer "why did it do
+that?"
+
+**Semantic memory** is a structured store of committed facts — a table,
+a graph, a plain JSON file. Not "here's a chunk of text that mentions the
+database URL," but `database.url = ...`. Exact, updateable, and not
+subject to retrieval luck.
+
+</HowItWorks>
+
+## Retrieval is the hard part
+
+Storage is solved. The failure is almost always retrieval: the right fact
+exists and does not come back.
+
+```python
+# The naive version, and why it disappoints.
+def recall(query: str, k: int = 5) -> list[str]:
+    hits = store.similarity_search(query, k=k)
+    return [h.text for h in hits]
+
+# Similarity ranks by "reads like the query," not "answers the query."
+# A decision recorded as prose rarely reads like the question about it.
+```
+
+Three things move the needle more than swapping embedding models:
+
+1. **Write for retrieval.** Store a one-line summary alongside the chunk
+   and embed the summary. You control what it reads like.
+2. **Query expansion.** Ask the model to rewrite the question into three
+   phrasings, search all three, merge. Cheap, and it covers the vocabulary
+   gap.
+3. **Filter before you rank.** Most retrieval failures are scope
+   failures. Narrow by project, date, or type first, then rank within
+   that.
+
+<FailureModes>
+- **Context poisoning.** One bad retrieved chunk anchors the model for the
+  rest of the run. Retrieved content should be visibly marked as
+  retrieved, not blended into the instructions.
+- **Silent staleness.** A vector store has no opinion about which of two
+  contradictory facts is current. If you never delete, you are storing
+  both and retrieving whichever embeds closer.
+- **Unbounded growth.** Every run appends. Without a compaction step,
+  retrieval quality degrades exactly as the archive becomes valuable.
+</FailureModes>
+
+<WhatILearned>
+Reach for the simplest layer that answers the question. Most of what
+people build a vector store for is a lookup — a key and a value they
+already know the name of. Semantic memory in a JSON file answers it
+exactly, every time, for free.
+
+Use the vector store for the genuinely fuzzy case: "have I seen anything
+like this before?" That is the question it is actually good at.
+</WhatILearned>

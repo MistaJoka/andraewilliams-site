@@ -1,0 +1,21 @@
+---
+import { cardSpec } from '../../lib/card-spec';
+import type { PostType } from '../../lib/enums';
+interface Props { type: PostType }
+const { type } = Astro.props;
+const spec = cardSpec(type);
+---
+<span class="type-badge" style={`--badge-accent: var(${spec.accent})`}>
+  <span class="glyph" aria-hidden="true">{spec.glyph}</span>{type}
+</span>
+<style>
+  .type-badge {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    font-family: var(--font-mono); font-size: var(--step--1);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--badge-accent);
+    border: 1px solid var(--badge-accent);
+    padding: 0.15em 0.5em;
+  }
+  .glyph { font-size: 1.1em; line-height: 1; }
+</style>

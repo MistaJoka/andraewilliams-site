@@ -1,0 +1,20 @@
+---
+interface Props { status: string }
+const { status } = Astro.props;
+const token = `--status-${status.toLowerCase()}`;
+---
+<span class="status" style={`--s: var(${token})`}>
+  <span class="dot" aria-hidden="true"></span>{status}
+</span>
+<style>
+  .status {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    font-family: var(--font-mono); font-size: var(--step--1);
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--s);
+  }
+  /* The one place a radius is allowed: a status dot is a light, not a box. */
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--s); box-shadow: 0 0 6px var(--s);
+  }
+</style>

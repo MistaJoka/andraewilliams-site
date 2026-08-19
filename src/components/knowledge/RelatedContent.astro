@@ -1,0 +1,73 @@
+---
+import { cardSpec } from '../../lib/card-spec';
+interface Props { posts: any[]; topics: any[]; project?: any }
+const { posts, topics, project } = Astro.props;
+const has = posts.length || topics.length || project;
+---
+{has && (
+  <aside class="related" aria-labelledby="related-heading">
+    <h2 id="related-heading" class="eyebrow">Related</h2>
+
+    {posts.length > 0 && (
+      <div class="group">
+        <p class="group-label">Posts</p>
+        <ul>
+          {posts.map((p) => (
+            <li>
+              <a href={`/posts/${p.id}/`} style={`--a: var(${cardSpec(p.data.type).accent})`}>
+                <span class="kind">{p.data.type}</span>{p.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {topics.length > 0 && (
+      <div class="group">
+        <p class="group-label">Topics</p>
+        <ul class="inline">
+          {topics.map((t) => (
+            <li>
+              <a href={`/topics/${t.data.id}/`} style={`--a: var(${t.data.accent})`}>
+                <span aria-hidden="true">{t.data.glyph}</span> {t.data.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {project && (
+      <div class="group">
+        <p class="group-label">Project</p>
+        <ul>
+          <li>
+            <a href={`/projects/${project.id}/`} style="--a: var(--accent)">
+              <span class="kind">{project.data.status}</span>{project.data.title}
+            </a>
+          </li>
+        </ul>
+      </div>
+    )}
+  </aside>
+)}
+
+<style>
+  .related { border-top: 1px solid var(--line); padding-top: var(--sp-5); margin-top: var(--sp-6); }
+  .group { margin-top: var(--sp-4); }
+  .group-label {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 var(--sp-2);
+  }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+  ul.inline { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+  a { display: flex; gap: var(--sp-3); align-items: baseline; color: var(--text-0); text-decoration: none; }
+  a:hover { color: var(--a); }
+  .kind {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--a);
+    letter-spacing: 0.1em; min-width: 11ch;
+  }
+  ul.inline a { color: var(--a); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+  ul.inline a:hover { border-color: var(--a); }
+</style>

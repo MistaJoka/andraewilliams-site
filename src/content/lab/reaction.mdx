@@ -1,0 +1,18 @@
+---
+title: "Reaction"
+description: "Two imaginary chemicals — one feeds, one eats — obeying three rules per cell until they chase each other into a maze nobody drew."
+date: 2026-08-19
+status: WORKING
+outcome: CONFIRMED
+topics: [ai]
+tags: [webgl, glsl, ascii]
+tools: [WebGL, GLSL, FBO, Gray-Scott]
+scene: reaction
+built: "Wrote the Gray-Scott sim, packed both chemicals to 16-bit across RGBA to stop 8-bit rounding freezing the reaction, and swept feed/kill by measurement to find the maze regime."
+model: "Claude Opus 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/ascii/reaction-sim.js
+---
+
+The interesting part is a precision bug. An 8-bit channel counts in steps of 1/255, and one tick of this chemistry changes V by far less than that — so stored naively the whole reaction rounds to zero and freezes. The fix spends two channels per chemical, coarse value plus remainder, which buys roughly 1/65025 steps. RGBA holds U in RG and V in BA.
+
+The feed/kill parameters were found by measurement, not by copying textbook values: the classic coral numbers (0.0545 / 0.062) sat inert under this discretisation. Sweeping eight pairs for 12k ticks each and scoring the spatial spread of V picked 0.038 / 0.060, which settles into the winding maze regime.

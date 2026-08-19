@@ -8,3 +8,7 @@ node_modules/
 .superpowers/
 CLAUDE.md
 AGENTS.md
+
+# Build output
+dist/
+.astro/

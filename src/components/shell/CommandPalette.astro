@@ -1,0 +1,187 @@
+---
+// The site's only significant client JS. Native <dialog> because it gives
+// focus trapping, Escape-to-close, backdrop and an inert background for
+// free — which is most of the accessibility work done correctly.
+---
+<dialog id="palette" aria-label="Search and navigate">
+  <form method="dialog" class="palette-form">
+    <label class="visually-hidden" for="palette-input">Search posts, topics, series, projects</label>
+    <input
+      id="palette-input"
+      type="search"
+      autocomplete="off"
+      placeholder="Search posts, topics, series, projects…"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="palette-results"
+      aria-autocomplete="list"
+    />
+  </form>
+  <ul id="palette-results" role="listbox" aria-label="Results"></ul>
+  <p class="palette-hint">
+    <kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>↵</kbd> open · <kbd>esc</kbd> close
+  </p>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('palette') as HTMLDialogElement | null;
+  const input = document.getElementById('palette-input') as HTMLInputElement | null;
+  const list = document.getElementById('palette-results') as HTMLUListElement | null;
+  if (dialog && input && list) {
+    type Doc = { t: string; d: string; k: string; u: string; g: string };
+    let docs: Doc[] | null = null;
+    let cursor = 0;
+    let shown: Doc[] = [];
+
+    // Scores "does this answer the query", not "does this read like it".
+    // A command palette matches names and acronyms, which is why a
+    // stemmed full-text engine is the wrong tool here.
+    function score(doc: Doc, q: string): number {
+      const t = doc.t.toLowerCase();
+      const hay = `${t} ${doc.g.toLowerCase()} ${doc.d.toLowerCase()}`;
+      if (t === q) return 1200;
+      if (t.startsWith(q)) return 1000 - t.length;
+      if (t.split(/\s+/).some((w) => w.startsWith(q))) return 600 - t.length;
+      const acronym = doc.t.split(/\s+/).map((w) => w[0]?.toLowerCase() ?? '').join('');
+      if (acronym.startsWith(q)) return 400;
+      if (hay.includes(q)) return 200 - t.length;
+      // Subsequence is a last resort and runs against the TITLE only.
+      // Against the full haystack it matched almost everything: three
+      // common letters will appear in order somewhere in any paragraph,
+      // so "mcp" returned ten results where one was relevant.
+      if (q.length < 3) return -1;
+      let i = 0;
+      for (const ch of t) if (ch === q[i]) i++;
+      return i === q.length ? 80 : -1;
+    }
+
+    function render(): void {
+      const q = input!.value.trim().toLowerCase();
+      shown = !q
+        ? (docs ?? []).filter((d) => d.k === 'NAV')
+        : (docs ?? [])
+            .map((d) => ({ d, s: score(d, q) }))
+            .filter((r) => r.s > 0)
+            .sort((a, b) => b.s - a.s)
+            .slice(0, 12)
+            .map((r) => r.d);
+
+      cursor = 0;
+      list!.replaceChildren(
+        ...shown.map((doc, i) => {
+          const li = document.createElement('li');
+          li.id = `palette-opt-${i}`;
+          li.setAttribute('role', 'option');
+          li.setAttribute('aria-selected', String(i === 0));
+          const a = document.createElement('a');
+          a.href = doc.u;
+          a.tabIndex = -1;
+          const kind = document.createElement('span');
+          kind.className = 'kind';
+          kind.textContent = doc.k;
+          const title = document.createElement('span');
+          title.className = 'title';
+          title.textContent = doc.t;
+          a.append(kind, title);
+          li.append(a);
+          return li;
+        }),
+      );
+      if (!shown.length && q) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        li.textContent = `Nothing matches “${q}”.`;
+        list!.append(li);
+      }
+      sync();
+    }
+
+    function sync(): void {
+      [...list!.querySelectorAll('[role="option"]')].forEach((el, i) => {
+        el.setAttribute('aria-selected', String(i === cursor));
+        el.classList.toggle('active', i === cursor);
+      });
+      input!.setAttribute('aria-activedescendant', shown.length ? `palette-opt-${cursor}` : '');
+    }
+
+    async function open(): Promise<void> {
+      if (dialog!.open) return;
+      dialog!.showModal();
+      // The index arrives here and nowhere else — never on page load.
+      if (!docs) {
+        try {
+          docs = await (await fetch('/search-index.json')).json();
+        } catch {
+          docs = [];
+        }
+      }
+      render();
+      input!.focus();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement)?.tagName ?? '');
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        dialog!.open ? dialog!.close() : open();
+      } else if (e.key === '/' && !typing && !dialog!.open) {
+        e.preventDefault();
+        open();
+      }
+    });
+
+    document.querySelectorAll('[data-open-palette]').forEach((el) =>
+      el.addEventListener('click', () => open()),
+    );
+
+    input.addEventListener('input', render);
+
+    dialog.addEventListener('keydown', (e) => {
+      if (!shown.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); cursor = (cursor + 1) % shown.length; sync(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); cursor = (cursor - 1 + shown.length) % shown.length; sync(); }
+      else if (e.key === 'Enter') { e.preventDefault(); window.location.href = shown[cursor]!.u; }
+    });
+
+    // Click on the backdrop (outside the panel) closes.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+</script>
+
+<style>
+  #palette {
+    width: min(100% - 2rem, 40rem);
+    margin-inline: auto; margin-top: 12vh;
+    padding: 0;
+    background: var(--bg-1);
+    border: 1px solid var(--line-bright);
+    color: var(--text-0);
+  }
+  #palette::backdrop { background: rgb(0 0 0 / 0.7); }
+  .palette-form { margin: 0; border-bottom: 1px solid var(--line); }
+  #palette input {
+    width: 100%; padding: var(--sp-4);
+    background: transparent; border: 0; color: var(--text-0);
+    font-family: var(--font-mono); font-size: var(--step-1);
+  }
+  #palette input:focus { outline: none; }
+  #palette ul { list-style: none; margin: 0; padding: 0; max-height: 50vh; overflow-y: auto; }
+  #palette li a {
+    display: flex; align-items: baseline; gap: var(--sp-4);
+    padding: var(--sp-3) var(--sp-4); text-decoration: none; color: var(--text-1);
+  }
+  #palette li.active a { background: var(--bg-2); color: var(--text-0); box-shadow: inset 3px 0 0 var(--accent); }
+  .kind {
+    font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.1em; color: var(--text-2); min-width: 7ch;
+  }
+  .title { font-weight: 500; }
+  .empty, .palette-hint {
+    padding: var(--sp-3) var(--sp-4); color: var(--text-2);
+    font-family: var(--font-mono); font-size: var(--step--1); margin: 0;
+  }
+  .palette-hint { border-top: 1px solid var(--line); display: flex; gap: var(--sp-2); align-items: center; }
+  .palette-hint kbd { border: 1px solid var(--line-bright); padding: 0 0.35em; }
+</style>

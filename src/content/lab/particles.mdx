@@ -1,0 +1,16 @@
+---
+title: "Particles"
+description: "24 points orbit the centre; every cell sums inverse-square falloff to all of them, so each point reads as a soft light."
+date: 2026-08-17
+status: WORKING
+outcome: CONFIRMED
+topics: [ai]
+tags: [webgl, glsl, ascii]
+tools: [WebGL, GLSL, ASCII]
+scene: particles
+built: "Generated the orbital hash-noise field as a single sceneField() function."
+model: "Claude Opus 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/ascii/scenes.js
+---
+
+Every character cell asks the same question — how much light reaches me — and answers it by summing `0.0025/(d²+0.0006)` over 24 moving points. No sprites, no textures. The softness is the falloff curve, not a blur.

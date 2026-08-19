@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostHeader from '../../components/content/PostHeader.astro';
+import SeriesNav from '../../components/content/SeriesNav.astro';
+import RelatedContent from '../../components/knowledge/RelatedContent.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import { resolveRelated, seriesSiblings } from '../../lib/graph';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const related = await resolveRelated(post);
+const seriesEntry = post.data.series ? await getEntry(post.data.series) : undefined;
+
+let nav: { prev?: any; next?: any } = {};
+if (seriesEntry) {
+  const siblings = await seriesSiblings(seriesEntry.id);
+  const i = siblings.findIndex((s) => s.id === post.id);
+  const at = (n: number) => {
+    const s = siblings[n];
+    return s ? { id: s.id, title: s.data.title, order: s.data.seriesOrder! } : undefined;
+  };
+  nav = { prev: at(i - 1), next: at(i + 1) };
+}
+---
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  publishedTime={post.data.date}
+>
+  <article class="post">
+    <PostHeader
+      post={post}
+      topics={related.topics.filter((t: any) =>
+        post.data.topics.some((r: any) => r.id === t.id),
+      )}
+      series={seriesEntry && {
+        title: seriesEntry.data.title,
+        plannedParts: seriesEntry.data.plannedParts,
+      }}
+    />
+
+    <div class="prose"><Content /></div>
+
+    {seriesEntry && post.data.seriesOrder && (
+      <SeriesNav
+        series={{
+          id: seriesEntry.id,
+          title: seriesEntry.data.title,
+          plannedParts: seriesEntry.data.plannedParts,
+        }}
+        order={post.data.seriesOrder}
+        prev={nav.prev}
+        next={nav.next}
+      />
+    )}
+
+    <RelatedContent posts={related.posts} topics={related.topics} project={related.project} />
+  </article>
+</BaseLayout>
+
+<style>
+  .post { padding-bottom: var(--sp-6); }
+  .prose { max-width: 72ch; }
+  .prose :global(h2) {
+    font-size: var(--step-2); margin-top: var(--sp-6);
+    padding-top: var(--sp-3); border-top: 1px solid var(--line);
+  }
+  .prose :global(h3) { font-size: var(--step-1); margin-top: var(--sp-5); }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.25rem; margin-bottom: var(--sp-4); }
+  .prose :global(li) { margin-bottom: var(--sp-2); }
+  .prose :global(strong) { color: var(--text-0); }
+  .prose :global(pre) { background: var(--bg-1) !important; }
+</style>

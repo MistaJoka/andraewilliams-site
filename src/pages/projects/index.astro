@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusLight from '../../components/ui/StatusLight.astro';
+import { getCollection } from 'astro:content';
+import { formatDate } from '../../lib/format';
+
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const byDate = [...projects].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<BaseLayout title="Projects" description="Things I actually built — what they do, what stack, and what state they are in.">
+  <header class="page-head">
+    <p class="eyebrow">Projects</p>
+    <h1>Things I actually built</h1>
+    <p class="lede">{projects.length} project{projects.length === 1 ? '' : 's'}. Status is honest, including the broken ones.</p>
+  </header>
+  <ul class="list">
+    {byDate.map((p) => (
+      <li>
+        <a href={`/projects/${p.id}/`}>
+          <span class="top"><span class="t">{p.data.title}</span><StatusLight status={p.data.status} /></span>
+          <span class="d">{p.data.description}</span>
+          <span class="foot">
+            <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+            <span class="tools">{p.data.tools.join(' · ')}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+<style>
+  .page-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+  h1 { font-size: var(--step-3); margin: var(--sp-3) 0; }
+  .lede { color: var(--text-1); }
+  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-4); }
+  .list a { display: grid; gap: var(--sp-3); padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); text-decoration: none; }
+  .list a:hover { border-color: var(--accent); background: var(--bg-2); }
+  .top { display: flex; justify-content: space-between; gap: var(--sp-4); align-items: center; flex-wrap: wrap; }
+  .t { color: var(--text-0); font-size: var(--step-1); font-weight: 700; }
+  .d { color: var(--text-1); }
+  .foot { display: flex; gap: var(--sp-4); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; }
+</style>

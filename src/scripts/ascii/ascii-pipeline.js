@@ -17,27 +17,30 @@ void main() {
 // tacticalRamp is the shared lookup table turning that into a color:
 // 0 = navy, 1 = red, blue/teal/green/amber between. Same ramp for every
 // scene -> one visual language, not five palettes.
-const TACTICAL_RAMP_GLSL = `
-vec3 tacticalRamp(float t) {
-  t = clamp(t, 0.0, 1.0);
-  vec3 c0 = vec3(0.02, 0.04, 0.07);   // navy   (t = 0.0)
-  vec3 c1 = vec3(0.039, 0.239, 0.384); // blue   (t = 0.2)
-  vec3 c2 = vec3(0.122, 0.820, 0.757); // teal   (t = 0.4)
-  vec3 c3 = vec3(0.310, 0.827, 0.353); // green  (t = 0.6)
-  vec3 c4 = vec3(1.0, 0.616, 0.184);   // amber  (t = 0.8)
-  vec3 c5 = vec3(1.0, 0.231, 0.231);   // red    (t = 1.0)
+// ELI5: every scene outputs one number per pixel (0-1, "how intense").
+// The ramp is the shared lookup table turning that into a colour. It is
+// PASSED IN rather than hardcoded so it comes from the same design tokens
+// as the CSS — see src/lib/palette.ts. Same ramp for every scene, so the
+// site has one visual language rather than six.
+const rampGlsl = (stops) => {
+  const v = stops.map((c) => {
+    const h = c.replace('#', '');
+    const f = (i) => (parseInt(h.slice(i, i + 2), 16) / 255).toFixed(4);
+    return `vec3(${f(0)}, ${f(2)}, ${f(4)})`;
+  });
+  const band = 1 / (v.length - 1);
+  const lines = v
+    .slice(0, -1)
+    .map((_, i) =>
+      i === v.length - 2
+        ? `  return mix(${v[i]}, ${v[i + 1]}, (t - ${(i * band).toFixed(4)}) / ${band.toFixed(4)});`
+        : `  if (t < ${((i + 1) * band).toFixed(4)}) return mix(${v[i]}, ${v[i + 1]}, (t - ${(i * band).toFixed(4)}) / ${band.toFixed(4)});`,
+    )
+    .join('\n');
+  return `\nvec3 tacticalRamp(float t) {\n  t = clamp(t, 0.0, 1.0);\n${lines}\n}\n`;
+};
 
-  // Pick the two stops t falls between and blend linearly across that
-  // 0.2-wide band.
-  if (t < 0.2) return mix(c0, c1, t / 0.2);
-  if (t < 0.4) return mix(c1, c2, (t - 0.2) / 0.2);
-  if (t < 0.6) return mix(c2, c3, (t - 0.4) / 0.2);
-  if (t < 0.8) return mix(c3, c4, (t - 0.6) / 0.2);
-  return mix(c4, c5, (t - 0.8) / 0.2);
-}
-`;
-
-const FRAG_TEMPLATE = (sceneGLSL) => `
+const FRAG_TEMPLATE = (sceneGLSL, rampSrc) => `
 precision highp float;
 varying vec2 vUv;
 uniform vec2 uResolution;
@@ -49,7 +52,7 @@ uniform float uRampLen;
 uniform vec3 uBgColor;
 uniform sampler2D uReactionTexture;
 
-${TACTICAL_RAMP_GLSL}
+${rampSrc}
 ${sceneGLSL}
 
 // ELI5: the one shader every scene runs through. Per pixel:
@@ -90,10 +93,12 @@ void main() {
 `;
 
 export class AsciiPipeline {
-  constructor(canvas, scenes, { cellWidth = 8, cellHeight = 14, bgColor = [0.02, 0.04, 0.07] } = {}) {
+  constructor(canvas, scenes, { cellWidth = 8, cellHeight = 14, bgColor = [0.02, 0.04, 0.07], ramp } = {}) {
     this.canvas = canvas;
     this.scenes = scenes;
     this.bgColor = bgColor;
+    // Built once from the design tokens the caller passes in.
+    this.rampSrc = rampGlsl(ramp ?? ['#05070d', '#2f79cc', '#22d3ee', '#4ade80', '#fbbf24', '#ff6b7a']);
 
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) throw new Error('WebGL unavailable');
@@ -121,7 +126,7 @@ export class AsciiPipeline {
   _ensureProgram(name) {
     if (!this.programCache.has(name)) {
       const gl = this.gl;
-      const program = createProgram(gl, VERT_SRC, FRAG_TEMPLATE(this.scenes[name]));
+      const program = createProgram(gl, VERT_SRC, FRAG_TEMPLATE(this.scenes[name], this.rampSrc));
       const locations = {
         aPosition: gl.getAttribLocation(program, 'aPosition'),
         uResolution: gl.getUniformLocation(program, 'uResolution'),

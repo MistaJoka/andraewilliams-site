@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, getEntries } from 'astro:content';
+import { seriesSiblings } from '../../lib/graph';
+import { formatDate, seriesCounter } from '../../lib/format';
+import { cardSpec } from '../../lib/card-spec';
+
+export async function getStaticPaths() {
+  const all = await getCollection('series');
+  return all.map((s) => ({ params: { slug: s.id }, props: { series: s } }));
+}
+
+const { series } = Astro.props;
+const parts = await seriesSiblings(series.id);
+const topics = await getEntries(series.data.topics);
+---
+<BaseLayout title={series.data.title} description={series.data.description}>
+  <header class="series-head">
+    <p class="eyebrow">Series · {series.data.status}</p>
+    <h1>{series.data.title}</h1>
+    <p class="lede">{series.data.description}</p>
+    <p class="progress">
+      <span class="count">{seriesCounter(parts.length, series.data.plannedParts)}</span>
+      <span class="label">parts published</span>
+      <span class="bar" aria-hidden="true">
+        {Array.from({ length: series.data.plannedParts }, (_, i) => (
+          <span class:list={['seg', { done: parts.some((p) => p.data.seriesOrder === i + 1) }]}></span>
+        ))}
+      </span>
+    </p>
+    <p class="topics">
+      {topics.map((t: any) => (
+        <a href={`/topics/${t.data.id}/`} style={`--t: var(${t.data.accent})`}>{t.data.label}</a>
+      ))}
+    </p>
+  </header>
+
+  <ol class="parts">
+    {parts.map((p) => (
+      <li style={`--a: var(${cardSpec(p.data.type).accent})`}>
+        <a href={`/posts/${p.id}/`}>
+          <span class="n">{String(p.data.seriesOrder).padStart(2, '0')}</span>
+          <span class="body">
+            <span class="t">{p.data.title}</span>
+            <span class="d">{p.data.description}</span>
+          </span>
+          <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+        </a>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>
+
+<style>
+  .series-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+  h1 { font-size: var(--step-4); margin: var(--sp-3) 0; }
+  .lede { color: var(--text-1); font-size: var(--step-1); max-width: 62ch; }
+  .progress { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
+  .count { color: var(--accent); }
+  .bar { display: inline-flex; gap: 3px; }
+  .seg { width: 18px; height: 6px; background: var(--line-bright); }
+  .seg.done { background: var(--accent); }
+  .topics { display: flex; gap: var(--sp-3); margin: var(--sp-4) 0 0; }
+  .topics a { color: var(--t); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; text-decoration: none; border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+  .topics a:hover { border-color: var(--t); }
+
+  .parts { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .parts a { display: grid; grid-template-columns: auto 1fr auto; gap: var(--sp-4); align-items: baseline; padding: var(--sp-4); border: 1px solid var(--line); text-decoration: none; }
+  .parts a:hover { border-color: var(--a); background: var(--bg-1); }
+  .n { font-family: var(--font-mono); font-size: var(--step-2); color: var(--a); }
+  .body { display: grid; gap: var(--sp-1); }
+  .t { color: var(--text-0); font-weight: 700; font-size: var(--step-1); }
+  .d { color: var(--text-1); }
+  .parts time { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; }
+  @media (max-width: 40rem) {
+    .parts a { grid-template-columns: auto 1fr; }
+    .parts time { grid-column: 2; }
+  }
+</style>

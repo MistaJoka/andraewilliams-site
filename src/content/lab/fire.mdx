@@ -1,0 +1,16 @@
+---
+title: "Fire"
+description: "Domain-warped fractal Brownian motion: noise fed back into itself as its own offset, which turns blobs into flame tongues."
+date: 2026-08-17
+status: WORKING
+outcome: CONFIRMED
+topics: [ai]
+tags: [webgl, glsl, ascii]
+tools: [WebGL, GLSL, fBm]
+scene: fire
+built: "Wrote the octave-summed noise and the self-referential domain warp."
+model: "Claude Opus 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/ascii/scenes.js
+---
+
+Plain fBm gives you clouds. Feeding the noise its own output as a position offset — domain warping — stretches those clouds along their own gradient, and that is what turns a blob into a tongue.

@@ -1,0 +1,65 @@
+/* The single source of truth for colour, type and space.
+   Art direction: deep blue-black base, electric blue primary, per-topic
+   accents that carry meaning rather than decoration. Topic accents are
+   referenced by name from src/data/topics.yaml, so a topic can never
+   introduce an off-palette colour. */
+
+:root {
+  /* --- surfaces: flat, layered near-blacks, never shadows-on-white --- */
+  --bg-0: #05070d;
+  --bg-1: #0a0e18;
+  --bg-2: #121a2a;
+  --line: #1e2739;
+  --line-bright: #35476a;
+
+  /* --- text --- */
+  --text-0: #e8eef8;
+  --text-1: #9db0cc;
+  --text-2: #7a8ca9;
+
+  /* --- primary accent --- */
+  --accent: #56a8ff;
+  --accent-dim: #2f79cc;
+  --accent-glow: #56a8ff33;
+
+  /* --- topic accents: signal, not rainbow --- */
+  --topic-ai: #56a8ff;
+  --topic-cyber: #22d3ee;
+  --topic-homelab: #4ade80;
+  --topic-risk: #ff6b7a;
+  --topic-mma: #ff9a3c;
+  --topic-anime: #c58bff;
+  --topic-resources: #2dd4bf;
+
+  /* --- status: reserved for real state --- */
+  --status-idea: #7a8ca9;
+  --status-testing: #fbbf24;
+  --status-working: #4ade80;
+  --status-broken: #ff6b7a;
+  --status-production: #56a8ff;
+  --status-archived: #5f6d84;
+
+  /* --- type: three roles, three families, no more --- */
+  --font-display: 'Silkscreen', 'Courier New', monospace;
+  --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  --step--1: 0.78rem;
+  --step-0: 0.95rem;
+  --step-1: 1.15rem;
+  --step-2: 1.5rem;
+  --step-3: 2rem;
+  --step-4: 2.75rem;
+
+  /* --- space --- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+
+  /* Hard edges. Radius exists only for status dots. */
+  --radius: 0;
+}

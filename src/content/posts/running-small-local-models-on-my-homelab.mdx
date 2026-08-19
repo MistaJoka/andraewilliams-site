@@ -1,0 +1,43 @@
+---
+title: Running Small Local Models on My Homelab
+description: Q6_K quantization, GGUF, and what 24GB of VRAM actually buys you in real throughput rather than benchmark numbers.
+type: EXPERIMENT
+difficulty: INTERMEDIATE
+date: 2026-08-17
+topics: [homelab, ai]
+tags: [llm, ollama, quantization]
+status: WORKING
+---
+
+## Hypothesis
+
+A 30B-class model at Q6_K would fit in 24GB and stay fast enough for
+interactive use.
+
+## Setup
+
+Single RTX 4090, 24GB. GGUF weights via Ollama. Measured tokens/sec at
+the client, not at the kernel, because client-side is what I actually
+experience.
+
+## What I measured
+
+Fit was not the problem — Q6_K left headroom. Context length was. At 8k
+context the KV cache is comfortable; at 32k it is not, and the run either
+spills to system RAM and collapses to a crawl, or fails outright.
+
+The useful number is not "does the model fit" but "does the model plus
+the context I intend to use fit". Those are very different questions and
+only the first one appears in the quantization tables.
+
+## Result
+
+Workable for interactive tasks at moderate context. Not workable as a
+drop-in for long-context agent runs, which is what I actually wanted it
+for. Quantizing further trades quality for context, and at Q4 the
+degradation was obvious on code.
+
+## What I learned
+
+Benchmark tables report weight size. Plan against weights *plus* KV
+cache, or you will size a machine for the wrong workload.

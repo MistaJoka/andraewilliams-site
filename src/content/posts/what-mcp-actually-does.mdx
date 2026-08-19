@@ -1,0 +1,27 @@
+---
+title: What MCP Actually Does
+description: The Model Context Protocol in plain terms — it is a port, not a plugin system, and that distinction explains most of the confusion.
+type: TLDR
+difficulty: BEGINNER
+date: 2026-08-18
+topics: [ai]
+tags: [mcp, protocol, agents]
+---
+
+MCP is a **wire protocol** for handing a model tools, data and prompts
+from an outside process. That is the whole idea.
+
+The confusion comes from calling it a plugin system. A plugin runs inside
+your app. An MCP server runs beside it, as its own process, and speaks
+JSON-RPC over stdio or HTTP. Your agent is a client; the server owns the
+capability.
+
+Three things a server can offer:
+
+- **Tools** — functions the model may call.
+- **Resources** — data the client may read.
+- **Prompts** — reusable templates the user may invoke.
+
+Why it matters: the same filesystem server works in any MCP-speaking
+client, and swapping the model changes nothing on the server side. That
+decoupling is the point — not the tool-calling, which already existed.

@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/cards/Card.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/cards.css';
+
+export async function getStaticPaths() {
+  const topics = await getCollection('topics');
+  return topics.map((t) => ({ params: { topic: t.data.id }, props: { topic: t } }));
+}
+
+const { topic } = Astro.props;
+const [posts, seriesList, allTopics] = await Promise.all([
+  getCollection('posts', ({ data }) => !data.draft && data.topics.some((r: any) => r.id === topic.id)),
+  getCollection('series'),
+  getCollection('topics'),
+]);
+
+const byDate = [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const seriesById = Object.fromEntries(
+  seriesList.map((s) => [s.id, { title: s.data.title, plannedParts: s.data.plannedParts }]),
+);
+const relatedSeries = seriesList.filter((s) => s.data.topics.some((r: any) => r.id === topic.id));
+
+// Connected topics: any topic that co-occurs with this one on a post.
+// Derived from the same relationship data the graph will use later.
+const connectedIds = new Set<string>();
+for (const p of posts) for (const r of p.data.topics) if (r.id !== topic.id) connectedIds.add(r.id);
+const connected = allTopics.filter((t) => connectedIds.has(t.id));
+---
+<BaseLayout title={topic.data.label} description={topic.data.blurb}>
+  <header class="topic-head" style={`--t: var(${topic.data.accent})`}>
+    <p class="eyebrow">Topic</p>
+    <h1><span class="glyph" aria-hidden="true">{topic.data.glyph}</span>{topic.data.label}</h1>
+    <p class="lede">{topic.data.blurb}</p>
+    <p class="counts">{posts.length} post{posts.length === 1 ? '' : 's'}</p>
+  </header>
+
+  {relatedSeries.length > 0 && (
+    <section class="strip">
+      <h2 class="eyebrow">Series</h2>
+      <ul>
+        {relatedSeries.map((s) => (
+          <li><a href={`/series/${s.id}/`}>{s.data.title}</a></li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {connected.length > 0 && (
+    <section class="strip">
+      <h2 class="eyebrow">Connected topics</h2>
+      <ul>
+        {connected.map((t) => (
+          <li style={`--t: var(${t.data.accent})`}>
+            <a href={`/topics/${t.data.id}/`}><span aria-hidden="true">{t.data.glyph}</span> {t.data.label}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section>
+    <h2 class="eyebrow section-heading">Latest</h2>
+    <ul class="feed-grid">
+      {byDate.map((post) => {
+        const s = post.data.series ? seriesById[post.data.series.id] : undefined;
+        return (
+          <li>
+            <Card post={post} series={s && post.data.seriesOrder != null
+              ? { title: s.title, order: post.data.seriesOrder, total: s.plannedParts }
+              : undefined} />
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .topic-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
+  h1 { font-size: var(--step-4); display: flex; align-items: center; gap: var(--sp-3); color: var(--t); }
+  .glyph { font-size: 0.8em; }
+  .lede { color: var(--text-1); font-size: var(--step-1); max-width: 62ch; }
+  .counts, .strip ul { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; color: var(--text-2); text-transform: uppercase; }
+  .strip { margin-bottom: var(--sp-5); }
+  .strip ul { list-style: none; display: flex; flex-wrap: wrap; gap: var(--sp-3); margin: var(--sp-2) 0 0; padding: 0; }
+  .strip a { color: var(--t, var(--accent)); text-decoration: none; border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); display: inline-block; }
+  .strip a:hover { border-color: currentColor; }
+  .section-heading { margin-bottom: var(--sp-4); }
+</style>
