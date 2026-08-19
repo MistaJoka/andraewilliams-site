@@ -1,8 +1,8 @@
 // ELI5: shaders can't remember anything between frames. So we park last
 // frame's result in a texture and hand it back next frame — a whiteboard
 // erased and redrawn each tick.
-// Deep dive: shared setup for ripple/Rule30/Life — each ping-pongs a pair
-// of these instead of being a stateless f(uv, time) scene.
+// Deep dive: shared setup for any sim that ping-pongs a pair of these
+// instead of being a stateless f(uv, time) scene — currently reaction.
 
 export function createSimTexture(gl, size, { filter, initialData } = {}) {
   const tex = gl.createTexture();                    // allocate a GPU texture handle

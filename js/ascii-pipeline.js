@@ -1,6 +1,5 @@
 import { createProgram } from './gl-utils.js';
 import { buildFontAtlas } from './font-atlas.js';
-import { RippleSim } from './ripple-sim.js';
 import { ReactionSim } from './reaction-sim.js';
 
 // Fullscreen-triangle vertex shader: pass the clip-space position through
@@ -48,7 +47,6 @@ uniform float uAspect;
 uniform sampler2D uAtlas;
 uniform float uRampLen;
 uniform vec3 uBgColor;
-uniform sampler2D uSimTexture;
 uniform sampler2D uReactionTexture;
 
 ${TACTICAL_RAMP_GLSL}
@@ -101,9 +99,8 @@ export class AsciiPipeline {
     if (!gl) throw new Error('WebGL unavailable');
     this.gl = gl;
 
-    // Font glyph sheet + the always-running feedback-buffer sims.
+    // Font glyph sheet + the always-running feedback-buffer sim.
     this.atlas = buildFontAtlas(gl, { cellWidth, cellHeight, textColor: '#eeeeee' });
-    this.rippleSim = new RippleSim(gl);
     this.reactionSim = new ReactionSim(gl);
 
     // ELI5: one oversized triangle clipped to fill the screen — cheaper
@@ -134,7 +131,6 @@ export class AsciiPipeline {
         uAtlas: gl.getUniformLocation(program, 'uAtlas'),
         uRampLen: gl.getUniformLocation(program, 'uRampLen'),
         uBgColor: gl.getUniformLocation(program, 'uBgColor'),
-        uSimTexture: gl.getUniformLocation(program, 'uSimTexture'),
         uReactionTexture: gl.getUniformLocation(program, 'uReactionTexture'),
       };
       this.programCache.set(name, { program, locations });
@@ -166,7 +162,7 @@ export class AsciiPipeline {
   }
 
   // Binds one scene's program + all shared inputs (glyph atlas + the
-  // sim textures, one per texture unit) and draws it into whatever
+  // sim texture, one per texture unit) and draws it into whatever
   // viewport/scissor is currently set.
   _drawScene(program, locations, w, h, timeSeconds) {
     const gl = this.gl;
@@ -176,19 +172,15 @@ export class AsciiPipeline {
     gl.enableVertexAttribArray(locations.aPosition);
     gl.vertexAttribPointer(locations.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-    // Texture units 0-2: font atlas, ripple, reaction — bound every
+    // Texture units 0-1: font atlas, reaction — bound every
     // draw since a different scene's program may be active next call.
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.atlas.texture);
     gl.uniform1i(locations.uAtlas, 0);
 
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, this.rippleSim.texture);
-    gl.uniform1i(locations.uSimTexture, 1);
-
-    gl.activeTexture(gl.TEXTURE2);
     gl.bindTexture(gl.TEXTURE_2D, this.reactionSim.texture);
-    gl.uniform1i(locations.uReactionTexture, 2);
+    gl.uniform1i(locations.uReactionTexture, 1);
 
     gl.uniform2f(locations.uResolution, w, h);
     gl.uniform2f(locations.uCell, this.atlas.cellWidth, this.atlas.cellHeight);
@@ -200,15 +192,14 @@ export class AsciiPipeline {
     gl.drawArrays(gl.TRIANGLES, 0, 3); // run the shader over every pixel in the current viewport
   }
 
-  _stepSims(nowMs) {
-    this.rippleSim.step(nowMs);
+  _stepSims() {
     this.reactionSim.step();
   }
 
   // Draws the single active scene fullscreen — the hero canvas's render path.
   render(frozen = false) {
     const gl = this.gl;
-    if (!frozen) this._stepSims(performance.now());
+    if (!frozen) this._stepSims();
     const { w, h } = this.resize();
     gl.viewport(0, 0, w, h);
     const t = frozen ? 0 : (performance.now() - this.sceneStartTime) / 1000;
@@ -224,7 +215,7 @@ export class AsciiPipeline {
   // relative to the canvas's own box — as returned by getBoundingClientRect().
   renderGrid(cellRects, frozen = false) {
     const gl = this.gl;
-    if (!frozen) this._stepSims(performance.now());
+    if (!frozen) this._stepSims();
     const { h: canvasH, dpr } = this.resize();
     gl.enable(gl.SCISSOR_TEST); // restrict drawing to each tile's rectangle in turn
     const t = frozen ? 0 : (performance.now() - this.gridStartTime) / 1000;
