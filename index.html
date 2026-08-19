@@ -47,6 +47,19 @@
       padding: 1.5rem 1.5rem 0.75rem; margin: 0;
     }
 
+    .section-lede {
+      margin: 0; padding: 0 1.5rem 1rem; max-width: 68ch;
+      color: var(--text-1); font-size: 0.8rem; line-height: 1.7;
+    }
+    .section-lede strong { color: var(--text-0); font-weight: normal; }
+    .section-stat {
+      display: block; margin-top: 0.5rem;
+      color: var(--text-1); font-size: 0.7rem; letter-spacing: 0.06em;
+    }
+    .section-stat b { color: var(--amber); font-weight: normal; }
+    .section-stat a { color: var(--teal); text-decoration: none; }
+    .section-stat a:hover, .section-stat a:focus-visible { text-decoration: underline; }
+
     #hero-section { position: relative; height: 70vh; }
     #ascii-canvas { display: block; width: 100%; height: 100%; }
     #fallback-content {
@@ -164,6 +177,16 @@
 
   <section id="gallery-section">
     <h2 class="section-title">Gallery</h2>
+    <p class="section-lede">
+      <strong>Written by AI, computed live.</strong> No images and no video anywhere on this
+      page — every project is a GLSL function evaluated once per character cell, every frame,
+      on your GPU. Reload and Reaction seeds a different maze; it has never drawn the same one
+      twice. Open any project for its dossier: what the model built, and a link to the code.
+      <span class="section-stat">
+        Whole site over the wire: <b id="page-weight">under 70 KB</b>
+        · <a href="https://github.com/MistaJoka/andraewilliams-site">source</a>
+      </span>
+    </p>
     <div id="gallery-stage">
       <canvas id="gallery-canvas"></canvas>
       <!-- Tiles are built from js/projects.js — the single source of
