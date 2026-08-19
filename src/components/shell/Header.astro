@@ -1,0 +1,76 @@
+---
+const NAV = [
+  { href: '/', label: 'HOME' },
+  { href: '/feed/', label: 'FEED' },
+  { href: '/topics/', label: 'TOPICS' },
+  { href: '/lab/', label: 'LAB' },
+  { href: '/projects/', label: 'PROJECTS' },
+  { href: '/resources/', label: 'RESOURCES' },
+  { href: '/about/', label: 'ABOUT' },
+];
+const here = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? here === '/' : here.startsWith(href));
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="wordmark" href="/">
+      <span class="name">ANDRAE WILLIAMS</span>
+      <span class="disciplines">AI · Software · Cyber · Risk · Systems</span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul>
+        {NAV.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <button type="button" class="search-trigger" data-open-palette>
+      <kbd>⌘K</kbd><span>Search</span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header { border-bottom: 1px solid var(--line); background: var(--bg-1); }
+  .bar {
+    display: flex; align-items: center; gap: var(--sp-5);
+    padding: var(--sp-3) var(--sp-4); flex-wrap: wrap;
+  }
+  .wordmark { text-decoration: none; display: grid; gap: 2px; margin-right: auto; }
+  .name {
+    font-family: var(--font-display); font-size: var(--step-0);
+    letter-spacing: 0.06em; color: var(--accent);
+  }
+  .disciplines {
+    font-family: var(--font-mono); font-size: var(--step--1);
+    color: var(--text-2); letter-spacing: 0.06em;
+  }
+  nav ul { display: flex; gap: var(--sp-4); list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav a {
+    font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.1em; color: var(--text-1); text-decoration: none;
+    padding: var(--sp-2) 0; border-bottom: 2px solid transparent;
+  }
+  nav a:hover { color: var(--text-0); }
+  nav a[aria-current='page'] { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .search-trigger {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    background: var(--bg-2); border: 1px solid var(--line);
+    color: var(--text-1); font-family: var(--font-mono); font-size: var(--step--1);
+    padding: var(--sp-2) var(--sp-3); cursor: pointer; letter-spacing: 0.08em;
+  }
+  .search-trigger:hover { border-color: var(--accent); color: var(--text-0); }
+  kbd { border: 1px solid var(--line-bright); padding: 0 0.3em; font-size: 0.9em; }
+
+  @media (max-width: 52rem) {
+    .bar { gap: var(--sp-3); }
+    .disciplines { display: none; }
+    nav { order: 3; width: 100%; overflow-x: auto; }
+    nav ul { flex-wrap: nowrap; }
+  }
+</style>

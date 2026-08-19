@@ -45,7 +45,7 @@ const series = defineCollection({
 const provenance = {
   built: z.string().optional(),
   model: z.string().optional(),
-  source: z.string().url().optional(),
+  source: z.url().optional(),
 };
 
 const projects = defineCollection({
@@ -59,8 +59,8 @@ const projects = defineCollection({
     topics: z.array(reference('topics')).min(1),
     tags: z.array(z.string()).default([]),
     tools: z.array(z.string()).default([]),
-    repo: z.string().url().optional(),
-    demo: z.string().url().optional(),
+    repo: z.url().optional(),
+    demo: z.url().optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
     ...provenance,
@@ -91,7 +91,7 @@ const resources = defineCollection({
   loader: glob({ pattern: MD, base: './src/content/resources' }),
   schema: z.object({
     title: z.string(),
-    url: z.string().url(),
+    url: z.url(),
     author: z.string().optional(),
     kind: z.enum(['BOOK', 'PAPER', 'TOOL', 'VIDEO', 'COURSE', 'REPO', 'POST']),
     topics: z.array(reference('topics')).min(1),

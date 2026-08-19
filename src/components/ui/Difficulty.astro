@@ -1,0 +1,25 @@
+---
+import { formatDifficulty } from '../../lib/format';
+interface Props { level: string }
+const { level } = Astro.props;
+// Four rungs, drawn as filled/empty blocks so difficulty is legible
+// without relying on colour.
+const RUNGS = ['ELI5', 'BEGINNER', 'INTERMEDIATE', 'DEEP_DIVE'];
+const filled = RUNGS.indexOf(level) + 1;
+---
+<span class="difficulty" title={`Difficulty: ${formatDifficulty(level)}`}>
+  <span class="bars" aria-hidden="true">
+    {RUNGS.map((_, i) => <span class:list={['bar', { on: i < filled }]}></span>)}
+  </span>
+  <span class="label">{formatDifficulty(level)}</span>
+</span>
+<style>
+  .difficulty { display: inline-flex; align-items: center; gap: var(--sp-2); }
+  .bars { display: inline-flex; gap: 2px; }
+  .bar { width: 3px; height: 10px; background: var(--line-bright); }
+  .bar.on { background: var(--text-1); }
+  .label {
+    font-family: var(--font-mono); font-size: var(--step--1);
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2);
+  }
+</style>

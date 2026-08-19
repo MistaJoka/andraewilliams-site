@@ -1,9 +1,74 @@
 ---
-// Scaffold smoke test — replaced in Phase 4 by the real homepage.
-// The integrity gate runs here for now; it moves to BaseLayout once that
-// exists, so every route pays for it exactly once.
-import { assertContentIntegrity } from '../lib/integrity';
-await assertContentIntegrity();
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FeaturedPost from '../components/feed/FeaturedPost.astro';
+import Feed from '../components/feed/Feed.astro';
+import { getCollection } from 'astro:content';
+import '../styles/cards.css';
+
+const [posts, seriesList, topics] = await Promise.all([
+  getCollection('posts', ({ data }) => !data.draft),
+  getCollection('series'),
+  getCollection('topics'),
+]);
+
+const seriesById = Object.fromEntries(
+  seriesList.map((s) => [s.id, { title: s.data.title, plannedParts: s.data.plannedParts }]),
+);
+
+const byDate = [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const featured = byDate.find((p) => p.data.featured) ?? byDate[0]!;
+const rest = byDate.filter((p) => p.id !== featured.id);
+
+// Filter chips: the topic hubs, then the three cross-cutting formats the
+// spec calls out. Both come from data, so neither is hardcoded here.
+const filters = [
+  ...[...topics].sort((a, b) => a.data.order - b.data.order).map((t) => ({ id: t.data.id, label: t.data.label })),
+  { id: 'tldr', label: 'TLDR' },
+  { id: 'eli5', label: 'ELI5' },
+  { id: 'visual', label: 'VISUAL' },
+];
+
+const featuredSeries = featured.data.series ? seriesById[featured.data.series.id] : undefined;
 ---
-<html lang="en"><head><meta charset="utf-8"><title>scaffold</title></head>
-<body><h1>scaffold ok</h1></body></html>
+<BaseLayout
+  title="Home"
+  description="A living technical feed and digital laboratory — AI, software, cyber, homelab, risk, MMA and anime, built and documented in public."
+>
+  <section class="identity" aria-labelledby="identity-heading">
+    <h1 id="identity-heading" class="visually-hidden">Andrae Williams — technical second brain</h1>
+    <div class="status-line">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="status-label">SYSTEM ONLINE</span>
+      <span class="status-sep" aria-hidden="true">│</span>
+      <span class="currently">
+        Currently: <b>learning</b> / <b>building</b> / <b>experimenting</b> in public
+      </span>
+    </div>
+    <p class="tagline">A living technical feed and digital laboratory.</p>
+  </section>
+
+  <FeaturedPost post={featured} series={featuredSeries} />
+
+  <section aria-labelledby="latest-heading">
+    <h2 id="latest-heading" class="eyebrow section-heading">Latest</h2>
+    <Feed posts={rest} seriesById={seriesById} filters={filters} />
+  </section>
+</BaseLayout>
+
+<style>
+  .identity { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-6); }
+  .status-line {
+    display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.1em; color: var(--text-2); text-transform: uppercase;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--status-working); box-shadow: 0 0 6px var(--status-working);
+  }
+  .status-label { color: var(--status-working); }
+  .status-sep { color: var(--line-bright); }
+  .currently b { color: var(--accent); font-weight: 400; }
+  .tagline { margin: var(--sp-4) 0 0; color: var(--text-1); font-size: var(--step-1); max-width: 54ch; }
+  .section-heading { margin-bottom: var(--sp-4); }
+</style>

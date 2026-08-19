@@ -1,0 +1,45 @@
+---
+title: How I Structure AI Agent Repos
+description: A clean, boring layout that survives an agent growing from one script into a system — and the one rule that keeps it clean.
+type: TUTORIAL
+difficulty: INTERMEDIATE
+date: 2026-08-16
+topics: [ai]
+tags: [repos, structure, best-practices]
+series: building-an-ai-agent
+seriesOrder: 2
+---
+
+## The layout
+
+```text
+agents/     one file per agent; behaviour only
+tools/      one file per tool; pure functions where possible
+memory/     storage adapters, nothing that decides anything
+tests/      characterization tests for tool contracts
+docs/       decisions, not descriptions
+```
+
+## The one rule
+
+**Tools do not know which agent called them, and agents do not know how
+tools are implemented.**
+
+That sounds obvious and it is violated constantly — usually by passing
+the whole agent context into a tool "just so it can log properly." Once a
+tool reads agent state, you can no longer test it alone, reuse it across
+agents, or reason about it without reading the agent too.
+
+## Why docs/ holds decisions
+
+Descriptions rot because the code moves under them. Decisions do not rot,
+because they record a choice made at a moment: what we picked, what we
+rejected, and why. Six months later the description is wrong and the
+decision is still true.
+
+## Growing it
+
+When an agent file passes a few hundred lines, the split is almost always
+behaviour vs. orchestration — what it decides vs. what it sequences. Split
+on that seam and both halves stay readable. Splitting by "utils" does not
+work; it just moves the mess.

@@ -1,0 +1,51 @@
+---
+// One dispatcher, four archetypes. The visual difference is driven by
+// CARD_SPEC data (frame, footprint, which metadata shows) rather than by
+// ten separate components, so an 11th post type is one row of config.
+import CardMeta from './CardMeta.astro';
+import TypeBadge from '../ui/TypeBadge.astro';
+import { cardSpec } from '../../lib/card-spec';
+import { readingTime } from '../../lib/format';
+import type { PostType } from '../../lib/enums';
+
+interface Props {
+  post: {
+    id: string;
+    body?: string;
+    data: {
+      title: string; description: string; type: PostType;
+      difficulty: string; date: Date; status?: string;
+    };
+  };
+  series?: { title: string; order: number; total: number };
+}
+const { post, series } = Astro.props;
+const { data } = post;
+const spec = cardSpec(data.type);
+---
+<a
+  href={`/posts/${post.id}/`}
+  class="card"
+  data-frame={spec.frame}
+  data-archetype={spec.archetype}
+  style={`--card-accent: var(${spec.accent})`}
+>
+  {spec.frame === 'poster' && <span class="watermark" aria-hidden="true">{spec.glyph}</span>}
+
+  <TypeBadge type={data.type} />
+
+  <h3 class="card-title">{data.title}</h3>
+
+  {spec.showExcerpt && <p class="card-excerpt">{data.description}</p>}
+
+  <div class="card-foot">
+    <CardMeta
+      fields={spec.meta}
+      date={data.date}
+      difficulty={data.difficulty}
+      status={data.status}
+      series={series}
+      readingTime={readingTime(post.body)}
+    />
+  </div>
+</a>

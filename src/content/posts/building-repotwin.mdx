@@ -1,0 +1,53 @@
+---
+title: Building RepoTwin
+description: A repo intelligence twin — clone, index, embed, map, query. What worked, what I rewrote twice, and where it still falls down.
+type: BUILD
+difficulty: INTERMEDIATE
+date: 2026-08-17
+topics: [ai]
+tags: [code, indexer, search]
+project: repotwin
+status: TESTING
+related:
+  posts: [how-ai-agent-memory-actually-works]
+---
+
+## TL;DR
+
+Five stages: clone → index → embed → map → query. The indexer was the
+easy part. Keeping the index *correct* as the repo moves was not.
+
+## What I built
+
+A local daemon that watches a repository and maintains three views of it:
+a file/symbol table from Tree-sitter, a call graph derived from that
+table, and an embedding index over documentation-shaped chunks.
+
+## What I tried
+
+The first version re-indexed everything on every run. Correct, and
+unusable — four minutes on a mid-size repo. The second version cached by
+file mtime, which was fast and quietly wrong: a rename changes no mtime
+on the content, so stale symbols survived under both names.
+
+The third version keys on content hash plus path, which handles renames
+and is still incremental.
+
+## What broke
+
+Embeddings drifted out of sync with the symbol table. Deleting a file
+removed its symbols but left its vectors, so retrieval kept surfacing
+functions that no longer existed. The fix was making deletion a first-
+class operation across all three stores rather than an afterthought in
+one of them.
+
+That is the same failure as a dangling reference in a content system —
+storage removed in one place and not another. It shows up everywhere once
+you learn to look for it.
+
+## Where it falls down
+
+"Where is X defined" works well. "Why is X built this way" does not. A
+symbol graph records structure, and intent was never written down
+anywhere the indexer can reach it. I do not think retrieval fixes that —
+the information genuinely is not in the repo.

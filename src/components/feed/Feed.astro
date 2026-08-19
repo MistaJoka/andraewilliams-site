@@ -1,0 +1,64 @@
+---
+import Card from '../cards/Card.astro';
+import FeedFilters from './FeedFilters.astro';
+import { cardSpec } from '../../lib/card-spec';
+
+interface Props {
+  posts: any[];
+  seriesById: Record<string, { title: string; plannedParts: number }>;
+  filters: { id: string; label: string }[];
+}
+const { posts, seriesById, filters } = Astro.props;
+
+// Every filter needs its own hide-rule; generated here so adding a filter
+// stays a data change.
+const filterCss = filters
+  .map((f) =>
+    [
+      // hide everything that does not carry this filter token
+      `.feed-root:has(#filter-${f.id}:checked) .feed-grid > li:not([data-filters~="${f.id}"]){display:none}`,
+      // ...and surface the empty state when nothing carries it at all
+      `.feed-root:has(#filter-${f.id}:checked):not(:has(.feed-grid > li[data-filters~="${f.id}"])) .feed-empty{display:block}`,
+    ].join('\n'),
+  )
+  .join('\n');
+---
+<div class="feed-root">
+  <FeedFilters filters={filters} />
+
+  <ul class="feed-grid">
+    {posts.map((post) => {
+      const s = post.data.series ? seriesById[post.data.series.id] : undefined;
+      const tokens = [
+        ...post.data.topics.map((t: any) => t.id),
+        post.data.type.toLowerCase(),
+      ].join(' ');
+      const spec = cardSpec(post.data.type);
+      return (
+        <li
+          data-filters={tokens}
+          class:list={[
+            spec.span.col === 2 && 'card-span-c2',
+            spec.span.row === 2 && 'card-span-r2',
+          ]}
+        >
+          <Card
+            post={post}
+            series={s && { title: s.title, order: post.data.seriesOrder, total: s.plannedParts }}
+          />
+        </li>
+      );
+    })}
+  </ul>
+
+  <p class="feed-empty" role="status">Nothing in the feed matches that filter yet.</p>
+</div>
+
+<style set:html={filterCss}></style>
+<style>
+  .feed-empty {
+    display: none;
+    font-family: var(--font-mono); font-size: var(--step--1);
+    color: var(--text-2); letter-spacing: 0.08em; padding: var(--sp-5) 0;
+  }
+</style>

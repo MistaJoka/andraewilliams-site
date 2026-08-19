@@ -1,0 +1,73 @@
+---
+import TypeBadge from '../ui/TypeBadge.astro';
+import Difficulty from '../ui/Difficulty.astro';
+import { formatDate, readingTime, seriesCounter } from '../../lib/format';
+import { cardSpec } from '../../lib/card-spec';
+
+interface Props { post: any; series?: { title: string; plannedParts: number } }
+const { post, series } = Astro.props;
+const spec = cardSpec(post.data.type);
+---
+<article class="featured" style={`--card-accent: var(${spec.accent})`}>
+  <p class="eyebrow featured-eyebrow">Featured</p>
+
+  <div class="featured-head">
+    <TypeBadge type={post.data.type} />
+    <Difficulty level={post.data.difficulty} />
+  </div>
+
+  <h2 class="featured-title">
+    <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+  </h2>
+
+  <p class="featured-tldr"><span class="tldr-key">TL;DR</span>{post.data.description}</p>
+
+  <div class="featured-meta">
+    <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+    <span>{readingTime(post.body)} MIN</span>
+    {post.data.tags.slice(0, 3).map((t: string) => <span class="tag">#{t}</span>)}
+    {series && post.data.seriesOrder && (
+      <a class="series-link" href={`/series/${post.data.series.id}/`}>
+        {series.title} <b>{seriesCounter(post.data.seriesOrder, series.plannedParts)}</b>
+      </a>
+    )}
+  </div>
+</article>
+
+<style>
+  .featured {
+    position: relative;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--card-accent);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin-bottom: var(--sp-6);
+  }
+  /* Instrument-panel corner marks — the same language as the bracket card
+     frame, at a larger scale. */
+  .featured::after {
+    content: ''; position: absolute; top: -1px; right: -1px;
+    width: 18px; height: 18px;
+    border-top: 2px solid var(--card-accent); border-right: 2px solid var(--card-accent);
+  }
+  .featured-eyebrow { margin-bottom: var(--sp-3); }
+  .featured-head { display: flex; gap: var(--sp-4); align-items: center; flex-wrap: wrap; margin-bottom: var(--sp-4); }
+  .featured-title { font-size: var(--step-3); margin: 0 0 var(--sp-4); line-height: 1.15; }
+  .featured-title a { color: var(--text-0); text-decoration: none; }
+  .featured-title a:hover { color: var(--card-accent); }
+  .featured-tldr { color: var(--text-1); max-width: 62ch; font-size: var(--step-1); }
+  .tldr-key {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--card-accent);
+    letter-spacing: 0.12em; margin-right: var(--sp-3);
+  }
+  .featured-meta {
+    display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); align-items: center;
+    font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.08em; color: var(--text-2); text-transform: uppercase;
+  }
+  .tag { color: var(--text-2); }
+  .series-link { color: var(--text-1); text-decoration: none; border-bottom: 1px solid var(--line-bright); }
+  .series-link:hover { color: var(--card-accent); }
+  .series-link b { color: var(--card-accent); font-weight: 400; }
+  @media (max-width: 40rem) { .featured-title { font-size: var(--step-2); } }
+</style>
