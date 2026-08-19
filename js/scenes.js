@@ -32,38 +32,79 @@ float sceneField(vec2 uv, float t) {
 }
 `;
 
-// ELI5: a circle whose edge wobbles with angle instead of a fixed
-// radius — sum 5 wobble frequencies (tight+fast to broad+slow) for a
-// jagged, alive edge instead of a clean scallop. Size pulses gently over
-// time; a fine ripple inside stops the core from reading flat.
+// ELI5: a corona, not a blob. Three layers stacked: a molten core whose
+// outline is chewed by turbulence, streamers thrown outward from it, and
+// shock rings that expand and fade like something detonated in the
+// middle. The old version was one wobbly circle and read as almost empty
+// at thumbnail size — this fills its frame.
+//
+// Deep dive: fbm sampled in POLAR coordinates, so the turbulence flows
+// around the ring instead of sliding across it in screen space.
 const aura = `
-float hashA(float n) { return fract(sin(n) * 43758.5453123); }
+float hashA(vec2 p) {
+  p = fract(p * vec2(127.1, 311.7));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
+}
+
+// 2D value noise: random value per lattice corner, smoothly blended.
+float noiseA(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = p - i;
+  f = f * f * (3.0 - 2.0 * f); // smoothstep curve — no creases at the seams
+  float a = hashA(i);
+  float b = hashA(i + vec2(1.0, 0.0));
+  float c = hashA(i + vec2(0.0, 1.0));
+  float d = hashA(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+// Three octaves, each twice as fine and half as loud.
+float fbmA(vec2 p) {
+  float v = 0.0;
+  float amp = 0.5;
+  for (int i = 0; i < 3; i++) {
+    v += amp * noiseA(p);
+    p *= 2.0;
+    amp *= 0.5;
+  }
+  return v;
+}
 
 float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
-  float r = length(p);       // distance from center
-  float ang = atan(p.y, p.x); // angle around center
+  float r = length(p);
+  float ang = atan(p.y, p.x);
 
-  // Sum 5 sine waves in angle, each its own frequency/speed/phase.
-  float spikes = 0.0;
-  for (int i = 0; i < 5; i++) {
+  // ELI5: feeding the ANGLE into the noise (not x/y) is what makes the
+  // turbulence wrap around the shape — it drifts along the rim instead of
+  // sliding past it. The radius term makes it churn outward over time.
+  float turb = fbmA(vec2(ang * 1.7, r * 2.6 - t * 0.4));
+
+  // Molten core: solid in the middle, dissolving at a turbulent edge.
+  float edge = 0.30 + turb * 0.26;
+  float core = smoothstep(edge, edge * 0.55, r);        // tight, genuinely hot centre
+  float halo = smoothstep(edge * 1.4, edge * 0.6, r) * 0.5; // glow bleeding past it
+  float limb = smoothstep(0.055, 0.0, abs(r - edge));   // bright rim -> a readable silhouette
+
+  // Streamers: fine angular striping, warped by the same turbulence so
+  // they bend with the rim. Windowed to live just outside the core.
+  float streak = 0.5 + 0.5 * sin(ang * 24.0 + turb * 9.0 + t * 1.3);
+  streak *= smoothstep(edge * 2.2, edge * 1.0, r) * smoothstep(edge * 0.75, edge * 1.05, r);
+
+  // Shock rings: three expanding shells, each fading as it grows.
+  float rings = 0.0;
+  for (int i = 0; i < 3; i++) {
     float fi = float(i);
-    float freq = 5.0 + fi * 3.0;
-    float speed = 0.6 + fi * 0.31;
-    float jitter = hashA(fi * 12.9) * 6.2831853;
-    spikes += (0.5 + 0.5 * sin(ang * freq + t * speed + jitter)) / (fi + 1.0);
+    float phase = fract(t * 0.26 + fi * 0.3333);
+    float radius = 0.22 + phase * 1.05;
+    rings += smoothstep(0.05, 0.0, abs(r - radius)) * (1.0 - phase);
   }
-  spikes /= 2.3;
 
-  // Edge radius = base + spikes, breathing slowly via pulse; core is
-  // "inside that radius" via smoothstep for a soft edge.
-  float edge = 0.28 + spikes * 0.55;
-  float pulse = 0.85 + 0.15 * sin(t * 3.0);
-  float core = smoothstep(edge * pulse, 0.0, r);
+  // Slow breath so the whole thing is never quite still.
+  float breath = 0.9 + 0.1 * sin(t * 1.7);
 
-  // Fine radial ripple layered on top so the inside isn't flat.
-  float shimmer = 0.5 + 0.5 * sin(r * 18.0 - t * 6.0 + spikes * 6.0);
-  return clamp(core * (0.7 + 0.3 * shimmer), 0.0, 1.0);
+  return clamp((core + halo + limb * 0.85 + streak * 0.5 + rings * 0.7) * breath, 0.0, 1.0);
 }
 `;
 
@@ -149,10 +190,15 @@ float sceneField(vec2 uv, float t) {
 }
 `;
 
-// ELI5: one diagonal stroke repeating on a timer: reaches across the
-// screen (wipe-on), holds, fades, restarts. Thickness is perturbed by
-// 1D noise along its length for torn/bled ink edges, plus a few random
-// drips off the underside.
+// ELI5: three brush strokes cutting across the field, each on its own
+// clock so one is always mid-swing — the old single stroke left the
+// screen empty for a third of every cycle. A stroke is not drawn as a
+// shape: each cell asks "how far am I from the line the brush is
+// travelling", and near cells become ink.
+//
+// Deep dive: segment SDF with a pressure-tapered width, a 1D-noise
+// dry-brush edge, ink that runs out from the tail forward, and a few
+// spatter droplets thrown past the tip.
 const inkSlash = `
 float hashB(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -160,55 +206,81 @@ float hashB(vec2 p) {
   return fract(p.x * p.y);
 }
 
-// 1D value noise along a single axis — same smoothstep-blend idea as
-// noiseF above, just one dimension.
+float hashB1(float n) { return fract(sin(n * 78.233) * 43758.5453123); }
+
+// 1D value noise — smooth random wobble along one axis.
 float noise1(float x) {
   float i = floor(x);
   float f = smoothstep(0.0, 1.0, fract(x));
   return mix(hashB(vec2(i, 0.0)), hashB(vec2(i + 1.0, 0.0)), f);
 }
 
+// ELI5: shortest distance from a point to a line segment. Project the
+// point onto the line, clamp to the segment's ends, measure the gap.
+float segDist(vec2 p, vec2 a, vec2 b) {
+  vec2 pa = p - a;
+  vec2 ba = b - a;
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+  return length(pa - ba * h);
+}
+
+// One stroke. \`seed\` offsets its clock so the three never swing together.
+float brushStroke(vec2 p, float t, float seed) {
+  float period = 2.6;
+  float clock = t / period + seed;
+  float cycle = floor(clock);
+  float phase = fract(clock);
+
+  // Fresh angle and offset every cycle, so it never repeats the same slash.
+  float ang = (hashB1(cycle + seed * 17.0) - 0.5) * 1.8;
+  float off = (hashB1(cycle * 3.7 + seed * 11.0) - 0.5) * 0.9;
+  mat2 rot = mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
+  vec2 q = rot * p - vec2(0.0, off); // rotate so the stroke runs along x
+
+  // The tip races ahead; the tail follows later, so the stroke draws on
+  // and then runs dry from the back.
+  float head = mix(-1.7, 1.7, smoothstep(0.0, 0.42, phase));
+  float tail = mix(-1.7, 1.7, smoothstep(0.30, 0.95, phase));
+  if (head - tail < 0.01) return 0.0;
+
+  float d = segDist(q, vec2(tail, 0.0), vec2(head, 0.0));
+
+  // Pressure: thin where the brush lands and lifts, fat through the middle.
+  float along = clamp((q.x - tail) / (head - tail), 0.0, 1.0);
+  float pressure = sin(along * 3.14159);
+  float width = 0.03 + 0.16 * pressure;
+
+  // Dry-brush: chew the edge with noise so it is not a clean capsule.
+  float rough = 0.62 + 0.38 * noise1(q.x * 16.0 + seed * 29.0);
+  // Flat-topped, not a hairline: solid out to most of the width, then a
+  // quick falloff. A plain smoothstep-to-zero peaked only dead on the
+  // centre line, which the cell grid mostly sampled past.
+  float core = smoothstep(width * rough, width * 0.2, d);
+  float bleed = smoothstep(width * 2.8, width * 0.9, d) * 0.4; // ink wicking outward
+
+  // Spatter flung past the tip while the brush is still moving fast.
+  float spatter = 0.0;
+  for (int i = 0; i < 4; i++) {
+    float fi = float(i);
+    vec2 drop = vec2(head, 0.0) + vec2(0.05 + hashB1(fi + seed) * 0.28,
+                                       (hashB1(fi * 5.3 + seed) - 0.5) * 0.4);
+    spatter += smoothstep(0.05, 0.0, length(q - drop)) * smoothstep(0.05, 0.25, phase);
+  }
+
+  float dry = 1.0 - smoothstep(0.72, 1.0, phase); // the whole mark fades as it dries
+  return (core + bleed + spatter * 0.8) * dry;
+}
+
 float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
-
-  float ang = -0.55;
-  mat2 rot = mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
-  // ELI5: rotate the whole coordinate space by the stroke's angle so the
-  // rest of the math can pretend the stroke is perfectly horizontal —
-  // much simpler than doing diagonal distance math directly.
-  vec2 q = rot * p; // q.x runs along the stroke, q.y is perpendicular to it
-
-  // Cycle timing: which repeat we're in (cycle) and how far through it (phase).
-  float period = 3.2;
-  float cycle = floor(t / period);
-  float phase = fract(t / period);
-
-  float sweep = smoothstep(0.08, 0.4, phase);        // 0->1 wipe-on ramp early in the cycle
-  float reach = mix(-1.8, 1.8, sweep);                // how far the stroke has extended
-  float fade = 1.0 - smoothstep(0.55, 1.0, phase);    // fades out late in the cycle
-  float tipStart = smoothstep(-1.8, -1.6, q.x);       // stroke doesn't start before its origin
-  float inFront = 1.0 - smoothstep(reach - 0.05, reach + 0.02, q.x); // masks off anything past the current reach
-
-  // Thickness perturbed by noise along the stroke -> torn/bled edge.
-  float bleed = noise1(q.x * 8.0 + cycle * 17.3) * 0.06;
-  float width = 0.045 + bleed;
-  float core = 1.0 - smoothstep(width * 0.5, width, abs(q.y));
-
-  // Sparse drips hanging below the stroke, only where dripSeed rolls high.
-  float dripSeed = noise1(q.x * 10.0 + cycle * 9.1 + 50.0);
-  float drip = smoothstep(0.82, 1.0, dripSeed) * (1.0 - smoothstep(0.0, 0.3, -q.y)) * step(q.y, 0.0);
-
-  float stroke = core * inFront * tipStart * fade;
-  stroke = max(stroke, drip * inFront * tipStart * fade * 0.6);
-
-  return clamp(stroke, 0.0, 1.0);
+  // Thirds of a cycle apart: as one dries, the next is already landing.
+  float ink = brushStroke(p, t, 0.0)
+            + brushStroke(p, t, 0.333) * 0.85
+            + brushStroke(p, t, 0.667) * 0.7;
+  return clamp(ink, 0.0, 1.0);
 }
 `;
 
-// ELI5: layer independent HUD pieces — background grid, gapped
-// crosshair, 4 pulsing corner brackets, a rotating radar sweep with a
-// fading trail — and add their brightness. No 3D object, just 2D shape
-// functions (grid lines, distance/angle thresholds) combined.
 const mechaHud = `
 float sceneField(vec2 uv, float t) {
   vec2 p = uv * 2.0 - 1.0;
@@ -259,22 +331,6 @@ float sceneField(vec2 uv, float t) {
 }
 `;
 
-// ELI5: thin adapter — just samples what js/rule30-sim.js already
-// computed this frame. No logic lives here.
-const rule30 = `
-float sceneField(vec2 uv, float t) {
-  return texture2D(uRule30Texture, uv).r;
-}
-`;
-
-// ELI5: same pattern as rule30 above — samples js/game-of-life-sim.js's
-// output. No logic here.
-const life = `
-float sceneField(vec2 uv, float t) {
-  return texture2D(uLifeTexture, uv).r;
-}
-`;
-
 // ELI5: the pattern is not drawn here at all — js/reaction-sim.js grows
 // it in a texture, and this scene just reads how much of the "eater"
 // chemical (V) ended up at each point. The 16-bit value is split across
@@ -299,4 +355,4 @@ float sceneField(vec2 uv, float t) {
 }
 `;
 
-export const scenes = { particles, aura, fire, inkSlash, mechaHud, rule30, life, reaction };
+export const scenes = { particles, aura, fire, inkSlash, mechaHud, reaction };

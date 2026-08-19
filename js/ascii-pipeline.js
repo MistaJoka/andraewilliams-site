@@ -1,8 +1,6 @@
 import { createProgram } from './gl-utils.js';
 import { buildFontAtlas } from './font-atlas.js';
 import { RippleSim } from './ripple-sim.js';
-import { Rule30Sim } from './rule30-sim.js';
-import { GameOfLifeSim } from './game-of-life-sim.js';
 import { ReactionSim } from './reaction-sim.js';
 
 // Fullscreen-triangle vertex shader: pass the clip-space position through
@@ -51,8 +49,6 @@ uniform sampler2D uAtlas;
 uniform float uRampLen;
 uniform vec3 uBgColor;
 uniform sampler2D uSimTexture;
-uniform sampler2D uRule30Texture;
-uniform sampler2D uLifeTexture;
 uniform sampler2D uReactionTexture;
 
 ${TACTICAL_RAMP_GLSL}
@@ -105,11 +101,9 @@ export class AsciiPipeline {
     if (!gl) throw new Error('WebGL unavailable');
     this.gl = gl;
 
-    // Font glyph sheet + the 4 always-running feedback-buffer sims.
+    // Font glyph sheet + the always-running feedback-buffer sims.
     this.atlas = buildFontAtlas(gl, { cellWidth, cellHeight, textColor: '#eeeeee' });
     this.rippleSim = new RippleSim(gl);
-    this.rule30Sim = new Rule30Sim(gl);
-    this.lifeSim = new GameOfLifeSim(gl);
     this.reactionSim = new ReactionSim(gl);
 
     // ELI5: one oversized triangle clipped to fill the screen — cheaper
@@ -141,8 +135,6 @@ export class AsciiPipeline {
         uRampLen: gl.getUniformLocation(program, 'uRampLen'),
         uBgColor: gl.getUniformLocation(program, 'uBgColor'),
         uSimTexture: gl.getUniformLocation(program, 'uSimTexture'),
-        uRule30Texture: gl.getUniformLocation(program, 'uRule30Texture'),
-        uLifeTexture: gl.getUniformLocation(program, 'uLifeTexture'),
         uReactionTexture: gl.getUniformLocation(program, 'uReactionTexture'),
       };
       this.programCache.set(name, { program, locations });
@@ -173,7 +165,7 @@ export class AsciiPipeline {
     return { w, h, dpr };
   }
 
-  // Binds one scene's program + all shared inputs (glyph atlas + the 4
+  // Binds one scene's program + all shared inputs (glyph atlas + the
   // sim textures, one per texture unit) and draws it into whatever
   // viewport/scissor is currently set.
   _drawScene(program, locations, w, h, timeSeconds) {
@@ -184,7 +176,7 @@ export class AsciiPipeline {
     gl.enableVertexAttribArray(locations.aPosition);
     gl.vertexAttribPointer(locations.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-    // Texture units 0-4: font atlas, ripple, rule30, life, reaction — bound every
+    // Texture units 0-2: font atlas, ripple, reaction — bound every
     // draw since a different scene's program may be active next call.
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.atlas.texture);
@@ -195,16 +187,8 @@ export class AsciiPipeline {
     gl.uniform1i(locations.uSimTexture, 1);
 
     gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, this.rule30Sim.texture);
-    gl.uniform1i(locations.uRule30Texture, 2);
-
-    gl.activeTexture(gl.TEXTURE3);
-    gl.bindTexture(gl.TEXTURE_2D, this.lifeSim.texture);
-    gl.uniform1i(locations.uLifeTexture, 3);
-
-    gl.activeTexture(gl.TEXTURE4);
     gl.bindTexture(gl.TEXTURE_2D, this.reactionSim.texture);
-    gl.uniform1i(locations.uReactionTexture, 4);
+    gl.uniform1i(locations.uReactionTexture, 2);
 
     gl.uniform2f(locations.uResolution, w, h);
     gl.uniform2f(locations.uCell, this.atlas.cellWidth, this.atlas.cellHeight);
@@ -218,8 +202,6 @@ export class AsciiPipeline {
 
   _stepSims(nowMs) {
     this.rippleSim.step(nowMs);
-    this.rule30Sim.step(nowMs);
-    this.lifeSim.step(nowMs);
     this.reactionSim.step();
   }
 
