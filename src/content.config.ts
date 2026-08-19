@@ -15,7 +15,12 @@ const MD = '**/[^_]*.{md,mdx}';
 const topics = defineCollection({
   loader: file('src/data/topics.yaml'),
   schema: z.object({
-    id: z.string(),
+    // Constrained because a topic id is interpolated into a generated CSS
+    // rule for the JS-free feed filters (`<style set:html>`). Anything
+    // outside this alphabet could terminate the rule and inject its own.
+    // Enforcing it here means a bad id fails the build instead of
+    // reaching a stylesheet.
+    id: z.string().regex(/^[a-z0-9-]+$/, 'topic id must be lowercase letters, digits and hyphens only'),
     label: z.string(),
     accent: z.string().regex(/^--[a-z0-9-]+$/, 'accent must name a CSS custom property'),
     glyph: z.string().min(1).max(2),
