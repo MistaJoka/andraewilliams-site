@@ -22,17 +22,20 @@ const filterCss = filters
   </header>
 
   <div class="res-root">
-    <fieldset class="filters">
-      <legend class="visually-hidden">Filter resources by topic</legend>
-      <input type="radio" name="res-filter" id="filter-all" checked class="visually-hidden" />
-      <label for="filter-all">ALL</label>
-      {filters.map((f) => (
-        <>
-          <input type="radio" name="res-filter" id={`filter-${f.id}`} class="visually-hidden" />
-          <label for={`filter-${f.id}`}>{f.label}</label>
-        </>
-      ))}
-    </fieldset>
+    <details class="filter-disclosure">
+      <summary>Browse by topic</summary>
+      <fieldset class="filters">
+        <legend class="visually-hidden">Filter resources by topic</legend>
+        <input type="radio" name="res-filter" id="filter-all" checked class="visually-hidden" />
+        <label for="filter-all">ALL</label>
+        {filters.map((f) => (
+          <>
+            <input type="radio" name="res-filter" id={`filter-${f.id}`} class="visually-hidden" />
+            <label for={`filter-${f.id}`}>{f.label}</label>
+          </>
+        ))}
+      </fieldset>
+    </details>
 
     <ul class="res-list">
       {byDate.map((r) => (
@@ -58,7 +61,17 @@ const filterCss = filters
   .page-head { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-5); }
   h1 { font-size: var(--step-3); margin: var(--sp-3) 0; }
   .lede { color: var(--text-1); max-width: 62ch; }
-  .filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); border: 0; padding: 0; margin: 0 0 var(--sp-5); }
+  .filter-disclosure { margin-bottom: var(--sp-5); }
+  .filter-disclosure summary {
+    cursor: pointer; font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.1em; color: var(--text-1); text-transform: uppercase;
+    padding: var(--sp-2) 0; list-style: none;
+  }
+  .filter-disclosure summary::-webkit-details-marker { display: none; }
+  .filter-disclosure summary::before { content: '▸ '; }
+  .filter-disclosure[open] summary::before { content: '▾ '; }
+  .filter-disclosure[open] summary { color: var(--accent); }
+  .filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); border: 0; padding: var(--sp-3) 0 0; margin: 0; }
   .filters label { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em; color: var(--text-1); border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); cursor: pointer; }
   .filters input:checked + label { color: var(--bg-0); background: var(--accent); border-color: var(--accent); font-weight: 700; }
   .filters input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }

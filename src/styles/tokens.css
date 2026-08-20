@@ -20,7 +20,6 @@
   /* --- primary accent --- */
   --accent: #56a8ff;
   --accent-dim: #2f79cc;
-  --accent-glow: #56a8ff33;
 
   /* --- topic accents: signal, not rainbow --- */
   --topic-ai: #56a8ff;

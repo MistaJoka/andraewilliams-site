@@ -24,7 +24,10 @@ const filterCss = filters
   .join('\n');
 ---
 <div class="feed-root">
-  <FeedFilters filters={filters} />
+  <details class="filter-disclosure">
+    <summary>Filter</summary>
+    <FeedFilters filters={filters} />
+  </details>
 
   <ul class="feed-grid">
     {posts.map((post) => {
@@ -63,4 +66,14 @@ const filterCss = filters
     font-family: var(--font-mono); font-size: var(--step--1);
     color: var(--text-2); letter-spacing: 0.08em; padding: var(--sp-5) 0;
   }
+  .filter-disclosure { margin-bottom: var(--sp-5); }
+  .filter-disclosure summary {
+    cursor: pointer; font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.1em; color: var(--text-1); text-transform: uppercase;
+    padding: var(--sp-2) 0; list-style: none;
+  }
+  .filter-disclosure summary::-webkit-details-marker { display: none; }
+  .filter-disclosure summary::before { content: '▸ '; }
+  .filter-disclosure[open] summary::before { content: '▾ '; }
+  .filter-disclosure[open] summary { color: var(--accent); }
 </style>

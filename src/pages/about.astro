@@ -1,33 +1,48 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="About" description="Who this is and what this site is for.">
+<BaseLayout title="About" description="Risk analyst turned systems builder — what I do and how I work.">
   <header class="page-head">
     <p class="eyebrow">About</p>
     <h1>Andrae Williams</h1>
-    <p class="lede">AI · Software · Cyber · Risk · Systems</p>
+    <p class="lede">Risk · Software · AI</p>
   </header>
   <div class="prose">
     <p>
-      This site is a technical second brain kept in public. It is where I work
-      things out — what I am learning, what I am building, what broke, and what
-      I would do differently.
+      I read risk signals for a living — fraud, payments, merchant behavior — before I
+      started building the software that acts on them. These days that means full-stack
+      apps, AI agents, and the local infrastructure to run them without handing everything
+      to somebody else's cloud.
     </p>
-    <h2>What is here</h2>
+
+    <h2>What I do</h2>
     <p>
-      Posts are organised by <a href="/topics/">topic</a> and, where they form a
-      sequence, by <a href="/feed/">series</a>. The <a href="/lab/">lab</a> holds
-      live experiments; <a href="/projects/">projects</a> holds things that
-      actually shipped. <a href="/resources/">Resources</a> is the reference
-      library I actually reach for.
+      Risk analysis taught me to distrust a system until it has been tested against real
+      failure. I bring that into software: building agents and tools that have to hold up
+      under adversarial or messy conditions, not just the happy path — and running as much
+      of it as I can on hardware I control, in a homelab built for local inference.
     </p>
-    <h2>How it is written</h2>
+
+    <h2>How I work</h2>
+    <p>A few things I try to hold to, in order:</p>
+    <ul>
+      <li>Understand constraints before proposing a solution.</li>
+      <li>Build practical systems, not proofs of concept that stop at the demo.</li>
+      <li>Inspect failure modes on purpose, not just the success path.</li>
+      <li>Prefer evidence to assumptions — including about my own work.</li>
+      <li>Make important decisions reversible.</li>
+      <li>Document what broke, not just what shipped.</li>
+      <li>Use AI as an implementation multiplier, not a substitute for expertise.</li>
+    </ul>
+
+    <h2>Why this site exists</h2>
     <p>
-      Every entry aims to do at least one of: learn, build, explain, test,
-      analyse, visualise, reference, or connect. This is a growing map, not a
-      publishing treadmill — so there is no schedule, and older entries get
-      updated rather than replaced.
+      This is where I work things out in public — organised by <a href="/topics/">topic</a>,
+      with the occasional multi-part series, a <a href="/lab/">lab</a> for live experiments,
+      a <a href="/projects/">work</a> page for what actually shipped, and a <a href="/resources/">reference library</a>{' '}
+      for what I actually reach for. There is no publishing schedule; older entries get updated rather than replaced.
     </p>
+
     <h2>Provenance</h2>
     <p>
       Projects and lab entries record what was built by AI and which model wrote
@@ -42,4 +57,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .lede { color: var(--text-1); font-family: var(--font-mono); letter-spacing: 0.08em; }
   .prose { max-width: 68ch; }
   .prose h2 { font-size: var(--step-1); margin-top: var(--sp-6); }
+  .prose ul { padding-left: 1.25em; }
+  .prose li { margin-bottom: var(--sp-2); color: var(--text-1); }
 </style>

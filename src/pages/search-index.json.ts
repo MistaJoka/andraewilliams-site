@@ -10,11 +10,11 @@ import { getCollection } from 'astro:content';
 interface Doc { t: string; d: string; k: string; u: string; g: string }
 
 const NAV: Doc[] = [
-  { t: 'Home', d: 'Feed, featured work, and current focus', k: 'NAV', u: '/', g: 'start index' },
-  { t: 'Feed', d: 'Everything, newest first', k: 'NAV', u: '/feed/', g: 'all posts stream' },
+  { t: 'Home', d: 'Selected work, notes and the lab', k: 'NAV', u: '/', g: 'start index' },
+  { t: 'Notes', d: 'Everything, newest first', k: 'NAV', u: '/feed/', g: 'all posts stream feed' },
   { t: 'Topics', d: 'The map of what I work on', k: 'NAV', u: '/topics/', g: 'hubs subjects' },
   { t: 'Lab', d: 'Active experiments', k: 'NAV', u: '/lab/', g: 'experiments shaders' },
-  { t: 'Projects', d: 'Things I actually built', k: 'NAV', u: '/projects/', g: 'work builds' },
+  { t: 'Work', d: 'Things I actually built', k: 'NAV', u: '/projects/', g: 'work builds projects' },
   { t: 'Resources', d: 'Curated reference library', k: 'NAV', u: '/resources/', g: 'tools links' },
   { t: 'About', d: 'Who this is', k: 'NAV', u: '/about/', g: 'bio contact' },
 ];

@@ -11,10 +11,7 @@ const byDate = [...lab].sort((a, b) => b.data.date.getTime() - a.data.date.getTi
   <header class="page-head">
     <p class="eyebrow">Lab</p>
     <h1>Active experiments</h1>
-    <p class="lede">
-      {lab.length} entries. Each one runs in your browser when you ask it to —
-      nothing starts on its own.
-    </p>
+    <p class="lede">Each entry runs in your browser only when you ask it to — nothing starts on its own.</p>
   </header>
   <ul class="list">
     {byDate.map((l) => (

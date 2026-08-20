@@ -1,11 +1,8 @@
 ---
 const NAV = [
-  { href: '/', label: 'HOME' },
-  { href: '/feed/', label: 'FEED' },
-  { href: '/topics/', label: 'TOPICS' },
+  { href: '/projects/', label: 'WORK' },
+  { href: '/feed/', label: 'NOTES' },
   { href: '/lab/', label: 'LAB' },
-  { href: '/projects/', label: 'PROJECTS' },
-  { href: '/resources/', label: 'RESOURCES' },
   { href: '/about/', label: 'ABOUT' },
 ];
 const here = Astro.url.pathname;
@@ -15,7 +12,7 @@ const isActive = (href: string) => (href === '/' ? here === '/' : here.startsWit
   <div class="wrap bar">
     <a class="wordmark" href="/">
       <span class="name">ANDRAE WILLIAMS</span>
-      <span class="disciplines">AI · Software · Cyber · Risk · Systems</span>
+      <span class="disciplines">Risk · Software · AI</span>
     </a>
 
     <!-- Checkbox hack, not <details>: a closed <details> hides its

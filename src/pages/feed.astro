@@ -20,11 +20,11 @@ const filters = [
   { id: 'visual', label: 'VISUAL' },
 ];
 ---
-<BaseLayout title="Feed" description="Everything, newest first — posts, builds, experiments and notes across AI, cyber, homelab, risk, MMA and anime.">
+<BaseLayout title="Notes" description="Technical explanations, build logs, experiments and things worth remembering — across AI, cyber, homelab, risk, MMA and anime.">
   <header class="page-head">
-    <p class="eyebrow">Feed</p>
-    <h1>Everything, newest first</h1>
-    <p class="lede">{posts.length} entries. Filter by topic or format.</p>
+    <p class="eyebrow">Notes</p>
+    <h1>Notes</h1>
+    <p class="lede">Technical explanations, build logs, experiments and things worth remembering.</p>
   </header>
   <Feed posts={byDate} seriesById={seriesById} filters={filters} />
 </BaseLayout>

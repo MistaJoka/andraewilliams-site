@@ -1,96 +1,196 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FeaturedPost from '../components/feed/FeaturedPost.astro';
-import Feed from '../components/feed/Feed.astro';
 import AsciiStage from '../components/lab/AsciiStage.astro';
-import { getCollection } from 'astro:content';
+import StatusLight from '../components/ui/StatusLight.astro';
+import TypeBadge from '../components/ui/TypeBadge.astro';
+import { getCollection, getEntries } from 'astro:content';
+import { formatDate } from '../lib/format';
 import '../styles/cards.css';
 
-const [posts, seriesList, topics] = await Promise.all([
+const [posts, seriesList, topics, projects] = await Promise.all([
   getCollection('posts', ({ data }) => !data.draft),
   getCollection('series'),
   getCollection('topics'),
+  getCollection('projects', ({ data }) => !data.draft),
 ]);
 
 const seriesById = Object.fromEntries(
   seriesList.map((s) => [s.id, { title: s.data.title, plannedParts: s.data.plannedParts }]),
 );
 
+// Notes: one highlighted post via the existing FeaturedPost treatment,
+// plus a short plain list — not the full filterable Feed grid, which
+// lives at /feed/ only.
 const byDate = [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const featured = byDate.find((p) => p.data.featured) ?? byDate[0]!;
-const rest = byDate.filter((p) => p.id !== featured.id);
-
-// Filter chips: the topic hubs, then the three cross-cutting formats the
-// spec calls out. Both come from data, so neither is hardcoded here.
-const filters = [
-  ...[...topics].sort((a, b) => a.data.order - b.data.order).map((t) => ({ id: t.data.id, label: t.data.label })),
-  { id: 'tldr', label: 'TLDR' },
-  { id: 'eli5', label: 'ELI5' },
-  { id: 'visual', label: 'VISUAL' },
-];
-
+const recentNotes = byDate.filter((p) => p.id !== featured.id).slice(0, 4);
 const featuredSeries = featured.data.series ? seriesById[featured.data.series.id] : undefined;
+
+// Selected work: all shipped projects, newest first, each topped in its
+// own real topic accent rather than a hardcoded colour.
+const workByDate = [...projects].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const workTopics = await Promise.all(workByDate.map((p) => getEntries(p.data.topics)));
+
+// Series: both current entries are COMPLETE multi-part write-ups, newest
+// start date first. No status filter — this still reads correctly if an
+// ONGOING series is added later.
+const seriesByStart = [...seriesList].sort((a, b) => b.data.started.getTime() - a.data.started.getTime());
+
+// Topics: core subjects vs. the two off-hours ones, split on the same
+// `order` field topics.yaml already uses (1-4 core, 5-6 off-hours) —
+// not a second hardcoded list.
+const orderedTopics = [...topics].sort((a, b) => a.data.order - b.data.order);
+const coreTopics = orderedTopics.filter((t) => t.data.order <= 4);
+const offHoursTopics = orderedTopics.filter((t) => t.data.order > 4);
 ---
 <BaseLayout
   title="Home"
-  description="A living technical feed and digital laboratory — AI, software, cyber, homelab, risk, MMA and anime, built and documented in public."
+  description="Risk analysis, full-stack software and applied AI — selected work, notes and a browser-based lab, built and documented in public."
 >
-  <section class="identity" aria-labelledby="identity-heading">
-    <h1 id="identity-heading" class="visually-hidden">Andrae Williams — technical second brain</h1>
-    <div class="status-line">
-      <span class="dot" aria-hidden="true"></span>
-      <span class="status-label">SYSTEM ONLINE</span>
-      <span class="status-sep" aria-hidden="true">│</span>
-      <span class="currently">
-        Currently: <b>learning</b> / <b>building</b> / <b>experimenting</b> in public
-      </span>
-    </div>
-    <p class="tagline">A living technical feed and digital laboratory.</p>
+  <header class="hero">
+    <p class="eyebrow">Andrae Williams</p>
+    <h1>Risk analyst turned systems builder.</h1>
+    <p class="hero-lede">
+      A technical record of what I build and learn — payments and fraud risk,
+      full-stack software, applied AI, and the homelab it all runs on.
+      Written and shipped in public.
+    </p>
+  </header>
 
-    <!-- The one decorative canvas on the site. Deferred until on screen,
-         one static frame under prefers-reduced-motion, and it falls back
-         to the caption if WebGL is unavailable. -->
+  <section class="work" aria-labelledby="work-heading">
+    <h2 id="work-heading" class="eyebrow section-heading">Selected work</h2>
+    <ul class="work-grid">
+      {workByDate.map((p, i) => (
+        <li style={`--w: var(${workTopics[i]?.[0]?.data.accent ?? '--topic-ai'})`}>
+          <a href={`/projects/${p.id}/`} class="work-card">
+            <span class="work-top">
+              <span class="work-kind">Project</span>
+              <StatusLight status={p.data.status} />
+            </span>
+            <h3 class="work-title">{p.data.title}</h3>
+            <p class="work-desc">{p.data.description}</p>
+            {p.data.model && <p class="work-provenance">Built with {p.data.model}</p>}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="section-link"><a href="/projects/">All work →</a></p>
+  </section>
+
+  <section class="threads" aria-labelledby="threads-heading">
+    <h2 id="threads-heading" class="eyebrow section-heading">Series</h2>
+    <ul class="thread-list">
+      {seriesByStart.map((s) => (
+        <li>
+          <a href={`/series/${s.id}/`}>
+            <span class="thread-title">{s.data.title}</span>
+            <span class="thread-desc">{s.data.description}</span>
+            <span class="thread-meta">{s.data.plannedParts} parts · {s.data.status.toLowerCase()}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="notes" aria-labelledby="notes-heading">
+    <h2 id="notes-heading" class="eyebrow section-heading">Notes</h2>
+    <FeaturedPost post={featured} series={featuredSeries} />
+    <ul class="notes-list">
+      {recentNotes.map((p) => (
+        <li>
+          <a href={`/posts/${p.id}/`}>
+            <TypeBadge type={p.data.type} />
+            <span class="notes-title">{p.data.title}</span>
+            <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="section-link"><a href="/feed/">All notes →</a></p>
+  </section>
+
+  <section class="lab-teaser" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Lab</h2>
+    <p class="lab-lede">
+      Small WebGL scenes rendered live in your browser as ASCII — nothing runs until you ask it to.
+    </p>
     <AsciiStage
       scene="aura"
       title="Aura"
-      autoplay
-      height="11rem"
+      height="14rem"
       fallback="A corona rendered live as ASCII — see it in the lab."
     />
-    <p class="stage-note">
-      Rendered live in your browser as ASCII. <a href="/lab/">See how it works →</a>
-    </p>
+    <p class="section-link"><a href="/lab/">All experiments →</a></p>
   </section>
 
-  <FeaturedPost post={featured} series={featuredSeries} />
-
-  <section aria-labelledby="latest-heading">
-    <h2 id="latest-heading" class="eyebrow section-heading">Latest</h2>
-    <Feed posts={rest} seriesById={seriesById} filters={filters} />
+  <section class="topics-teaser" aria-labelledby="topics-heading">
+    <h2 id="topics-heading" class="eyebrow section-heading">Topics</h2>
+    <ul class="topic-pills">
+      {coreTopics.map((t) => (
+        <li><a href={`/topics/${t.data.id}/`} style={`--t: var(${t.data.accent})`}>{t.data.glyph} {t.data.label}</a></li>
+      ))}
+    </ul>
+    <p class="off-hours">
+      Off-hours: {offHoursTopics.map((t, i) => <>{i > 0 && ' · '}<a href={`/topics/${t.data.id}/`}>{t.data.label}</a></>)}
+    </p>
   </section>
 </BaseLayout>
 
 <style>
-  .identity { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-6); }
-  .status-line {
-    display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap;
-    font-family: var(--font-mono); font-size: var(--step--1);
-    letter-spacing: 0.1em; color: var(--text-2); text-transform: uppercase;
-  }
-  .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--status-working); box-shadow: 0 0 6px var(--status-working);
-  }
-  .status-label { color: var(--status-working); }
-  .status-sep { color: var(--line-bright); }
-  /* The separator only makes sense while both halves share a line. */
-  @media (max-width: 34rem) { .status-sep { display: none; } }
-  .currently b { color: var(--accent); font-weight: 400; }
-  .tagline { margin: var(--sp-4) 0 var(--sp-5); color: var(--text-1); font-size: var(--step-1); max-width: 54ch; }
-  .stage-note {
-    margin: calc(var(--sp-5) * -1 + var(--sp-2)) 0 0;
-    font-family: var(--font-mono); font-size: var(--step--1);
-    letter-spacing: 0.08em; color: var(--text-2);
-  }
+  .hero { padding: var(--sp-6) 0 var(--sp-5); border-bottom: 1px solid var(--line); margin-bottom: var(--sp-6); }
+  .hero h1 { font-size: var(--step-4); margin: var(--sp-3) 0 var(--sp-4); max-width: 20ch; }
+  .hero-lede { color: var(--text-1); font-size: var(--step-1); max-width: 58ch; }
+
   .section-heading { margin-bottom: var(--sp-4); }
+  .section-link { margin-top: var(--sp-4); }
+  .section-link a { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; }
+
+  .work { margin-bottom: var(--sp-7); }
+  .work-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
+  .work-card {
+    display: grid; gap: var(--sp-3); height: 100%; padding: var(--sp-4);
+    border: 1px solid var(--line); border-top: 3px solid var(--w);
+    background: var(--bg-1); text-decoration: none;
+    transition: border-color 150ms ease-out, background 150ms ease-out;
+  }
+  .work-card:hover { border-color: var(--w); background: var(--bg-2); }
+  .work-top { display: flex; justify-content: space-between; align-items: center; }
+  .work-kind { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em; color: var(--text-2); text-transform: uppercase; }
+  .work-title { font-size: var(--step-1); margin: 0; color: var(--text-0); }
+  .work-desc { color: var(--text-1); margin: 0; }
+  .work-provenance { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.06em; margin: 0; }
+  @media (max-width: 55rem) { .work-grid { grid-template-columns: 1fr; } }
+
+  .threads { margin-bottom: var(--sp-7); }
+  .thread-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .thread-list a {
+    display: grid; gap: var(--sp-1); padding: var(--sp-4);
+    border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
+    transition: border-color 150ms ease-out, background 150ms ease-out;
+  }
+  .thread-list a:hover { border-color: var(--accent); background: var(--bg-2); }
+  .thread-title { color: var(--text-0); font-weight: 700; }
+  .thread-desc { color: var(--text-1); }
+  .thread-meta { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .notes { margin-bottom: var(--sp-7); }
+  .notes-list { list-style: none; margin: var(--sp-4) 0 0; padding: 0; display: grid; gap: var(--sp-2); }
+  .notes-list a { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) 0; border-bottom: 1px solid var(--line); text-decoration: none; color: var(--text-0); }
+  .notes-list a:hover .notes-title { color: var(--accent); }
+  .notes-title { flex: 1; }
+  .notes-list time { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; }
+
+  .lab-teaser { margin-bottom: var(--sp-7); }
+  .lab-lede { color: var(--text-1); max-width: 56ch; margin-bottom: var(--sp-4); }
+
+  .topics-teaser .topic-pills { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  .topic-pills a {
+    display: inline-block; color: var(--t); font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.08em; text-decoration: none; border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3);
+  }
+  .topic-pills a:hover { border-color: var(--t); }
+  .off-hours { margin-top: var(--sp-3); font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; }
+  .off-hours a { color: var(--text-2); }
+  .off-hours a:hover { color: var(--accent); }
 </style>

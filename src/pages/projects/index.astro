@@ -7,11 +7,11 @@ import { formatDate } from '../../lib/format';
 const projects = await getCollection('projects', ({ data }) => !data.draft);
 const byDate = [...projects].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
-<BaseLayout title="Projects" description="Things I actually built — what they do, what stack, and what state they are in.">
+<BaseLayout title="Work" description="Systems and experiments I actually shipped, with constraints, failures and current status left visible.">
   <header class="page-head">
-    <p class="eyebrow">Projects</p>
+    <p class="eyebrow">Work</p>
     <h1>Things I actually built</h1>
-    <p class="lede">{projects.length} project{projects.length === 1 ? '' : 's'}. Status is honest, including the broken ones.</p>
+    <p class="lede">Systems and experiments I actually shipped, with constraints, failures and current status left visible.</p>
   </header>
   <ul class="list">
     {byDate.map((p) => (
@@ -19,6 +19,7 @@ const byDate = [...projects].sort((a, b) => b.data.date.getTime() - a.data.date.
         <a href={`/projects/${p.id}/`}>
           <span class="top"><span class="t">{p.data.title}</span><StatusLight status={p.data.status} /></span>
           <span class="d">{p.data.description}</span>
+          {p.data.model && <span class="prov">Built with {p.data.model}</span>}
           <span class="foot">
             <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
             <span class="tools">{p.data.tools.join(' · ')}</span>
@@ -38,5 +39,6 @@ const byDate = [...projects].sort((a, b) => b.data.date.getTime() - a.data.date.
   .top { display: flex; justify-content: space-between; gap: var(--sp-4); align-items: center; flex-wrap: wrap; }
   .t { color: var(--text-0); font-size: var(--step-1); font-weight: 700; }
   .d { color: var(--text-1); }
+  .prov { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.06em; }
   .foot { display: flex; gap: var(--sp-4); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; }
 </style>

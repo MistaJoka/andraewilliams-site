@@ -3,16 +3,24 @@ const year = new Date().getUTCFullYear();
 ---
 <footer class="site-footer">
   <div class="wrap inner">
-    <span>BUILT IN PUBLIC · OWN YOUR WORK · LEAVE SIGNAL</span>
-    <span>© {year} Andrae Williams</span>
+    <span class="copyright">© {year} Andrae Williams</span>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="https://github.com/MistaJoka" rel="noopener noreferrer" target="_blank">GitHub</a>
+      <a href="/rss.xml">RSS</a>
+      <a href="/topics/">Topics</a>
+      <a href="/resources/">Resources</a>
+    </nav>
   </div>
 </footer>
 <style>
   .site-footer { border-top: 1px solid var(--line); margin-top: var(--sp-7); background: var(--bg-1); }
   .inner {
-    display: flex; justify-content: space-between; gap: var(--sp-4); flex-wrap: wrap;
+    display: flex; justify-content: space-between; align-items: center; gap: var(--sp-4); flex-wrap: wrap;
     padding: var(--sp-5) var(--sp-4);
     font-family: var(--font-mono); font-size: var(--step--1);
     letter-spacing: 0.08em; color: var(--text-2);
   }
+  .footer-links { display: flex; gap: var(--sp-4); flex-wrap: wrap; }
+  .footer-links a { color: var(--text-2); text-decoration: none; }
+  .footer-links a:hover { color: var(--accent); }
 </style>

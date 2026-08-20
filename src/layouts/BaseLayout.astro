@@ -33,7 +33,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 // Absolute — every scraper requires it, and several reject relative paths
 // outright rather than resolving them.
 const ogImageUrl = new URL(ogImage, Astro.site).href;
-const fullTitle = title === 'Home' ? 'Andrae Williams — technical second brain' : `${title} — Andrae Williams`;
+const fullTitle = title === 'Home' ? 'Andrae Williams — Software, Applied AI & Risk' : `${title} — Andrae Williams`;
 ---
 <!doctype html>
 <html lang="en">
