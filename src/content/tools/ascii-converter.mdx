@@ -1,0 +1,18 @@
+---
+title: "ASCII Image Converter"
+description: "Drop an image, get it back as ASCII art rendered in the site's own amber terminal aesthetic — sampled entirely on a 2D canvas, no upload."
+date: 2026-08-20
+status: WORKING
+category: portfolio
+app: ascii-convert
+topics: [homelab]
+tags: [canvas, image-processing]
+tools: [JavaScript, Canvas 2D]
+built: "Draws the source image into an offscreen canvas scaled down to N columns, reads the pixel buffer with getImageData, and maps each cell's luminance to a character on a 10-step density ramp."
+model: "Claude Sonnet 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/tools/ascii-convert.js
+---
+
+Same underlying idea as the shader-driven scenes in [/lab](/lab/) — a luminance value maps to a position on a density ramp, `' .:-=+*#%@'`, dark to dense — but with a plain `<canvas>` doing the sampling instead of a GLSL glyph atlas. The image never leaves the browser: `URL.createObjectURL` hands the `<img>` element a local blob URL, and everything downstream is `drawImage` + `getImageData`.
+
+Monospace glyphs are roughly twice as tall as wide, so the row count is corrected by a fixed aspect ratio before sampling — skip that and every image comes out stretched vertically.

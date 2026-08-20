@@ -92,6 +92,28 @@ const lab = defineCollection({
   }),
 });
 
+const tools = defineCollection({
+  loader: glob({ pattern: MD, base: './src/content/tools' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(200),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    status: z.enum(STATUS),
+    // Portfolio: distinctive, demonstrates craft. Utility: plain reader value.
+    // Drives the grouping on the /tools index.
+    category: z.enum(['portfolio', 'utility']),
+    topics: z.array(reference('topics')).min(1),
+    tags: z.array(z.string()).default([]),
+    tools: z.array(z.string()).default([]),
+    // Presence of `app` is what mounts the interactive tool on this entry —
+    // same role `scene` plays for lab's WebGL engine.
+    app: z.enum(['cidr', 'ascii-convert']).optional(),
+    draft: z.boolean().default(false),
+    ...provenance,
+  }),
+});
+
 const resources = defineCollection({
   loader: glob({ pattern: MD, base: './src/content/resources' }),
   schema: z.object({
@@ -141,4 +163,4 @@ const posts = defineCollection({
     }),
 });
 
-export const collections = { posts, projects, lab, series, resources, topics };
+export const collections = { posts, projects, lab, tools, series, resources, topics };

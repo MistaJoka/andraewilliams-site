@@ -1,0 +1,85 @@
+---
+---
+<div class="cidr-tool" data-tool="cidr">
+  <label class="field">
+    <span>Address</span>
+    <input
+      type="text"
+      class="input"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="192.168.1.0/24"
+      value="192.168.1.0/24"
+    />
+  </label>
+  <p class="error" hidden></p>
+  <dl class="result"></dl>
+</div>
+
+<script>
+  import { computeCidr } from '../../scripts/tools/cidr.js';
+
+  const tools = document.querySelectorAll<HTMLElement>('[data-tool="cidr"]');
+  for (const tool of tools) {
+    const input = tool.querySelector<HTMLInputElement>('.input')!;
+    const error = tool.querySelector<HTMLElement>('.error')!;
+    const result = tool.querySelector<HTMLElement>('.result')!;
+
+    const render = () => {
+      const rows = computeCidr(input.value);
+      if (!rows) {
+        error.hidden = false;
+        error.textContent = 'Enter an address like 192.168.1.0/24';
+        result.replaceChildren();
+        return;
+      }
+      error.hidden = true;
+      result.replaceChildren(
+        ...rows.flatMap(([label, value]) => {
+          const dt = document.createElement('dt');
+          dt.textContent = label;
+          const dd = document.createElement('dd');
+          dd.textContent = value;
+          return [dt, dd];
+        }),
+      );
+    };
+
+    input.addEventListener('input', render);
+    render();
+  }
+</script>
+
+<style>
+  .cidr-tool {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin: 0 0 var(--sp-5);
+  }
+  .field { display: grid; gap: var(--sp-2); max-width: 24rem; }
+  .field span {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .input {
+    font-family: var(--font-mono); font-size: var(--step-0); color: var(--text-0);
+    background: var(--bg-0); border: 1px solid var(--line); padding: var(--sp-3);
+  }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .error {
+    color: var(--status-broken); font-family: var(--font-mono); font-size: var(--step--1);
+    margin: var(--sp-3) 0 0;
+  }
+  .result {
+    display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-2) var(--sp-5);
+    margin: var(--sp-5) 0 0; padding-top: var(--sp-4); border-top: 1px solid var(--line);
+    font-size: var(--step--1);
+  }
+  .result:empty { display: none; }
+  .result dt {
+    font-family: var(--font-mono); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .result dd { margin: 0; color: var(--text-0); font-family: var(--font-mono); }
+</style>

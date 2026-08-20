@@ -1,0 +1,18 @@
+---
+title: "CIDR / Subnet Calculator"
+description: "Type an address like 192.168.1.0/24, get network, broadcast, mask and usable-host range instantly — no server round trip."
+date: 2026-08-20
+status: WORKING
+category: utility
+app: cidr
+topics: [homelab]
+tags: [networking, calculator]
+tools: [JavaScript]
+built: "32-bit unsigned bitwise math on the parsed octets, with an explicit branch for /0 (JS shift amounts are masked to 5 bits, so `<<32` is a no-op) and for /31–/32 (RFC 3021: no reserved network/broadcast, every address is usable)."
+model: "Claude Sonnet 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/tools/cidr.js
+---
+
+Every field recomputes on keystroke — there's no submit button because there's nothing to submit to. The whole thing is `computeCidr()` in [cidr.js](https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/tools/cidr.js): parse the octets and prefix, derive the mask, and the rest — network, broadcast, wildcard, usable range — falls out of AND/OR/NOT against that mask.
+
+The one sharp edge is `/0`: a 32-bit left-shift by 32 is a no-op in JavaScript, not zero, because shift amounts are masked to 5 bits. Left as the general formula it would silently return the wrong mask for the whole-internet case, so `/0` gets its own branch instead.

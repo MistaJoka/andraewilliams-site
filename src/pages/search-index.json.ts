@@ -14,6 +14,7 @@ const NAV: Doc[] = [
   { t: 'Notes', d: 'Everything, newest first', k: 'NAV', u: '/feed/', g: 'all posts stream feed' },
   { t: 'Topics', d: 'The map of what I work on', k: 'NAV', u: '/topics/', g: 'hubs subjects' },
   { t: 'Lab', d: 'Active experiments', k: 'NAV', u: '/lab/', g: 'experiments shaders' },
+  { t: 'Tools', d: 'Offline, in-browser utilities', k: 'NAV', u: '/tools/', g: 'calculators converters utilities' },
   { t: 'Work', d: 'Things I actually built', k: 'NAV', u: '/projects/', g: 'work builds projects' },
   { t: 'Resources', d: 'Curated reference library', k: 'NAV', u: '/resources/', g: 'tools links' },
   { t: 'About', d: 'Who this is', k: 'NAV', u: '/about/', g: 'bio contact' },
@@ -42,6 +43,9 @@ export const GET: APIRoute = async () => {
   }
   for (const l of await getCollection('lab', ({ data }) => !data.draft)) {
     docs.push({ t: l.data.title, d: l.data.description.slice(0, 110), k: 'LAB', u: `/lab/${l.id}/`, g: [...l.data.tags, ...l.data.tools].join(' ') });
+  }
+  for (const t of await getCollection('tools', ({ data }) => !data.draft)) {
+    docs.push({ t: t.data.title, d: t.data.description.slice(0, 110), k: 'TOOL', u: `/tools/${t.id}/`, g: [...t.data.tags, ...t.data.tools].join(' ') });
   }
   for (const r of await getCollection('resources')) {
     docs.push({ t: r.data.title, d: r.data.why.slice(0, 110), k: 'RESOURCE', u: `/resources/#${r.id}`, g: [...r.data.tags, r.data.kind].join(' ') });
