@@ -3,6 +3,7 @@ title: Homelab From Zero
 description: From an empty desk to a small rack that earns its power draw — hypervisor, network, storage, and the mistakes in order.
 topics: [homelab]
 plannedParts: 8
+status: COMPLETE
 started: 2026-08-19
 featured: false
 ---

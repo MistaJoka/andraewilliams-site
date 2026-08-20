@@ -1,0 +1,104 @@
+---
+title: "The Lab, Eight Parts Later"
+description: "What actually got built, what it cost, and the two incidents that proved the 'allowed to break' rule from part one was the right one."
+type: BUILD
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [homelab]
+tags: [retrospective, architecture]
+series: homelab-from-zero
+seriesOrder: 8
+status: PRODUCTION
+---
+import { Tldr, Architecture, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+One used mini-PC, one hypervisor, one tailnet, a two-pile storage rule,
+and two real workloads — is now a small, boring, reliable system that
+nobody in the house thinks about. That was always the actual goal. A lab
+you have to think about has stopped being a lab.
+</Tldr>
+
+## What got built
+
+Seven parts, in the order they had to happen: philosophy first, because
+it decided the budget; hardware, because it decided everything after;
+the hypervisor, because it made every later step reversible; the network,
+because a lab you can't reach is a lab you stop opening; storage, because
+knowing what's disposable comes before buying anything to protect it;
+and only then the two workloads that justified the electricity — local
+models and whole-house DNS filtering.
+
+<Architecture>
+```text
+                    ┌─────────────────────┐
+   your devices ───▶│      TAILSCALE      │◀─── phone, laptop, anywhere
+                    │   (part 4: no open   │
+                    │   ports, ever)       │
+                    └──────────┬───────────┘
+                               │
+                    ┌──────────▼───────────┐
+                    │   PROXMOX VE (part 3) │
+                    │   one mini-PC, static  │
+                    │   IP, snapshots on     │
+                    │   everything below     │
+                    └──────────┬───────────┘
+              ┌────────────────┼────────────────┐
+              ▼                ▼                 ▼
+        ┌──────────┐    ┌──────────┐      ┌─────────────┐
+        │ Pi-hole  │    │  Ollama  │      │   storage    │
+        │ (part 7) │    │ (part 6) │      │  (part 5):   │
+        │ LXC, DNS │    │ VM, local│      │  rebuildable │
+        │ for the  │    │ models,  │      │  = 1 SSD,    │
+        │  house   │    │ Q6_K     │      │  irreplace-  │
+        └──────────┘    └──────────┘      │  able = off- │
+                                           │  box backup  │
+                                           └─────────────┘
+```
+</Architecture>
+
+## What it actually costs
+
+One idling mini-PC's worth of power, the price of one used machine, and
+roughly zero ongoing maintenance — the whole point of parts three through
+five was converting "requires attention" into "requires nothing," so the
+system could keep running without becoming a second job. It has not
+needed a rebuild since part three's first snapshot.
+
+<FailureModes>
+Two real incidents happened across this series, not hypothetical ones,
+and both are worth reading as a pair:
+
+- **The DHCP collision (part 3).** The hypervisor's static IP sat inside
+  the router's lease pool; a phone got handed the same address three
+  days later and both devices half-worked. Caused by skipping a step
+  the plan already called for.
+- **The full query log (part 7).** Pi-hole's disk filled with DNS logs,
+  the container stopped resolving, and the whole house kept working
+  anyway because a fallback resolver was configured from the start.
+  Caused by a mistake that happened anyway, and survived *because* the
+  lab was built assuming mistakes would happen.
+
+That is the actual lesson, not "don't make mistakes" — you will, on
+schedule. The lesson is that part one's "decide what's allowed to break"
+rule, applied honestly, makes the difference between an outage and a
+non-event. The DHCP collision was ugly because nothing was designed to
+absorb it. The DNS outage was invisible because something was.
+</FailureModes>
+
+## What I'd do differently
+
+Add the fallback DNS entry *before* the incident that taught me to,
+obviously — but more generally: build the thing that absorbs failure at
+the same time as the thing that can fail, not after. Tailscale in part
+four and the storage split in part five both got this right by accident,
+because they were designed with "what if this breaks" as part of the
+brief. Pi-hole didn't, until it had to.
+
+<WhatILearned>
+A finished homelab is not a lab with every possible service running —
+it's a lab where you've stopped noticing it's there, because the things
+that could go wrong were designed for before they did. Eight parts in,
+that's the actual state: not more ambitious, just less fragile. Whatever
+gets added next inherits that standard, or it doesn't get added.
+</WhatILearned>
