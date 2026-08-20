@@ -1,0 +1,97 @@
+---
+title: "Pi-hole: Ad-Blocking for the Whole House"
+description: "One DNS server, every device on the network, zero browser extensions — and why this is the workload that actually convinces skeptics."
+type: TUTORIAL
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [homelab]
+tags: [pihole, dns, privacy, adblock]
+series: homelab-from-zero
+seriesOrder: 7
+related:
+  posts: [what-a-homelab-actually-is, tailscale-reach-your-lab-from-anywhere]
+---
+import { Tldr, WhyItMatters, HowItWorks, WhatBroke, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+Pi-hole in a container, point your router's DNS at it, and every device
+on the network — phone, TV, laptop, the one nobody thinks to install an
+extension on — stops loading ad and tracker domains before the request
+even leaves your network. No client software, no per-browser setup.
+</Tldr>
+
+<WhyItMatters>
+Part one drew the line between what a lab is for: learning by breaking,
+running things you want to own, and rehearsal. Pi-hole is the cleanest
+example of the middle one. It costs almost nothing to run, it works
+whether or not anyone in the house knows it exists, and it is the
+workload that makes a skeptical housemate notice the lab is good for
+something — the TV's ads just stop, with no explanation required.
+</WhyItMatters>
+
+<HowItWorks>
+## What it actually does
+
+Pi-hole is a DNS server that answers most lookups honestly and a known
+list of ad/tracker domains with nothing. A device asking "where is
+doubleclick.net" gets no answer, so the ad never loads — this happens
+before a single byte of the ad is requested, which is why it also beats
+most browser extensions on speed and works on devices that have no idea
+what an extension is.
+
+## Setup, in order
+
+1. **Run it as an LXC container**, not a VM — Pi-hole is one lightweight
+   process; a VM's overhead buys nothing here. Part three's snapshot
+   habit applies directly: snapshot before the first config change.
+2. **Give it a static IP** the same way the hypervisor itself got one in
+   part three, and for the same reason — a DNS server that moves
+   addresses breaks every device pointed at it at once.
+3. **Point the router's DNS at it.** One setting, in the router admin
+   page, not per device. This is the whole point: one change, every
+   device on the network inherits it, forever, with no ongoing
+   maintenance.
+4. **Add a second DNS entry as fallback** — your ISP's resolver or a
+   public one. If Pi-hole is ever down, the network keeps working
+   without ads blocked rather than not working at all. A single point of
+   DNS failure is a worse trade than a few unblocked ads.
+5. **Extend it over Tailscale.** Part four's tailnet already reaches
+   every device you carry outside the house; Pi-hole's DNS can be
+   offered to the tailnet too, so the phone gets the same filtering on
+   mobile data that it gets at home — the router-level trick, extended
+   past the router.
+</HowItWorks>
+
+<WhatBroke>
+The fallback DNS entry was not optional in practice — it was the thing
+that saved the household from noticing the lab at all. Pi-hole's
+container ran out of disk on its query-log partition (logs default to
+keeping every DNS query, and a busy house generates more of those than
+you'd guess) and stopped resolving. Every device on the network kept
+working because the second DNS entry picked up the slack automatically,
+and nobody found out until I checked the dashboard days later. Without
+that fallback the whole house loses internet the moment this one
+container hiccups — a single container becoming a single point of
+failure for basic connectivity is exactly the "restaurant" mistake part
+one warned about, quietly reintroduced through a router setting.
+</WhatBroke>
+
+<FailureModes>
+- **No fallback DNS.** Covered above — the one mistake in this setup
+  that turns an ad-blocker outage into a full internet outage.
+- **Over-blocking a working site** and not knowing why. Pi-hole's
+  dashboard shows exactly which list blocked which domain; check it
+  before assuming a site is just broken.
+- **Trusting a blocklist you didn't read.** Some third-party lists block
+  entire ad-tech companies that also serve login flows or payment
+  processors. A big list is not automatically a good list.
+</FailureModes>
+
+<WhatILearned>
+This is the rare lab workload where the payoff is louder than the setup
+— fifteen minutes of config buys a permanently quieter internet for
+every device in the house, with no software to maintain per-device. It
+is also the workload most likely to make the lab's existence obvious to
+people who do not care about labs, which turns out to be worth more than
+any benchmark.
+</WhatILearned>
