@@ -1,0 +1,67 @@
+---
+title: Picking Homelab Hardware Without Wasting Money
+description: The used-enterprise trap, the mini-PC sweet spot, and why your first server should cost less than your monitor.
+type: TUTORIAL
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [homelab]
+tags: [hardware, planning, budget]
+series: homelab-from-zero
+seriesOrder: 2
+---
+import { Tldr, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+Buy one used mini-PC, run it for three months, and let the workloads you
+actually run — not the ones you imagine — write the second shopping list.
+</Tldr>
+
+## The trap: used enterprise gear
+
+The classic advice is a used rack server, because the price-per-spec
+looks unbeatable. The specs are real. So is everything the listing does
+not say: it idles at the power draw of a space heater, it sounds like
+one too, and it teaches you server hardware — which is probably not what
+you set out to learn.
+
+You wanted to learn virtualisation, networking, and services. A machine
+that is expensive to leave on is a machine you turn off, and a lab that
+is off teaches nothing.
+
+## The sweet spot: one used mini-PC
+
+An office-surplus mini-PC — the small business desktops sold by the
+thousand off corporate leases — runs a real hypervisor and a dozen light
+services, idles under a light bulb, and sits silently on a shelf. That
+is the whole starter list:
+
+- **CPU:** whatever the mini-PC came with. It is enough.
+- **RAM:** the one spec worth maxing. Virtualisation eats RAM long
+  before CPU. 32GB if the price is close.
+- **Storage:** one SSD. Redundancy comes later, when something is worth
+  protecting.
+- **Network:** the port on the back. Managed switches are a part-five
+  problem, not a part-one problem.
+
+## What about GPUs?
+
+Only if local AI is the actual goal — it is the one workload that
+genuinely needs one, and it changes the build completely: a mini-PC has
+no room, no power, and no cooling for it. That fork in the road gets its
+own part later in this series. Do not buy the GPU first and let it
+dictate everything else unless you already know that is the point.
+
+<FailureModes>
+- **Speccing for imagined workloads.** The Kubernetes cluster you might
+  run someday keeps not existing while the RAM you bought idles.
+- **Buying two of everything for redundancy.** A lab that is allowed to
+  break does not need a failover pair. That is restaurant thinking.
+- **The empty rack.** Buying the rack before the machines is furniture
+  shopping. The shelf was fine.
+</FailureModes>
+
+<WhatILearned>
+Three months of real usage produces a better hardware plan than any
+amount of research, because it replaces guesses about workloads with a
+process list you can read.
+</WhatILearned>

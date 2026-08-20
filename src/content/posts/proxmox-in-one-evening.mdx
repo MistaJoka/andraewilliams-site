@@ -1,0 +1,69 @@
+---
+title: Proxmox in One Evening
+description: Install the hypervisor first, even for one machine — snapshots make every later experiment reversible, which is the whole point of a lab.
+type: TUTORIAL
+difficulty: INTERMEDIATE
+date: 2026-08-19
+topics: [homelab]
+tags: [proxmox, virtualization, hypervisor]
+series: homelab-from-zero
+seriesOrder: 3
+related:
+  posts: [what-a-homelab-actually-is]
+---
+import { Tldr, WhyItMatters, HowItWorks, WhatBroke, WhatILearned } from '@blocks';
+
+<Tldr>
+Proxmox VE on the bare metal, everything else in VMs and containers on
+top. One evening: flash the installer, install, fix the enterprise-repo
+nag, take your first snapshot. From then on every experiment is
+disposable.
+</Tldr>
+
+<WhyItMatters>
+The hypervisor is not about running many machines — at the start you
+will run two or three. It is about making state cheap. Snapshot, try the
+scary thing, roll back in thirty seconds. Without that, every experiment
+carries the silent question "how long would a reinstall take?" and the
+honest answer stops you trying things. Which was the point of the lab.
+</WhyItMatters>
+
+<HowItWorks>
+## The evening, in order
+
+1. **Flash the Proxmox VE ISO** to a USB stick and install onto the
+   machine's SSD. Say yes to wiping it — this machine is a lab now. Give
+   it a static IP when the installer asks; a hypervisor that changes
+   address is a hypervisor you lose track of.
+2. **Open the web UI** at `https://<that-ip>:8006` from your normal
+   computer. The self-signed-certificate warning is expected — accept it.
+   Everything from here on happens in a browser tab.
+3. **Fix the repositories.** A fresh install points at the paid
+   enterprise repo and greets you with a subscription nag. Switch to the
+   no-subscription repo in the UI (Repositories → disable enterprise,
+   add no-subscription), then update. The nag is cosmetic; unpatched
+   packages are not.
+4. **Make your first container.** Templates ship built in — a Debian LXC
+   container takes two minutes and a few hundred MB of RAM. Containers
+   for Linux services, full VMs for anything that needs its own kernel.
+5. **Take a snapshot before you touch anything else.** That is the habit
+   this whole evening exists to install.
+</HowItWorks>
+
+<WhatBroke>
+The static IP I set in the installer was inside the router's DHCP pool,
+and three days later the router leased the same address to a phone. Both
+devices half-worked; the lab was unreachable in a way that looked like a
+Proxmox problem and was not.
+
+The fix is one rule: hypervisor IPs live *outside* the DHCP range.
+Reserve the address in the router or shrink the pool — either way, do it
+the same evening, not after the collision teaches you why.
+</WhatBroke>
+
+<WhatILearned>
+Snapshots change behaviour more than they change infrastructure. The
+week after installing Proxmox I tried more, broke more, and learned more
+than the month before it — not because the machine got faster, but
+because failure got cheap.
+</WhatILearned>

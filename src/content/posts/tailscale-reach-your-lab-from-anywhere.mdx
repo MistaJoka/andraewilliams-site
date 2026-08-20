@@ -1,0 +1,68 @@
+---
+title: "Tailscale: Reach Your Lab From Anywhere"
+description: Flat, private networking to every lab machine with zero opened ports — and why port forwarding was never the answer.
+type: TUTORIAL
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [homelab, cyber]
+tags: [tailscale, networking, wireguard, vpn]
+series: homelab-from-zero
+seriesOrder: 4
+related:
+  posts: [proxmox-in-one-evening]
+---
+import { Tldr, Eli5, HowItWorks, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+Install Tailscale on the hypervisor and your laptop, sign in twice, and
+every lab machine is reachable from anywhere by a stable private address
+— with nothing exposed to the internet and no router configuration at
+all.
+</Tldr>
+
+<Eli5>
+Port forwarding is cutting a hole in your front door so you can reach in
+from the street. It works, and now the street can reach in too.
+
+Tailscale is different: every one of your devices gets a private phone
+line to every other one. No holes in any door — the devices call out to
+find each other, the way every app on your phone already does, and
+WireGuard encrypts the line end to end. Nothing about your lab is
+visible from the street at all.
+</Eli5>
+
+<HowItWorks>
+## The twenty minutes
+
+1. **Install on the Proxmox host** — one command from Tailscale's docs,
+   then `tailscale up` and sign in. The host joins your private network
+   (your "tailnet") with a `100.x.y.z` address that never changes.
+2. **Install on your laptop and phone.** Same sign-in. That is the whole
+   client list to start: the machines you sit at, plus the lab.
+3. **Turn on MagicDNS** in the admin console, so the lab is
+   `https://proxmox:8006` from anywhere instead of a memorised IP.
+4. **Check the doors are actually shut:** no port forwards on the
+   router, UPnP off. The lab should be reachable from your laptop on
+   mobile data and invisible to everything else.
+</HowItWorks>
+
+<FailureModes>
+- **The free plan covers a lab many times over** — the limits sit far
+  above anything this series builds. The failure is assuming you need to
+  self-host the coordination layer on day one; that is its own project,
+  for later, if ever.
+- **Tailscale on every VM by reflex.** You can, but the host is enough
+  to start — a subnet route from the hypervisor covers the machines
+  behind it with one config instead of ten.
+- **Forgetting the phone test.** Verifying from inside your own Wi-Fi
+  proves nothing about reachability. Turn off Wi-Fi and check from
+  mobile data once — that is the test that means it.
+</FailureModes>
+
+<WhatILearned>
+The reason to do networking this early — part four, before storage,
+before any real workload — is that a lab you can reach from anywhere is
+a lab you actually use. Every part after this one assumes you can open
+the console from wherever you are, and that assumption is what keeps the
+series moving.
+</WhatILearned>
