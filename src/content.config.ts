@@ -108,7 +108,7 @@ const tools = defineCollection({
     tools: z.array(z.string()).default([]),
     // Presence of `app` is what mounts the interactive tool on this entry —
     // same role `scene` plays for lab's WebGL engine.
-    app: z.enum(['cidr', 'ascii-convert']).optional(),
+    app: z.enum(['cidr', 'ascii-convert', 'compose-ports']).optional(),
     draft: z.boolean().default(false),
     ...provenance,
   }),

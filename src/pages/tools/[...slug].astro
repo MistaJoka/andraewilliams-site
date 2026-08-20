@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import StatusLight from '../../components/ui/StatusLight.astro';
 import CidrCalculator from '../../components/tools/CidrCalculator.astro';
 import AsciiConverter from '../../components/tools/AsciiConverter.astro';
+import ComposePortChecker from '../../components/tools/ComposePortChecker.astro';
 import { getCollection, getEntries, render } from 'astro:content';
 import { formatDate } from '../../lib/format';
 
@@ -27,6 +28,7 @@ const topics = await getEntries(entry.data.topics);
 
   {entry.data.app === 'cidr' && <CidrCalculator />}
   {entry.data.app === 'ascii-convert' && <AsciiConverter />}
+  {entry.data.app === 'compose-ports' && <ComposePortChecker />}
 
   <div class="prose"><Content /></div>
 
