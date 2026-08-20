@@ -1,0 +1,18 @@
+---
+title: "Terminal Contrast Auditor"
+description: "Type a hex or rgb() color, get its WCAG 2.1 contrast ratio against this site's actual background tokens — read live from tokens.css, not copied."
+date: 2026-08-20
+status: WORKING
+category: portfolio
+app: contrast
+topics: [homelab]
+tags: [accessibility, design-system]
+tools: [JavaScript]
+built: "Standard WCAG 2.1 relative-luminance math (sRGB → linear → luminance → ratio), checked against `getComputedStyle(document.documentElement)` reads of --bg-0/1/2 rather than hardcoded hex — the same reasoning as src/lib/palette.ts's token-parsing helper: one source of truth, not three that can drift."
+model: "Claude Sonnet 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/tools/contrast.js
+---
+
+Every accent color this site ever adds has to earn its place against three real surfaces — `--bg-0`, `--bg-1`, `--bg-2` — not a swatch in a design tool. This tool reads those tokens' current computed values directly from the page, so a palette change in `tokens.css` is reflected here automatically instead of needing a second, hand-maintained copy.
+
+The ratio math is the WCAG 2.1 formula verbatim: each channel goes through the sRGB-to-linear transfer function, gets weighted into relative luminance, and the darker/lighter pair's luminance ratio is checked against the 4.5:1 (normal text) and 3:1 (large text) AA thresholds, and 7:1 / 4.5:1 for AAA.

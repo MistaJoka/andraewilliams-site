@@ -1,0 +1,131 @@
+---
+---
+<div class="contrast-tool" data-tool="contrast">
+  <label class="field">
+    <span>Color (hex or rgb)</span>
+    <input
+      type="text"
+      class="input"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="#56a8ff"
+      value="#56a8ff"
+    />
+  </label>
+  <p class="error" hidden></p>
+  <table class="result" hidden>
+    <thead>
+      <tr><th>Surface</th><th>Ratio</th><th>Normal text</th><th>Large text</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  import { parseColor, contrastRatio, wcagLevel } from '../../scripts/tools/contrast.js';
+
+  const tools = document.querySelectorAll<HTMLElement>('[data-tool="contrast"]');
+  for (const tool of tools) {
+    const input = tool.querySelector<HTMLInputElement>('.input')!;
+    const error = tool.querySelector<HTMLElement>('.error')!;
+    const result = tool.querySelector<HTMLTableElement>('.result')!;
+    const tbody = tool.querySelector<HTMLElement>('tbody')!;
+
+    // Read the site's real surface tokens live, rather than duplicating
+    // their hex values here — this stays correct if tokens.css changes.
+    const root = getComputedStyle(document.documentElement);
+    const surfaces = ['--bg-0', '--bg-1', '--bg-2'].map((token) => ({
+      token,
+      hex: root.getPropertyValue(token).trim(),
+      rgb: parseColor(root.getPropertyValue(token).trim()),
+    }));
+
+    const badge = (level: string) => {
+      const span = document.createElement('span');
+      span.className = 'badge';
+      span.dataset.level = level;
+      span.textContent = level;
+      return span;
+    };
+
+    const render = () => {
+      const rgb = parseColor(input.value);
+      if (!rgb) {
+        error.hidden = false;
+        error.textContent = 'Enter a color like #56a8ff or rgb(86, 168, 255)';
+        result.hidden = true;
+        return;
+      }
+      error.hidden = true;
+      result.hidden = false;
+
+      tbody.replaceChildren(
+        ...surfaces.map(({ token, hex, rgb: surfaceRgb }) => {
+          const tr = document.createElement('tr');
+          if (!surfaceRgb) return tr;
+          const ratio = contrastRatio(rgb, surfaceRgb);
+
+          const surfaceCell = document.createElement('td');
+          const dot = document.createElement('span');
+          dot.className = 'dot';
+          dot.style.background = hex;
+          surfaceCell.append(dot, document.createTextNode(` ${token}`));
+
+          const ratioCell = document.createElement('td');
+          ratioCell.textContent = `${ratio.toFixed(2)}:1`;
+
+          const normalCell = document.createElement('td');
+          normalCell.append(badge(wcagLevel(ratio, false)));
+          const largeCell = document.createElement('td');
+          largeCell.append(badge(wcagLevel(ratio, true)));
+
+          tr.append(surfaceCell, ratioCell, normalCell, largeCell);
+          return tr;
+        }),
+      );
+    };
+
+    input.addEventListener('input', render);
+    render();
+  }
+</script>
+
+<style>
+  .contrast-tool {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin: 0 0 var(--sp-5);
+  }
+  .field { display: grid; gap: var(--sp-2); max-width: 24rem; }
+  .field span {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .input {
+    font-family: var(--font-mono); font-size: var(--step-0); color: var(--text-0);
+    background: var(--bg-0); border: 1px solid var(--line); padding: var(--sp-3);
+  }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .error {
+    color: var(--status-broken); font-family: var(--font-mono); font-size: var(--step--1);
+    margin: var(--sp-3) 0 0;
+  }
+  .result {
+    width: 100%; border-collapse: collapse; margin-top: var(--sp-5);
+    font-family: var(--font-mono); font-size: var(--step--1);
+  }
+  .result th {
+    text-align: left; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em;
+    padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--line);
+  }
+  .result td { padding: var(--sp-2) var(--sp-3); color: var(--text-0); border-bottom: 1px solid var(--line); }
+  .dot {
+    display: inline-block; width: 9px; height: 9px; border: 1px solid var(--line-bright);
+    vertical-align: middle; margin-right: var(--sp-1);
+  }
+  .badge { letter-spacing: 0.06em; }
+  .badge[data-level='AAA'] { color: var(--status-working); }
+  .badge[data-level='AA'] { color: var(--status-testing); }
+  .badge[data-level='FAIL'] { color: var(--status-broken); }
+</style>
