@@ -1,0 +1,18 @@
+---
+title: "Cron Expression Builder"
+description: "Type a 5-field cron expression, get a plain-English explanation and the next five run times in your local clock."
+date: 2026-08-20
+status: WORKING
+category: utility
+app: cron
+topics: [homelab]
+tags: [scheduling, calculator]
+tools: [JavaScript]
+built: "Each field parses into a Set of matching integers (handling *, */n, ranges and a-b/n steps), then next-run search walks forward minute-by-minute against those sets, capped at ~4 years so a self-contradictory expression (Feb 30) terminates instead of looping forever."
+model: "Claude Sonnet 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/tools/cron.js
+---
+
+The one non-obvious rule cron itself gets right and most explainers skip: when **both** day-of-month and day-of-week are restricted, a day matching *either* one counts — it's an OR, not an AND. `0 0 15 * 1` doesn't mean "the 15th, if it's a Monday" — it fires on the 15th of every month *and* every Monday.
+
+The plain-English description is template-matched against the common shapes (every N minutes, a daily time, a weekday range, a day-of-month); anything odd enough to fall outside those templates still gets the literal resolved field values instead of a guessed-at sentence.

@@ -1,0 +1,99 @@
+---
+---
+<div class="cron-tool" data-tool="cron">
+  <label class="field">
+    <span>Cron expression</span>
+    <input
+      type="text"
+      class="input"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="30 14 * * 1-5"
+      value="30 14 * * 1-5"
+    />
+  </label>
+  <p class="hint">minute · hour · day-of-month · month · day-of-week</p>
+  <p class="error" hidden></p>
+  <div class="result" hidden>
+    <p class="description"></p>
+    <p class="eyebrow">Next runs (your local time)</p>
+    <ol class="runs"></ol>
+  </div>
+</div>
+
+<script>
+  import { parseCron, describe, nextRuns } from '../../scripts/tools/cron.js';
+
+  const tools = document.querySelectorAll<HTMLElement>('[data-tool="cron"]');
+  for (const tool of tools) {
+    const input = tool.querySelector<HTMLInputElement>('.input')!;
+    const error = tool.querySelector<HTMLElement>('.error')!;
+    const result = tool.querySelector<HTMLElement>('.result')!;
+    const description = tool.querySelector<HTMLElement>('.description')!;
+    const runsEl = tool.querySelector<HTMLElement>('.runs')!;
+
+    const formatRun = (d: Date) =>
+      d.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    const render = () => {
+      const spec = parseCron(input.value);
+      if (!spec) {
+        error.hidden = false;
+        error.textContent = 'Enter 5 space-separated fields: minute hour day-of-month month day-of-week';
+        result.hidden = true;
+        return;
+      }
+      error.hidden = true;
+      result.hidden = false;
+      description.textContent = describe(spec);
+
+      const runs = nextRuns(spec, new Date(), 5);
+      runsEl.replaceChildren(
+        ...(runs.length
+          ? runs.map((d) => { const li = document.createElement('li'); li.textContent = formatRun(d); return li; })
+          : [(() => { const li = document.createElement('li'); li.textContent = 'No run found in the next 4 years.'; return li; })()]),
+      );
+    };
+
+    input.addEventListener('input', render);
+    render();
+  }
+</script>
+
+<style>
+  .cron-tool {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin: 0 0 var(--sp-5);
+  }
+  .field { display: grid; gap: var(--sp-2); max-width: 24rem; }
+  .field span {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .input {
+    font-family: var(--font-mono); font-size: var(--step-0); color: var(--text-0);
+    background: var(--bg-0); border: 1px solid var(--line); padding: var(--sp-3);
+  }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .hint {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    margin: var(--sp-2) 0 0; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .error {
+    color: var(--status-broken); font-family: var(--font-mono); font-size: var(--step--1);
+    margin: var(--sp-3) 0 0;
+  }
+  .result { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--line); }
+  .description { color: var(--text-0); font-size: var(--step-0); margin: 0 0 var(--sp-4); }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 var(--sp-2);
+  }
+  .runs { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-1); }
+  .runs li {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-1);
+    padding: var(--sp-1) 0;
+  }
+</style>

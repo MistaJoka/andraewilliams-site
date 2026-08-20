@@ -5,6 +5,7 @@ import CidrCalculator from '../../components/tools/CidrCalculator.astro';
 import AsciiConverter from '../../components/tools/AsciiConverter.astro';
 import ComposePortChecker from '../../components/tools/ComposePortChecker.astro';
 import ContrastAuditor from '../../components/tools/ContrastAuditor.astro';
+import CronBuilder from '../../components/tools/CronBuilder.astro';
 import { getCollection, getEntries, render } from 'astro:content';
 import { formatDate } from '../../lib/format';
 
@@ -31,6 +32,7 @@ const topics = await getEntries(entry.data.topics);
   {entry.data.app === 'ascii-convert' && <AsciiConverter />}
   {entry.data.app === 'compose-ports' && <ComposePortChecker />}
   {entry.data.app === 'contrast' && <ContrastAuditor />}
+  {entry.data.app === 'cron' && <CronBuilder />}
 
   <div class="prose"><Content /></div>
 
