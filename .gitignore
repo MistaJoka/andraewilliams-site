@@ -8,6 +8,7 @@ node_modules/
 .superpowers/
 CLAUDE.md
 AGENTS.md
+DEVIATIONS.md
 
 # Build output
 dist/
