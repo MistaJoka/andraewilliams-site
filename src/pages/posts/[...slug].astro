@@ -3,6 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostHeader from '../../components/content/PostHeader.astro';
 import SeriesNav from '../../components/content/SeriesNav.astro';
 import RelatedContent from '../../components/knowledge/RelatedContent.astro';
+import KnowledgeGraph from '../../components/knowledge/KnowledgeGraph.astro';
+import { buildPostGraph } from '../../lib/graph';
+import { cardSpec } from '../../lib/card-spec';
 import { getCollection, getEntry, render } from 'astro:content';
 import { resolveRelated, seriesSiblings } from '../../lib/graph';
 
@@ -15,6 +18,7 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 
 const related = await resolveRelated(post);
+const graph = await buildPostGraph(post, cardSpec(post.data.type).accent);
 const seriesEntry = post.data.series ? await getEntry(post.data.series) : undefined;
 
 let nav: { prev?: any; next?: any } = {};
@@ -62,6 +66,7 @@ if (seriesEntry) {
       />
     )}
 
+    <KnowledgeGraph graph={graph} />
     <RelatedContent posts={related.posts} topics={related.topics} project={related.project} />
   </article>
 </BaseLayout>

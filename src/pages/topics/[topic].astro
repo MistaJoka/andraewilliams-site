@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/cards/Card.astro';
+import KnowledgeGraph from '../../components/knowledge/KnowledgeGraph.astro';
+import { buildTopicGraph } from '../../lib/graph';
 import { getCollection } from 'astro:content';
 import '../../styles/cards.css';
 
@@ -27,6 +29,7 @@ const relatedSeries = seriesList.filter((s) => s.data.topics.some((r: any) => r.
 const connectedIds = new Set<string>();
 for (const p of posts) for (const r of p.data.topics) if (r.id !== topic.id) connectedIds.add(r.id);
 const connected = allTopics.filter((t) => connectedIds.has(t.id));
+const graph = await buildTopicGraph(topic);
 ---
 <BaseLayout title={topic.data.label} description={topic.data.blurb}>
   <header class="topic-head" style={`--t: var(${topic.data.accent})`}>
@@ -59,6 +62,8 @@ const connected = allTopics.filter((t) => connectedIds.has(t.id));
       </ul>
     </section>
   )}
+
+  <KnowledgeGraph graph={graph} title="This topic's neighbourhood" />
 
   <section>
     <h2 class="eyebrow section-heading">Latest</h2>

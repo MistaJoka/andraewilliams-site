@@ -1,0 +1,122 @@
+---
+// A depth-1 knowledge graph rendered as build-time SVG. Zero client JS:
+// layout is computed here in frontmatter, nodes are real <a> links, and
+// the whole thing is skipped when there is nothing to connect.
+//
+// Radial layout with a right-side bias: labels sit beside their nodes,
+// and the horizontal midline carries more nodes than the vertical, so
+// text has room. Colours are resolved from tokens.css at build time
+// because SVG attributes here are plainer to reason about than CSS vars
+// inside a foreignObject.
+import type { Graph } from '../../lib/graph';
+import { resolveToken } from '../../lib/palette';
+
+interface Props { graph: Graph; title?: string }
+const { graph, title = 'Connected knowledge' } = Astro.props;
+const { center, neighbours } = graph;
+
+const W = 880;
+const H = 340;
+const CX = W / 2;
+const CY = H / 2;
+const RX = 250;   // ellipse radii — wider than tall, like the canvas
+const RY = 118;
+
+// Start at -90° (top) and walk clockwise, so ordering in the data reads
+// top-first in the picture.
+const positioned = await Promise.all(
+  neighbours.map(async (n, i) => {
+    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / neighbours.length;
+    const x = CX + RX * Math.cos(angle);
+    const y = CY + RY * Math.sin(angle);
+    // Labels flip side depending on which half the node is in.
+    const onRight = Math.cos(angle) >= -0.05;
+    return {
+      ...n,
+      x, y, onRight,
+      color: await resolveToken(n.accent, '#9db0cc'),
+      short: n.label.length > 24 ? n.label.slice(0, 23).trimEnd() + '…' : n.label,
+    };
+  }),
+);
+const centerColor = await resolveToken(center.accent, '#56a8ff');
+const centerShort = center.label.length > 30 ? center.label.slice(0, 29).trimEnd() + '…' : center.label;
+---
+{neighbours.length > 0 && (
+  <figure class="kgraph" aria-labelledby="kgraph-title">
+    <figcaption id="kgraph-title" class="eyebrow">{title}</figcaption>
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-label={`${center.label} connects to ${neighbours.map((n) => n.label).join(', ')}`}
+    >
+      <!-- edges under everything -->
+      {positioned.map((n) => (
+        <line x1={CX} y1={CY} x2={n.x} y2={n.y} stroke="#1e2739" stroke-width="1" />
+      ))}
+
+      <!-- neighbour nodes: whole group is a link -->
+      {positioned.map((n) => (
+        <a href={n.href}>
+          <g class="node">
+            <circle cx={n.x} cy={n.y} r="5" fill={n.color} />
+            <circle cx={n.x} cy={n.y} r="10" fill="none" stroke={n.color} stroke-opacity="0.35" class="halo" />
+            <text
+              x={n.onRight ? n.x + 16 : n.x - 16}
+              y={n.y - 4}
+              text-anchor={n.onRight ? 'start' : 'end'}
+              class="node-kind"
+              fill={n.color}
+            >{n.kind}</text>
+            <text
+              x={n.onRight ? n.x + 16 : n.x - 16}
+              y={n.y + 12}
+              text-anchor={n.onRight ? 'start' : 'end'}
+              class="node-label"
+            >{n.short}</text>
+          </g>
+        </a>
+      ))}
+
+      <!-- centre node: current page, not a link -->
+      <g>
+        <circle cx={CX} cy={CY} r="8" fill={centerColor} />
+        <circle cx={CX} cy={CY} r="16" fill="none" stroke={centerColor} stroke-opacity="0.4" />
+        <text x={CX} y={CY - 26} text-anchor="middle" class="node-kind" fill={centerColor}>{center.kind}</text>
+        <text x={CX} y={CY + 34} text-anchor="middle" class="node-label center-label">{centerShort}</text>
+      </g>
+    </svg>
+  </figure>
+)}
+
+<style>
+  .kgraph {
+    margin: var(--sp-6) 0;
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-4);
+  }
+  .kgraph figcaption { margin-bottom: var(--sp-2); }
+  svg { display: block; width: 100%; height: auto; }
+  .node-kind {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+  .node-label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    fill: var(--text-1);
+  }
+  .center-label { fill: var(--text-0); font-weight: 700; }
+  .halo { transition: r 150ms ease-out; }
+  svg a:hover .node-label,
+  svg a:focus-visible .node-label { fill: var(--text-0); text-decoration: underline; }
+  svg a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 40rem) {
+    /* Below phone width the radial labels collide; the RelatedContent
+       list right below carries the same links, so hiding the picture
+       loses nothing. */
+    .kgraph { display: none; }
+  }
+</style>
