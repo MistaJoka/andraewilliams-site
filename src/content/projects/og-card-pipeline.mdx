@@ -1,0 +1,40 @@
+---
+title: OG Card Pipeline
+description: Every post, project and lab entry gets a real social-preview image, generated at build time from the site's own design system — not a screenshot, not a template borrowed from somewhere else.
+date: 2026-08-19
+status: PRODUCTION
+topics: [ai]
+tags: [satori, resvg, seo, design-system]
+tools: [Satori, resvg, TypeScript]
+repo: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/lib/og.ts
+built: "Wrote the card template in the site's own panel language (accent rail, corner bracket, mono eyebrow), a token resolver that reads tokens.css instead of duplicating a colour map, and a link checker that fails the build on a missing card."
+model: Claude Opus 5
+---
+
+## What it is
+
+Every content entry on the site gets a 1200×630 PNG social-preview card,
+rendered at build time and cached forever. No manual design work per
+post — add an entry, get a card, in the site's own visual language
+rather than a generic template.
+
+## The constraint that shaped it
+
+Satori (the library that builds the SVG this renders from) has no
+concept of a CSS custom property, and it accepts TrueType/OpenType/WOFF
+font files but not WOFF2. Neither fact is documented anywhere obvious;
+both were confirmed by writing a five-line probe script and running it
+before committing to the approach, rather than discovering either one
+mid-build. The accent colours are resolved by parsing `tokens.css`
+directly at build time — one function, no duplicated colour map — which
+keeps the design tokens genuinely single-sourced instead of drifting
+between the site's CSS and its image-generation code.
+
+## Where it runs
+
+Verified on the actual deploy target before shipping, not just locally:
+`@resvg/resvg-js` ships a different native binary per platform, and the
+lockfile was generated on macOS. Checked that it also carried the
+`linux-x64-gnu` binary before pushing, so Vercel's build wouldn't
+silently fail on a platform mismatch neither the local build nor a
+casual read of the dependency tree would have caught.

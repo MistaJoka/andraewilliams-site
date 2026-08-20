@@ -1,0 +1,83 @@
+---
+title: "Evaluation: How Do You Know It Worked"
+description: "\"Looks right\" and \"is right\" are different claims — an agent only checked by eyeballing the transcript will drift for weeks before anyone notices."
+type: EXPERIMENT
+difficulty: INTERMEDIATE
+date: 2026-08-19
+topics: [ai]
+tags: [agents, evaluation, testing]
+series: building-an-ai-agent
+seriesOrder: 6
+status: WORKING
+related:
+  posts: [the-agent-loop]
+---
+import { Tldr, HowItWorks, WhatBroke, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+A golden set of twenty real tasks with known-good outcomes, re-run on
+every change, catches regressions that reading transcripts never will.
+The agent that looks fine in a demo and the agent that's quietly gotten
+worse look identical from the outside — evaluation is the only thing
+that tells them apart.
+</Tldr>
+
+<HowItWorks>
+## The golden set
+
+Twenty to fifty real tasks the agent has actually been asked to do, each
+with a way to check the outcome mechanically — not "does this look
+reasonable" but "did the file get created," "does the output contain the
+expected value," "did it call the right tool with the right arguments."
+Mechanical checks are boring and that's the point: they don't drift with
+your own changing sense of what "good" looks like.
+
+```python
+def score(task, transcript):
+    if task.check == "file_exists":
+        return Path(task.expected_path).exists()
+    if task.check == "contains":
+        return task.expected in transcript.final_output
+    if task.check == "tool_called":
+        return any(c.name == task.expected_tool for c in transcript.tool_calls)
+```
+
+## LLM-as-judge, used correctly
+
+For outcomes too fuzzy to check mechanically — did the summary actually
+capture the important part — a second model call can grade the first.
+The failure mode is trusting it blindly. Anchor it: give the judge the
+mechanical checks it CAN verify plus a rubric, and spot-check its scores
+against your own judgment on a sample before trusting it on the rest.
+</HowItWorks>
+
+<WhatBroke>
+A prompt change meant to fix one failing task silently dropped the
+success rate on a different task from 100% to 40% — nobody noticed for
+weeks, because eyeballing a handful of transcripts after the change all
+happened to look fine. The golden set exists specifically because it
+would have caught this in the same evaluation run that confirmed the
+intended fix worked, instead of a support ticket weeks later noticing
+the agent had gotten worse at something nobody was watching.
+</WhatBroke>
+
+<FailureModes>
+- **No golden set at all.** The default failure mode. Every change is
+  evaluated by vibes, and vibes don't catch a regression in a task
+  nobody happened to try that day.
+- **A golden set that never grows.** Every real failure the agent hits
+  in production is a free test case. Not adding it back to the set
+  means the same failure can recur invisibly.
+- **Trusting an unanchored judge.** An LLM judge with no rubric and no
+  spot-checking against human judgment will confidently score wrong
+  answers as right, especially ones that are wrong in a way that reads
+  fluently.
+</FailureModes>
+
+<WhatILearned>
+Evaluation is the part of this series most tutorials skip, and it's the
+part that actually determines whether an agent is safe to keep changing.
+Without it, every improvement is also a gamble on what you might have
+silently broken — and you won't find out until it happens somewhere you
+weren't looking.
+</WhatILearned>

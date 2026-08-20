@@ -1,0 +1,44 @@
+---
+title: Knowledge Graph
+description: A depth-1 relationship graph rendered as build-time SVG — zero client JS, every node a real link, derived from data the site already had.
+date: 2026-08-19
+status: PRODUCTION
+topics: [ai]
+tags: [astro, svg, information-design]
+tools: [Astro, TypeScript, SVG]
+repo: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/lib/graph.ts
+built: "Wrote the radial layout math and the depth-1 traversal (topics, series, project, explicit related posts, series siblings filling remaining slots), then found and fixed a label-clipping bug by measuring every label's getBBox() against the viewBox rather than trusting a screenshot."
+model: Claude Opus 5
+---
+
+## What it is
+
+Every post and topic page on this site carries a small SVG panel showing
+its nearest neighbours in the content graph — other posts, topics,
+series, projects — laid out radially around the current page. Click any
+node, it navigates.
+
+## Why it's interesting
+
+No client JavaScript at all. The layout — angle, radius, which side a
+label anchors to — is computed once at build time from data the site
+already had in frontmatter (topics, series membership, explicit related
+links), and the output is plain `<a>` tags inside an `<svg>`. A screen
+reader gets an `aria-label` naming every connection; a keyboard user tabs
+through real, focusable links; nothing about it depends on JavaScript
+running at all.
+
+The spec for this deliberately ruled out a full freeform graph engine —
+a depth-1 neighbourhood from data that already exists does the actual
+job (showing how one page connects to the rest of the site) without the
+complexity or client cost of a real graph library.
+
+## What broke
+
+Left-anchored labels clipped at the edge of the SVG's viewBox on the
+first pass — a title like "How I Structure AI Agent Repos" rendered
+truncated. Caught by measuring, not looking: `getBBox()` on every label
+against the viewBox, on both the sparsest case (3 neighbours) and the
+densest (8, the cap). Fixed by widening the canvas and shortening the
+label cap so the ring, the gap, and the text all fit inside the box —
+verified zero clipped, zero overlapping, both cases.

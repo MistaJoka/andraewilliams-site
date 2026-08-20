@@ -1,0 +1,84 @@
+---
+title: "Shipping an Agent That Survives Contact With Reality"
+description: Nine parts from the bare loop to a system with real memory, evaluation and guardrails — what actually mattered, and the one layer that made every other layer debuggable.
+type: BUILD
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [ai]
+tags: [agents, retrospective, architecture]
+series: building-an-ai-agent
+seriesOrder: 9
+status: PRODUCTION
+---
+import { Tldr, Architecture, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+The loop from part one is still, verbatim, the core of the system —
+everything else this series built is scaffolding around it: a schema so
+tools can be trusted, memory so state survives a turn, planning so steps
+can depend on each other, evaluation so regressions are visible,
+guardrails so a bad call can't do unbounded damage, and logging so all
+of the above can actually be debugged when they don't.
+</Tldr>
+
+## The whole system, in order built
+
+<Architecture>
+```text
+                    ┌──────────────┐
+    user input ────▶│              │
+  observations ────▶│  AGENT LOOP  │◀──── tool results
+   environment ────▶│   (part 1)   │
+                    └──────┬───────┘
+                           │
+   ┌───────────┬───────────┼───────────┬───────────┐
+   ▼           ▼           ▼           ▼           ▼
+┌───────┐ ┌─────────┐ ┌─────────┐ ┌──────────┐ ┌──────────┐
+│ TOOLS │ │ MEMORY  │ │ PLANNING│ │GUARDRAILS│ │EVALUATION│
+│(pt 3) │ │ (pt 4)  │ │ (pt 5)  │ │  (pt 7)  │ │  (pt 6)  │
+└───────┘ └─────────┘ └─────────┘ └──────────┘ └──────────┘
+                           │
+                    ┌──────▼───────┐
+                    │OBSERVABILITY │
+                    │   (pt 8)     │
+                    │ reads every  │
+                    │ layer above  │
+                    └──────────────┘
+```
+</Architecture>
+
+Notice observability sits underneath everything else, not beside it —
+every other layer's failures are only debuggable because part eight logs
+what they each decided.
+
+## What actually mattered
+
+Two things turned out to matter more than the loop itself. **Memory
+(part four)** — because a system that forgets between turns can't hold
+a plan, can't recall a prior mistake, and can't explain itself after the
+fact; three different later parts (planning, evaluation, observability)
+turned out to be memory problems wearing different names. And
+**evaluation (part six)** — because it's the only part of this system
+that tells you when a change made things worse, and it's the part every
+"build an agent in an afternoon" tutorial skips first.
+
+<FailureModes>
+Reading the whole series back, every real failure recorded across it
+traces to the same root: **a layer that assumed correctness instead of
+checking for it.** The write-path bug in part three assumed the model
+wouldn't guess a wrong directory. The silent regression in part six
+assumed a prompt change was safe because it looked fine on a handful of
+transcripts. Neither failure needed a smarter model to avoid — both
+needed a boundary or a check that didn't exist yet. That is the pattern
+worth carrying into whatever gets built next: the fix is almost never
+"be more careful," it's "make carelessness impossible to act on."
+</FailureModes>
+
+<WhatILearned>
+An agent that survives contact with reality isn't one that's smarter
+than the bare loop from part one — it's one surrounded by enough
+structure that its mistakes are bounded, visible, and cheap to fix
+instead of silent, unbounded, and expensive. Nine parts later, that's
+the actual deliverable: not a cleverer model, just fewer ways for an
+ordinary one to do real damage before anyone notices.
+</WhatILearned>

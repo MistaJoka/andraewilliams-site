@@ -1,0 +1,97 @@
+---
+title: "Tool Use: Giving the Agent Hands"
+description: "The tool schema is a contract, not a suggestion. Most tool-calling failures are the contract being too loose, not the model being too dumb."
+type: TUTORIAL
+difficulty: INTERMEDIATE
+date: 2026-08-19
+topics: [ai]
+tags: [agents, tools, schema]
+series: building-an-ai-agent
+seriesOrder: 3
+related:
+  posts: [the-agent-loop]
+---
+import { Tldr, HowItWorks, WhatBroke, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+A tool is a name, a JSON schema for its arguments, and a function that
+runs them. The schema is what the model actually reads — vague field
+names and missing constraints are read as permission to guess, and the
+model will guess.
+</Tldr>
+
+<HowItWorks>
+## What a tool actually is
+
+```json
+{
+  "name": "search_files",
+  "description": "Search the repo for a string. Returns up to 20 matches.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": { "type": "string", "description": "The literal text to search for, not a regex." },
+      "path": { "type": "string", "description": "Directory to search under. Defaults to repo root." }
+    },
+    "required": ["query"]
+  }
+}
+```
+
+Three things do almost all the work: a description specific enough to
+rule out the wrong tool ("not a regex" exists because the model tried
+regex syntax once and it silently matched nothing), a `required` list
+that's actually enforced, and field names that describe the value rather
+than abbreviating it — `path`, not `p`.
+
+## The execution boundary
+
+The model's job ends at producing arguments. Yours starts at validating
+them before anything runs:
+
+```python
+def execute(tool_call):
+    args = SCHEMAS[tool_call.name].validate(tool_call.arguments)  # raises on bad input
+    return TOOLS[tool_call.name](**args)
+```
+
+Never pass model output straight into a shell, a query, or a file path
+without validation — that is the same mistake as trusting unsanitized
+user input, with an extra step of indirection that makes it easier to
+forget.
+</HowItWorks>
+
+<WhatBroke>
+Early on, a `write_file` tool took a `path` argument with no constraint
+on where that path could point. The model, asked to "save the summary,"
+once wrote to a path one directory above the intended output folder —
+not maliciously, just because the description didn't rule it out and a
+sibling directory was a reasonable-sounding guess. The fix wasn't a
+smarter prompt. It was constraining `path` to a fixed subdirectory in
+the tool's own code, so the question of "could it write somewhere
+unintended" stopped being something the model's judgment was even asked
+to answer.
+</WhatBroke>
+
+<FailureModes>
+- **Vague descriptions.** "Modify the file" invites more interpretations
+  than "append a line to the end of the file." Specificity in the schema
+  is cheaper than specificity in the prompt, because the schema is
+  enforced and the prompt is a request.
+- **No validation at the boundary.** If the tool function trusts its
+  arguments, a malformed or adversarial tool call reaches real
+  execution. Validate every call the same way you'd validate an HTTP
+  request body.
+- **Too many similar tools.** `search`, `find`, and `grep` as three
+  separate tools makes the model guess which one you meant. One tool
+  with a `mode` parameter is a clearer contract than three tools with
+  overlapping names.
+</FailureModes>
+
+<WhatILearned>
+Tool design is API design with a probabilistic caller. Every rule that
+makes a REST endpoint safe to expose to an unknown client — validate
+input, constrain scope, make the contract unambiguous — applies here
+with more force, because the caller can't read your source code to
+resolve an ambiguity. It can only guess.
+</WhatILearned>

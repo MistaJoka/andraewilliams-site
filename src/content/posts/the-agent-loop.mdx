@@ -1,0 +1,67 @@
+---
+title: The Agent Loop
+description: "Call the model, parse a tool call, run it, feed the result back. The whole mechanism takes an afternoon — everything else in this series is what happens after."
+type: ELI5
+difficulty: ELI5
+date: 2026-08-19
+topics: [ai]
+tags: [agents, basics]
+series: building-an-ai-agent
+seriesOrder: 1
+---
+import { Eli5, WhyItMatters, HowItWorks, WhatILearned } from '@blocks';
+
+<Eli5>
+An agent is a phone call that keeps going. You say something, the model
+replies — sometimes with an answer, sometimes with "hand me the phone I
+want to press a button." You press the button, tell it what happened,
+and the call continues. That loop, four steps, is the entire mechanism.
+Everything people mean by "AI agent" is that loop plus more furniture
+around it.
+</Eli5>
+
+<WhyItMatters>
+Naming the loop matters because it's small enough to actually hold in
+your head, and every agent framework on the market is this loop wearing
+a different outfit. If you can't see the loop under the abstraction, you
+can't debug the abstraction when it breaks.
+</WhyItMatters>
+
+<HowItWorks>
+## The four steps
+
+1. **Call the model** with the conversation so far and a list of tools it
+   is allowed to use.
+2. **Parse the response.** Either it's a normal answer — done, return it
+   — or it's a tool call: a name and some arguments.
+3. **Run the tool** with those arguments. This is the only step that
+   touches the real world — a file, an API, a shell command.
+4. **Feed the result back** into the conversation and go to step 1.
+
+```python
+def run(user_input: str) -> str:
+    messages = [{"role": "user", "content": user_input}]
+    while True:
+        reply = model.call(messages, tools=TOOLS)
+        if reply.tool_call is None:
+            return reply.text
+        result = execute(reply.tool_call)
+        messages.append(reply.to_message())
+        messages.append({"role": "tool", "content": result})
+```
+
+That's the loop. No memory beyond the message list, no planning beyond
+"decide the next single step," no safety beyond whatever `execute()`
+happens to check. It works for anything that fits in one context window
+and doesn't need to remember yesterday.
+</HowItWorks>
+
+<WhatILearned>
+The loop is not the hard part, and treating it like the hard part is why
+so many agent projects stall on the wrong problem. The hard part is
+everything the bare loop has no opinion about: what it remembers between
+runs, how it decides on a multi-step plan instead of one call at a time,
+how you'd know if it started getting things wrong, and what stops it
+before a bad tool call does something expensive. That's the rest of this
+series, in the order those problems actually showed up.
+</WhatILearned>

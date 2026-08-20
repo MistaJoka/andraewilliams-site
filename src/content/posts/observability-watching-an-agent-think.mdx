@@ -1,0 +1,77 @@
+---
+title: "Observability: Watching an Agent Think"
+description: Part four called episodic memory the layer most agents skip. This is that layer, built — every decision logged, because a silent failure is the only kind you can't debug.
+type: BUILD
+difficulty: INTERMEDIATE
+date: 2026-08-19
+topics: [ai]
+tags: [agents, observability, logging]
+series: building-an-ai-agent
+seriesOrder: 8
+status: WORKING
+related:
+  posts: [how-ai-agent-memory-actually-works, evaluation-how-do-you-know-it-worked]
+---
+import { Tldr, WhyItMatters, HowItWorks, WhatBroke, WhatILearned } from '@blocks';
+
+<Tldr>
+Log every model call, every tool call and its result, and every plan
+revision — structured, not prose — and a "why did it do that" question
+becomes a five-minute log read instead of an unanswerable mystery. This
+is part four's episodic memory, actually built.
+</Tldr>
+
+<WhyItMatters>
+An agent that fails silently is worse than one that fails loudly,
+because the silent one looks like it's working. Evaluation from part six
+tells you *that* something regressed. Observability is the only thing
+that tells you *why* — and without it, every debugging session starts
+from a blank page instead of a trace.
+</WhyItMatters>
+
+<HowItWorks>
+## What actually gets logged
+
+One structured record per loop iteration, not a prose summary:
+
+```json
+{
+  "turn": 4,
+  "model_call": { "tokens_in": 1820, "tokens_out": 340 },
+  "tool_call": { "name": "search_files", "args": {"query": "debug_mode"} },
+  "tool_result": { "matches": 3, "duration_ms": 41 },
+  "plan_state": "step 2 of 4"
+}
+```
+
+Structured fields are queryable — "show every turn where a tool call
+failed" is a filter, not a manual re-read of a transcript. A prose log
+("the agent searched for debug_mode and found 3 matches") is the same
+information, minus the ability to ask it a question at scale.
+
+## The trace viewer
+
+A flat log file works for one run. Debugging a pattern across a hundred
+runs needs a viewer: turns as rows, tool calls expandable, plan state
+visible per turn, and a filter for "show me every run where the final
+answer was wrong." Building this is what actually made evaluation
+failures (part six) fast to diagnose instead of just detectable.
+</HowItWorks>
+
+<WhatBroke>
+Before this existed, a recurring wrong-answer failure in the golden set
+took an hour to diagnose each time, because the only record was the
+final transcript — readable prose with no structure to filter or
+compare across runs. Adding structured per-turn logging turned the same
+diagnosis into a query: filter every failing run by which tool was
+called last, and the pattern (a stale cache the tool wasn't invalidating)
+was visible in the first ten rows.
+</WhatBroke>
+
+<WhatILearned>
+Logging felt like the least interesting part of this series to build,
+and turned out to be the part every other part depends on. Evaluation
+tells you something broke; observability is the only reason you can find
+out what. Skipping it doesn't remove the debugging work — it just moves
+all of it to the moment something breaks in a way nobody can explain.
+</WhatILearned>

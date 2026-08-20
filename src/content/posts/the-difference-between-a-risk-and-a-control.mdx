@@ -1,0 +1,56 @@
+---
+title: The Difference Between a Risk and a Control
+description: "A risk register full of controls with no named risk behind them is the most common failure mode in risk management, and it's invisible until an incident asks the question directly."
+type: ELI5
+difficulty: ELI5
+date: 2026-08-19
+topics: [risk]
+tags: [risk-management, controls, basics]
+---
+import { Eli5, WhyItMatters, WhatILearned } from '@blocks';
+
+<Eli5>
+A risk is a sentence: "this specific bad thing could happen, for this
+specific reason." A control is the thing you do about it. Confusing them
+is like building a fence and forgetting what it's supposed to keep out —
+the fence might still be a good fence, but nobody can tell you if it's
+the *right* fence without the sentence it's answering.
+</Eli5>
+
+<WhyItMatters>
+Ask most people to describe a control on their risk register and they
+can. Ask them which specific risk it addresses, in one sentence, and
+the answer is often a shrug or a vague gesture at "security" in general.
+That gap is not a paperwork problem — a control with no named risk
+behind it can't be evaluated for whether it's actually working, because
+"working" was never defined.
+</WhyItMatters>
+
+## The test
+
+Write the risk as: *"[bad thing] could happen because [specific
+reason]."* Not "data breach" — that's a category, not a risk. Try:
+"a customer support agent could be socially engineered into resetting
+account MFA for an attacker, because the verification process relies on
+information that's also in a public data breach." Now the control has
+something to answer: does the verification process actually use
+information an attacker plausibly doesn't have? That's checkable. "We
+have a verification process" was not.
+
+## Why this order matters
+
+Write the control before the risk and you get security theater — a
+real, functioning process that doesn't actually address the failure mode
+that worries you, because nobody wrote the failure mode down first. Write
+the risk before the control and the control has a job description it can
+be graded against, including the honest possibility that it's the wrong
+control entirely.
+
+<WhatILearned>
+Every control on a real risk register should be one click away, in
+someone's head if not on paper, from the one-sentence risk it exists to
+answer. If that sentence doesn't come quickly, the control is probably
+solving last year's incident rather than this year's actual exposure —
+and that's worth finding out before an audit or an incident finds it
+for you.
+</WhatILearned>

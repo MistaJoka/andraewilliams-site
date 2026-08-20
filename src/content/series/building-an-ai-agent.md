@@ -2,7 +2,7 @@
 title: Building an AI Agent
 description: Nine parts, from the bare loop to a thing that survives contact with real tasks. Written while building it, not after.
 topics: [ai]
-status: ONGOING
+status: COMPLETE
 plannedParts: 9
 started: 2026-06-02
 featured: true

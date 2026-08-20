@@ -1,0 +1,81 @@
+---
+title: "Guardrails: Stopping the Agent From Hurting Itself"
+description: Capable and safe to leave unattended are different claims. Guardrails close the gap — permission boundaries, confirmation on the irreversible, and a cap on how much one bad turn can do.
+type: ARCHITECTURE
+difficulty: INTERMEDIATE
+date: 2026-08-19
+topics: [ai, cyber]
+tags: [agents, safety, guardrails]
+series: building-an-ai-agent
+seriesOrder: 7
+related:
+  posts: [tool-use-giving-the-agent-hands]
+---
+import { Tldr, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+Three layers, each catching what the one before it missed: constrain
+what a tool is even capable of, require explicit confirmation before
+anything irreversible, and cap how much any single turn can do. None of
+them require the model to be smarter — they work even when it's wrong.
+</Tldr>
+
+<WhyItMatters>
+Part three's tool schema stops the model from calling a tool
+incorrectly. It does nothing to stop the model from calling a tool
+*correctly* toward a bad outcome — deleting the right file at the wrong
+time, sending the right email to the wrong effect. Guardrails are the
+layer that assumes the model will eventually make a confident, correct
+call that's still the wrong thing to do, and plans for that instead of
+hoping it won't happen.
+</WhyItMatters>
+
+<HowItWorks>
+## Layer one: capability, not judgment
+
+The safest version of a dangerous action is a tool that cannot perform
+it at all. A `delete_file` tool scoped to one temp directory cannot
+touch anything outside it, regardless of what path the model requests —
+this is the same lesson as part three's write-path bug, generalized:
+constrain the tool's actual reach before trusting anything about the
+arguments it's called with.
+
+## Layer two: confirmation on the irreversible
+
+Anything that can't be undone — sending a message, spending money,
+deleting real data — pauses for explicit approval instead of executing
+immediately, the same principle this very site's own operating rules use
+for exactly this class of action. A guardrail here isn't the model
+asking permission out of politeness; it's the loop refusing to call the
+tool at all until a separate, human-controlled signal says to.
+
+## Layer three: blast radius per turn
+
+A rate limit or an action cap — at most N tool calls, or at most one
+write operation, per turn — bounds how much a single bad decision can
+do even if layers one and two both have a gap. It's the seatbelt behind
+the airbag: not meant to be the thing that saves you, meant to be there
+when the other layer has a hole you haven't found yet.
+</HowItWorks>
+
+<FailureModes>
+- **Guardrails implemented as a prompt instruction.** "Please ask before
+  deleting anything" is a request, not a boundary — it holds until the
+  first time it doesn't. Enforce boundaries in code the model cannot
+  talk its way around, not in the system prompt.
+- **All-or-nothing permissions.** A tool that's either fully blocked or
+  fully open skips the middle ground — read access without write access,
+  a sandboxed path instead of the whole filesystem — that covers most
+  real use cases more safely.
+- **No cap on repeated action.** A model stuck in a bad loop, retrying
+  the same failing call, can do N times the damage of one bad call if
+  nothing bounds N.
+</FailureModes>
+
+<WhatILearned>
+Guardrails earn their keep on the turn where everything else already
+failed — the schema didn't catch it, the plan was reasonable, evaluation
+hadn't seen this case yet. That's a low-probability turn by design, which
+is exactly why it's tempting to skip building for it. It's also the turn
+where skipping it costs the most.
+</WhatILearned>

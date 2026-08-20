@@ -1,0 +1,92 @@
+---
+title: "Planning and Reasoning: When One Call Isn't Enough"
+description: One tool call at a time works until the task has more than one step with a dependency between them. Then the loop needs an explicit plan, not just a next guess.
+type: ARCHITECTURE
+difficulty: INTERMEDIATE
+date: 2026-08-19
+topics: [ai]
+tags: [agents, planning, reasoning]
+series: building-an-ai-agent
+seriesOrder: 5
+related:
+  posts: [the-agent-loop, tool-use-giving-the-agent-hands]
+---
+import { Tldr, Architecture, WhyItMatters, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+The bare loop from part one picks one next action at a time with no
+memory of a larger goal. That's fine for a single tool call and starts
+failing the moment a task needs step three to know what step one found.
+The fix is making the plan a first-class object the loop can inspect and
+revise, not just letting each call reason from scratch.
+</Tldr>
+
+<WhyItMatters>
+"Just let the model figure out each step" works for tasks that decompose
+into independent actions. It breaks on tasks where step two's tool
+depends on step one's result — "find the config file, then check
+whether it sets debug mode" — because a model reasoning fresh each turn
+has to reconstruct the whole plan from the conversation history every
+time, and reconstructions drift.
+</WhyItMatters>
+
+<Architecture>
+```text
+  single-call loop (part 1)        planning loop (this part)
+
+  ┌────────┐                       ┌──────────────┐
+  │  call   │──▶ tool ──▶ result    │  make a plan  │
+  └────────┘         │              └──────┬───────┘
+       ▲              │                    ▼
+       └──────────────┘             ┌──────────────┐
+     (no memory of a goal,   ┌─────▶│ execute step  │
+      re-derives intent      │      └──────┬───────┘
+      from scratch each      │             ▼
+      turn)                  │      ┌──────────────┐
+                              │      │ update plan   │──▶ done?
+                              └──────┤ from result   │      │
+                                     └──────────────┘      ▼
+                                                          return
+```
+
+The difference isn't more intelligence per call — it's a plan object
+that survives between calls, so step three can reference what step one
+actually found instead of re-guessing it.
+</Architecture>
+
+## Two planning shapes, and when each earns its complexity
+
+**Plan-then-execute:** produce the full step list up front, run it,
+replan only on failure. Cheap, predictable, and wrong the moment step
+two's outcome should change step four — which is often.
+
+**Interleaved (ReAct-style):** think, act, observe, think again — the
+plan updates after every single result instead of being fixed up front.
+More expensive per step, but it's the only shape that handles "the
+answer to step one changes what step two should even be."
+
+Most tasks don't need interleaved planning. The bare loop from part one
+is still correct for single-step or independent-step tasks — reach for
+this only when a real dependency between steps shows up, not by default.
+
+<FailureModes>
+- **Planning when you didn't need to.** Interleaved planning costs one
+  extra model call per step. Reaching for it on a task the bare loop
+  already handles is pure overhead.
+- **A plan that never gets revised.** Plan-then-execute with no
+  replanning step means a wrong assumption at step one silently
+  poisons every step after it.
+- **Losing the plan between turns.** If the plan isn't in the message
+  history or a structured field the loop re-reads, "planning" is just
+  the model re-guessing intent from scratch — the exact problem this
+  part exists to fix.
+</FailureModes>
+
+<WhatILearned>
+Planning is a memory problem wearing a reasoning costume. The thing that
+actually changes behaviour isn't a cleverer prompt asking the model to
+"think step by step" — it's giving the loop somewhere durable to keep
+the plan so later steps can read what earlier steps decided, the same
+distinction part four drew between short-term context and something that
+actually persists.
+</WhatILearned>

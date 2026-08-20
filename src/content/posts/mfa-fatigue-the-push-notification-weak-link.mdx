@@ -1,0 +1,43 @@
+---
+title: "MFA Fatigue: Why Push Notifications Became the Weak Link"
+description: "The control that was supposed to stop credential stuffing has its own failure mode — and it's a human one, not a cryptographic one."
+type: TLDR
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [cyber]
+tags: [mfa, authentication, social-engineering]
+---
+
+Push-based MFA replaced "type a 6-digit code" with "tap approve on your
+phone" — friendlier, and it removed the phishable code. It also removed
+the one thing that made the old method safe: the code was useless to an
+attacker who didn't already have your password *and* your second
+device open at the exact moment they needed it.
+
+## The attack
+
+An attacker with a stolen password logs in repeatedly, triggering a push
+notification each time. Most people ignore the first one. Fewer ignore
+the fifth, sent at 11pm, alongside a text pretending to be IT saying
+"we're rolling out a required security update, please approve." One tap
+and the attacker is in — not because MFA failed cryptographically, but
+because the human being asked to make a security decision was given no
+context to make it with.
+
+## Why it worked
+
+A bare push notification says "approve sign-in?" and nothing else — no
+location, no device name, no reason. It asks for a security decision
+with less information than a cookie consent banner. Compare that to a
+prompt that shows the requesting device, its approximate location, and
+the app being signed into: the same tap now carries the context to
+notice "I am not in that city" before approving.
+
+## The actual fix
+
+Number matching — the login screen shows a two-digit number, the user
+must enter that same number on their phone to approve — turns "tap
+approve" back into "prove you can see both screens," which restores
+almost everything push notifications removed. It is a five-minute admin
+setting change in most identity platforms and it closes the gap without
+asking users to go back to typing codes.
