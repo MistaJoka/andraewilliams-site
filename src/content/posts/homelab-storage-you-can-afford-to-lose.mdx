@@ -1,0 +1,75 @@
+---
+title: Homelab Storage You Can Afford to Lose
+description: "The lab rule inverted: decide what is disposable first, protect the tiny remainder properly, and skip the NAS you were about to buy."
+type: TUTORIAL
+difficulty: BEGINNER
+date: 2026-08-19
+topics: [homelab]
+tags: [storage, backups, zfs]
+series: homelab-from-zero
+seriesOrder: 5
+related:
+  posts: [what-a-homelab-actually-is, proxmox-in-one-evening]
+---
+import { Tldr, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from '@blocks';
+
+<Tldr>
+Sort everything on the lab into two piles: rebuildable and not. The
+rebuildable pile — which is almost all of it — lives on the one SSD with
+no redundancy at all. The tiny remainder gets real, tested, off-machine
+backups. RAID is for neither pile.
+</Tldr>
+
+<WhyItMatters>
+Storage is where lab budgets go to die, because the advice is written
+for the restaurant, not the kitchen. A NAS, mirrored drives, and a
+backup server protect data — but part one established that a lab's data
+is mostly *supposed* to be disposable. Buying protection for
+throwaway state is the single most common overspend after the rack.
+</WhyItMatters>
+
+<HowItWorks>
+## The two piles
+
+**Pile one: rebuildable.** VM disks, container images, model weights,
+media you can re-download, every experiment. If the SSD died tonight,
+you would lose an evening reinstalling — and part three made even that
+cheap, because the VMs are snapshots and templates now. This pile needs
+capacity, not protection. One SSD. Done.
+
+**Pile two: irreplaceable.** Configs you hand-tuned, notes, anything
+you made rather than downloaded. On a lab this is usually gigabytes,
+not terabytes — small enough that protecting it properly costs almost
+nothing:
+
+1. **Get it off the machine.** Proxmox's built-in backup job to any
+   second disk — a cheap USB drive is genuinely fine here — plus a copy
+   somewhere that is not in your house. For gigabytes, free cloud tiers
+   or a repo cover it.
+2. **Automate it.** A backup that depends on remembering is a backup
+   that stops the week you get busy.
+3. **Restore one thing, once.** An untested backup is a hope, not a
+   backup. Restoring a single VM from the backup file is a ten-minute
+   drill that converts hope into knowledge.
+</HowItWorks>
+
+<FailureModes>
+- **RAID as backup.** Mirroring protects against one dead drive. It
+  faithfully replicates deletions, ransomware, and your own mistakes —
+  which are the actual threats to a lab. Redundancy is uptime insurance,
+  and a kitchen does not need uptime.
+- **The premature NAS.** A dedicated storage box is a fine part-eight
+  project. Bought at part five it is an expensive external drive with a
+  louder fan.
+- **Backing up the rebuildable pile.** Nightly images of disposable VMs
+  fill the backup disk in a month, and the job you then disable was the
+  one protecting pile two.
+</FailureModes>
+
+<WhatILearned>
+The two-pile sort is really part one's rule wearing storage clothes:
+know what the lab is allowed to break. Applied to disks it means most
+of your storage budget should buy capacity for experiments, and the
+protection budget — small, boring, automated — goes only to the sliver
+you could not type back in.
+</WhatILearned>
