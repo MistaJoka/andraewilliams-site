@@ -1,0 +1,138 @@
+---
+// The interactive network diagram: click-to-drill-down through the
+// stack, from the big picture down to Level 0. Named `network/` rather
+// than living under components/knowledge/ because that directory is
+// already taken by the unrelated per-page relationship-graph widget
+// (KnowledgeGraph.astro) — same route (/knowledge/), different feature.
+//
+// The entry scene renders here as real, build-time SVG (same technique
+// KnowledgeGraph.astro uses) so the page has genuine content with zero
+// JS. A module script then progressively enhances it: click-to-drill,
+// a breadcrumb trail, and a detail panel replace the static fallback
+// list. Unlike AsciiStage there is no heavy asset to gate behind a
+// click — this is a few KB of data and string-building, not a WebGL
+// bundle — so it enhances immediately rather than waiting to be asked.
+import { SCENES, ENTRY_SCENE_ID } from '../../scripts/network/scenes';
+import { renderScene } from '../../scripts/network/render';
+
+const entryScene = SCENES[ENTRY_SCENE_ID]!;
+const initialSvg = renderScene(entryScene);
+---
+<section class="network-stage" aria-label="Interactive network diagram">
+  <nav class="net-breadcrumb" aria-label="Level" hidden>
+    <ol></ol>
+  </nav>
+
+  <h2 class="net-scene-title" tabindex="-1">{entryScene.title}</h2>
+  <p class="net-intro">{entryScene.intro}</p>
+
+  <div class="net-canvas" set:html={initialSvg} />
+
+  <dl class="net-static-detail">
+    {entryScene.nodes.map((n) => (
+      <>
+        <dt>{n.label}</dt>
+        <dd>{n.caption}</dd>
+      </>
+    ))}
+  </dl>
+
+  <div class="net-detail">
+    <p class="net-detail-hint">Select any node above to see what it does.</p>
+  </div>
+</section>
+
+<script>
+  import { mount } from '../../scripts/network/mount';
+  document.querySelectorAll<HTMLElement>('.network-stage').forEach(mount);
+</script>
+
+<style>
+  .network-stage {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin: var(--sp-5) 0;
+  }
+  .net-scene-title { font-size: var(--step-1); color: var(--text-0); margin: 0 0 var(--sp-2); }
+  .net-scene-title:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .net-intro { color: var(--text-1); max-width: 62ch; margin: 0 0 var(--sp-4); }
+
+  .net-canvas { border: 1px solid var(--line); background: var(--bg-0); overflow-x: auto; }
+
+  .net-static-detail {
+    margin: var(--sp-4) 0 0;
+    gap: var(--sp-1) var(--sp-4);
+    grid-template-columns: max-content 1fr;
+  }
+  /* Own `display` only applies while NOT hidden — otherwise this rule's
+     author-origin `display: grid` beats the UA stylesheet's
+     `[hidden] { display: none }` regardless of specificity, since origin
+     outranks specificity in the cascade, and the fallback list stays
+     visible after mount.ts sets the hidden attribute. */
+  .net-static-detail:not([hidden]) { display: grid; }
+  .net-static-detail dt { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); }
+  .net-static-detail dd { margin: 0 0 var(--sp-3); color: var(--text-1); }
+
+  .net-detail { border-top: 1px solid var(--line); padding-top: var(--sp-4); margin-top: var(--sp-4); min-height: 4rem; }
+  .net-detail-hint { color: var(--text-2); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0; }
+</style>
+
+<style is:global>
+  /* Targets markup injected via set:html at build time and via
+     mount.ts's innerHTML/createElement calls at runtime — neither path
+     produces elements Astro's scoped-style compiler ever sees, so these
+     rules are deliberately global rather than scoped. */
+  .net-svg { display: block; width: 100%; height: auto; animation: net-fade-in 200ms ease-out; }
+  @keyframes net-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  /* Below this width, scaling the SVG down by container width shrinks
+     the node labels past legibility (11px in an 880-wide viewBox scales
+     to under 4px on a 390px phone). Render at natural size and let
+     .net-canvas scroll horizontally instead of shrinking to fit. */
+  @media (max-width: 40rem) {
+    .net-svg { width: 55rem; max-width: none; }
+  }
+
+  .net-edge { stroke: var(--line); stroke-width: 1; }
+
+  .net-node .dot { fill: var(--topic-cyber); }
+  .net-node--device .dot { fill: var(--accent); }
+  .net-node--drill .dot { fill: var(--accent); }
+  .net-node .halo { fill: none; stroke: var(--line-bright); stroke-opacity: 0; transition: stroke-opacity 150ms ease-out; }
+  .net-node--drill .halo { stroke: var(--accent); stroke-opacity: 0.35; }
+  .net-node:hover .halo,
+  .net-node:focus-visible .halo { stroke-opacity: 0.55; }
+  .net-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .net-label { font-family: var(--font-mono); font-size: 11px; fill: var(--text-1); }
+  .net-node--drill .net-label { fill: var(--accent); }
+  .net-node:hover .net-label,
+  .net-node:focus-visible .net-label { fill: var(--text-0); }
+
+  .net-breadcrumb ol {
+    list-style: none; display: flex; flex-wrap: wrap; gap: var(--sp-2);
+    margin: 0 0 var(--sp-4); padding: 0;
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em;
+  }
+  .net-breadcrumb li { display: flex; align-items: center; gap: var(--sp-2); color: var(--text-2); }
+  .net-breadcrumb li:not(:last-child)::after { content: '▸'; margin-left: var(--sp-2); color: var(--line-bright); }
+  .net-breadcrumb li[aria-current] { color: var(--text-0); }
+  .net-breadcrumb button {
+    background: none; border: none; padding: 0; font: inherit; letter-spacing: inherit;
+    color: var(--text-1); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
+  .net-breadcrumb button:hover,
+  .net-breadcrumb button:focus-visible { color: var(--accent); }
+
+  .net-detail-label {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 var(--sp-2);
+  }
+  .net-detail p { color: var(--text-1); margin: 0 0 var(--sp-2); max-width: 62ch; }
+  .net-continue {
+    margin-top: var(--sp-2); background: var(--bg-2); border: 1px solid var(--accent); color: var(--accent);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em;
+    padding: var(--sp-2) var(--sp-3); cursor: pointer;
+  }
+  .net-continue:hover { background: var(--accent); color: var(--bg-0); }
+</style>

@@ -12,6 +12,7 @@ interface Doc { t: string; d: string; k: string; u: string; g: string }
 const NAV: Doc[] = [
   { t: 'Home', d: 'Selected work, notes and the lab', k: 'NAV', u: '/', g: 'start index' },
   { t: 'Notes', d: 'Everything, newest first', k: 'NAV', u: '/feed/', g: 'all posts stream feed' },
+  { t: 'Knowledge', d: 'Concepts and fundamentals', k: 'NAV', u: '/knowledge/', g: 'fundamentals concepts basics learn' },
   { t: 'Topics', d: 'The map of what I work on', k: 'NAV', u: '/topics/', g: 'hubs subjects' },
   { t: 'Lab', d: 'Active experiments', k: 'NAV', u: '/lab/', g: 'experiments shaders' },
   { t: 'Work', d: 'Things I actually built', k: 'NAV', u: '/projects/', g: 'work builds projects' },
@@ -45,6 +46,9 @@ export const GET: APIRoute = async () => {
   }
   for (const r of await getCollection('resources')) {
     docs.push({ t: r.data.title, d: r.data.why.slice(0, 110), k: 'RESOURCE', u: `/resources/#${r.id}`, g: [...r.data.tags, r.data.kind].join(' ') });
+  }
+  for (const k of await getCollection('knowledge', ({ data }) => !data.draft)) {
+    docs.push({ t: k.data.title, d: k.data.description.slice(0, 110), k: 'KNOWLEDGE', u: `/knowledge/${k.id}/`, g: [...k.data.tags, ...k.data.topics.map((t) => t.id)].join(' ') });
   }
 
   return new Response(JSON.stringify(docs), {
