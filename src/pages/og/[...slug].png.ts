@@ -8,10 +8,11 @@ import { cardSpec } from '../../lib/card-spec';
 import { formatDifficulty, seriesCounter } from '../../lib/format';
 
 export async function getStaticPaths() {
-  const [posts, projects, lab] = await Promise.all([
+  const [posts, projects, lab, tools] = await Promise.all([
     getCollection('posts', ({ data }) => !data.draft),
     getCollection('projects', ({ data }) => !data.draft),
     getCollection('lab', ({ data }) => !data.draft),
+    getCollection('tools', ({ data }) => !data.draft),
   ]);
 
   const paths: { params: { slug: string }; props: Record<string, unknown> }[] = [];
@@ -57,6 +58,19 @@ export async function getStaticPaths() {
         description: l.data.description,
         footnote: l.data.tools.slice(0, 4).join(' · '),
         token: '--status-testing',
+      },
+    });
+  }
+
+  for (const t of tools) {
+    paths.push({
+      params: { slug: `tools/${t.id}` },
+      props: {
+        eyebrow: `TOOL · ${t.data.status}`,
+        title: t.data.title,
+        description: t.data.description,
+        footnote: t.data.tools.slice(0, 4).join(' · '),
+        token: '--accent',
       },
     });
   }

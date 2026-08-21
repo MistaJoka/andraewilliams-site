@@ -19,6 +19,7 @@ const REF_FIELDS: Record<string, string[]> = {
   posts: ['topics', 'series', 'project', 'related.posts', 'related.topics', 'related.projects', 'resources'],
   projects: ['topics'],
   lab: ['topics', 'project'],
+  tools: ['topics'],
   series: ['topics'],
   resources: ['topics'],
   knowledge: ['topics'],

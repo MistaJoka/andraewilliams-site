@@ -1,0 +1,122 @@
+---
+const DEFAULT = `services:
+  web:
+    image: nginx
+    ports:
+      - "8080:80"
+  api:
+    image: my-api
+    ports:
+      - "8080:5000"
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+`;
+---
+<div class="compose-tool" data-tool="compose-ports">
+  <label class="field">
+    <span>docker-compose.yml</span>
+    <textarea class="input" spellcheck="false" rows="14">{DEFAULT}</textarea>
+  </label>
+  <p class="error" hidden></p>
+  <div class="summary" hidden>
+    <p class="status"></p>
+    <ul class="collisions"></ul>
+    <ul class="warnings" hidden></ul>
+  </div>
+</div>
+
+<script>
+  import { parseCompose, findCollisions } from '../../scripts/tools/compose-ports.js';
+
+  const tools = document.querySelectorAll<HTMLElement>('[data-tool="compose-ports"]');
+  for (const tool of tools) {
+    const input = tool.querySelector<HTMLTextAreaElement>('.input')!;
+    const error = tool.querySelector<HTMLElement>('.error')!;
+    const summary = tool.querySelector<HTMLElement>('.summary')!;
+    const status = tool.querySelector<HTMLElement>('.status')!;
+    const collisionsEl = tool.querySelector<HTMLElement>('.collisions')!;
+    const warningsEl = tool.querySelector<HTMLElement>('.warnings')!;
+
+    const render = () => {
+      const { services, unparsed, servicesFound } = parseCompose(input.value);
+      if (!servicesFound) {
+        error.hidden = false;
+        error.textContent = 'No top-level `services:` block found.';
+        summary.hidden = true;
+        return;
+      }
+      error.hidden = true;
+      summary.hidden = false;
+
+      const collisions = findCollisions(services);
+      status.textContent = collisions.length
+        ? `${collisions.length} port collision${collisions.length > 1 ? 's' : ''} found`
+        : `No collisions across ${services.length} service${services.length === 1 ? '' : 's'}`;
+      status.dataset.state = collisions.length ? 'crit' : 'ok';
+
+      collisionsEl.replaceChildren(
+        ...collisions.map(({ services: [a, b], ports: [pa, pb] }) => {
+          const li = document.createElement('li');
+          li.textContent = `${a} (${pa}) ↔ ${b} (${pb})`;
+          return li;
+        }),
+      );
+
+      warningsEl.hidden = unparsed.length === 0;
+      warningsEl.replaceChildren(
+        ...unparsed.map(({ service, raw }) => {
+          const li = document.createElement('li');
+          li.textContent = `${service}: "${raw}" — not checked, unsupported syntax`;
+          return li;
+        }),
+      );
+    };
+
+    input.addEventListener('input', render);
+    render();
+  }
+</script>
+
+<style>
+  .compose-tool {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin: 0 0 var(--sp-5);
+  }
+  .field { display: grid; gap: var(--sp-2); }
+  .field span {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .input {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-0);
+    background: var(--bg-0); border: 1px solid var(--line); padding: var(--sp-3);
+    resize: vertical; line-height: 1.5;
+  }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .error {
+    color: var(--status-broken); font-family: var(--font-mono); font-size: var(--step--1);
+    margin: var(--sp-3) 0 0;
+  }
+  .summary { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--line); }
+  .status {
+    font-family: var(--font-mono); font-size: var(--step-0); text-transform: uppercase;
+    letter-spacing: 0.06em; margin: 0 0 var(--sp-3);
+  }
+  .status[data-state='crit'] { color: var(--status-broken); }
+  .status[data-state='ok'] { color: var(--status-working); }
+  .collisions, .warnings { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+  .collisions li {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-0);
+    padding: var(--sp-2) var(--sp-3); background: var(--bg-0); border-left: 2px solid var(--status-broken);
+  }
+  .warnings { margin-top: var(--sp-3); }
+  .warnings[hidden] { display: none; }
+  .warnings li {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    padding: var(--sp-2) var(--sp-3); border-left: 2px solid var(--line);
+  }
+</style>

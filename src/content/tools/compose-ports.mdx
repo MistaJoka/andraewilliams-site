@@ -1,0 +1,20 @@
+---
+title: "Docker Compose Port-Collision Checker"
+description: "Paste a docker-compose.yml, catch a host-port collision before `docker compose up` fails on it — everything is parsed and checked in your browser."
+date: 2026-08-20
+status: WORKING
+category: utility
+app: compose-ports
+topics: [homelab]
+tags: [docker, networking]
+tools: [JavaScript]
+built: "A hand-rolled indentation walker scoped to `services: <name>: ports:` — not a general YAML parser. Short port syntax (`8080:80`, `127.0.0.1:8080:80`, ranges) is fully checked; long `target:`/`published:` mappings and `${VAR}` interpolation are flagged as unsupported rather than silently skipped."
+model: "Claude Sonnet 5"
+source: https://github.com/MistaJoka/andraewilliams-site/blob/main/src/scripts/tools/compose-ports.js
+---
+
+Real docker-compose files use a handful of YAML shapes for the same `ports:` list — a block of `- "8080:80"` lines, an inline `["8080:80", "8081:81"]` array, an IP-bound `127.0.0.1:8080:80`, a port range, or the verbose `target:`/`published:` mapping form. Writing a full YAML parser to handle all of that felt like the wrong trade for a single-purpose checker, so this walks indentation directly and only understands the short forms.
+
+Anything it doesn't recognize — the long mapping form, a `${DB_PORT}` interpolation — gets listed separately as **not checked** instead of being swallowed. A collision checker that goes quiet on the one line it couldn't parse is worse than one that just says so.
+
+Collisions are found by treating every host-port mapping as a numeric range and checking pairwise overlap across services, not string equality — so `8080-8090:80-90` on one service correctly flags against a plain `8085:9000` on another.

@@ -1,0 +1,103 @@
+---
+---
+<div class="ascii-tool" data-tool="ascii">
+  <label class="drop" tabindex="0">
+    <input type="file" accept="image/*" hidden />
+    <span>Drop an image, or click to choose one</span>
+  </label>
+  <div class="controls" hidden>
+    <label class="field">
+      <span>Columns</span>
+      <input type="range" class="cols" min="40" max="220" value="110" />
+    </label>
+    <label class="check"><input type="checkbox" class="invert" /> Invert</label>
+    <button type="button" class="copy">Copy text</button>
+  </div>
+  <pre class="output" aria-live="polite"></pre>
+</div>
+
+<script>
+  import { renderAscii } from '../../scripts/tools/ascii-convert.js';
+
+  const tools = document.querySelectorAll<HTMLElement>('[data-tool="ascii"]');
+  for (const tool of tools) {
+    const drop = tool.querySelector<HTMLLabelElement>('.drop')!;
+    const input = tool.querySelector<HTMLInputElement>('input[type="file"]')!;
+    const controls = tool.querySelector<HTMLElement>('.controls')!;
+    const cols = tool.querySelector<HTMLInputElement>('.cols')!;
+    const invert = tool.querySelector<HTMLInputElement>('.invert')!;
+    const copyBtn = tool.querySelector<HTMLButtonElement>('.copy')!;
+    const output = tool.querySelector<HTMLElement>('.output')!;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    let image: HTMLImageElement | null = null;
+
+    const render = () => {
+      if (!image) return;
+      output.textContent = renderAscii(ctx, canvas, image, Number(cols.value), invert.checked);
+    };
+
+    const load = (file: File | undefined) => {
+      if (!file || !file.type.startsWith('image/')) return;
+      const img = new Image();
+      img.onload = () => {
+        image = img;
+        controls.hidden = false;
+        render();
+      };
+      img.src = URL.createObjectURL(file);
+    };
+
+    drop.addEventListener('click', () => input.click());
+    drop.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+    });
+    drop.addEventListener('dragover', (e) => e.preventDefault());
+    drop.addEventListener('drop', (e) => { e.preventDefault(); load(e.dataTransfer?.files?.[0]); });
+    input.addEventListener('change', () => load(input.files?.[0]));
+    cols.addEventListener('input', render);
+    invert.addEventListener('change', render);
+    copyBtn.addEventListener('click', () => navigator.clipboard?.writeText(output.textContent ?? ''));
+  }
+</script>
+
+<style>
+  .ascii-tool {
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    padding: var(--sp-5);
+    margin: 0 0 var(--sp-5);
+  }
+  .drop {
+    display: grid; place-content: center; text-align: center;
+    min-height: 8rem; border: 1px dashed var(--line);
+    font-family: var(--font-mono); font-size: var(--step--1);
+    color: var(--text-2); letter-spacing: 0.04em; cursor: pointer;
+  }
+  .drop:hover, .drop:focus-visible { border-color: var(--accent); color: var(--text-0); outline: none; }
+  .controls {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-4);
+    margin-top: var(--sp-4);
+  }
+  .controls[hidden] { display: none; }
+  .field { display: flex; align-items: center; gap: var(--sp-2); }
+  .field span, .check {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .check { display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; }
+  .copy {
+    margin-left: auto; background: var(--bg-2); border: 1px solid var(--accent);
+    color: var(--accent); font-family: var(--font-mono); font-size: var(--step--1);
+    letter-spacing: 0.08em; padding: var(--sp-2) var(--sp-4); cursor: pointer;
+  }
+  .copy:hover { background: var(--accent); color: var(--bg-0); }
+  .output {
+    margin: var(--sp-4) 0 0; padding: var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line);
+    color: var(--text-0); font-family: var(--font-mono);
+    font-size: 6px; line-height: 6px; letter-spacing: 0;
+    white-space: pre; overflow-x: auto;
+  }
+  .output:empty { display: none; }
+</style>
