@@ -20,7 +20,7 @@ export function renderScene(scene: NetScene): string {
       const a = byId.get(e.from);
       const b = byId.get(e.to);
       if (!a || !b) return '';
-      return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="net-edge" />`;
+      return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="net-edge" data-from="${esc(e.from)}" data-to="${esc(e.to)}" />`;
     })
     .join('');
 

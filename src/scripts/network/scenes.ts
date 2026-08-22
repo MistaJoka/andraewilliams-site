@@ -169,29 +169,37 @@ export const SCENES: Record<string, NetScene> = {
     parent: 'l4',
     nodes: [
       {
+        id: 'device-src',
+        label: 'Your Device',
+        kind: 'device',
+        x: 140,
+        y: 140,
+        caption:
+          'The client in this connection — same device as the Big Picture, now asking a specific machine to open a conversation on a specific port.',
+      },
+      {
+        id: 'device-dst',
+        label: 'Web Server',
+        kind: 'device',
+        x: 740,
+        y: 140,
+        caption: 'The server in this connection — already listening, waiting for exactly this kind of request to arrive.',
+      },
+      {
         id: 'port-src',
         label: 'Source Port',
         kind: 'concept',
-        x: 160,
-        y: 140,
+        x: 140,
+        y: 260,
         caption:
           'A random high-numbered port your OS picks for this one conversation — a return address that only exists for the duration of the call.',
-      },
-      {
-        id: 'handshake',
-        label: 'TCP 3-Way Handshake',
-        kind: 'concept',
-        x: 400,
-        y: 140,
-        caption:
-          'SYN, then SYN-ACK, then ACK — three packets that do nothing but agree the connection is real before a single byte of your request is sent.',
       },
       {
         id: 'port-dst',
         label: 'Destination Port 443',
         kind: 'concept',
-        x: 640,
-        y: 140,
+        x: 740,
+        y: 260,
         caption:
           'The "apartment number" at the destination IP. Port 443 means HTTPS is expected here — the web server software is what is actually listening on it.',
       },
@@ -200,7 +208,7 @@ export const SCENES: Record<string, NetScene> = {
         label: 'UDP (the other option)',
         kind: 'concept',
         x: 790,
-        y: 260,
+        y: 200,
         caption:
           'No handshake, no guarantee of delivery — just send it. Used when speed matters more than certainty, like live video or DNS itself.',
       },
@@ -216,9 +224,10 @@ export const SCENES: Record<string, NetScene> = {
       },
     ],
     edges: [
-      { from: 'port-src', to: 'handshake' },
-      { from: 'handshake', to: 'port-dst' },
-      { from: 'handshake', to: 'descend-l2' },
+      { from: 'device-src', to: 'port-src' },
+      { from: 'device-dst', to: 'port-dst' },
+      { from: 'device-src', to: 'device-dst' },
+      { from: 'device-src', to: 'descend-l2' },
     ],
   },
 
@@ -257,13 +266,22 @@ export const SCENES: Record<string, NetScene> = {
           'A subnet mask splits an IP address into a network part and a host part — it is what lets a router instantly know "is this destination on my local network, or do I need to forward it?"',
       },
       {
-        id: 'hops',
-        label: 'Router Hops',
-        kind: 'concept',
-        x: 790,
+        id: 'router2',
+        label: 'ISP Router',
+        kind: 'device',
+        x: 560,
         y: 260,
         caption:
-          'Every router between you and the destination repeats the same read-decrement-forward steps. This is exactly what the traceroute tool shows you, hop by hop.',
+          "The next router in line, usually the first one you don't own — same job as Your Router: read the address, check the table, forward it one hop closer.",
+      },
+      {
+        id: 'router3',
+        label: 'One More Hop',
+        kind: 'device',
+        x: 800,
+        y: 260,
+        caption:
+          "Real paths often run ten hops or more between you and the destination. traceroute prints every single one — the job never changes, only the number of times it repeats.",
       },
       {
         id: 'descend-l1',
@@ -279,7 +297,8 @@ export const SCENES: Record<string, NetScene> = {
     edges: [
       { from: 'ip', to: 'router1' },
       { from: 'router1', to: 'subnet' },
-      { from: 'router1', to: 'hops' },
+      { from: 'router1', to: 'router2' },
+      { from: 'router2', to: 'router3' },
       { from: 'router1', to: 'descend-l1' },
     ],
   },
@@ -292,6 +311,23 @@ export const SCENES: Record<string, NetScene> = {
       'Zoom all the way into your own local network. Here, nobody uses IP addresses to find each other — they use hardware addresses, and they ask out loud.',
     parent: 'l2',
     nodes: [
+      {
+        id: 'arp-asker',
+        label: 'Your Laptop',
+        kind: 'device',
+        x: 200,
+        y: 60,
+        caption: "Has an IP address for the device it wants to reach, but not a MAC address yet — and a frame can't be sent without one.",
+      },
+      {
+        id: 'arp-target',
+        label: 'Your Router',
+        kind: 'device',
+        x: 680,
+        y: 60,
+        caption:
+          "Same box as Your Router in the Network level — different job here. On this segment, it answers to its MAC address, not its IP.",
+      },
       {
         id: 'mac',
         label: 'MAC Address',
@@ -318,15 +354,6 @@ export const SCENES: Record<string, NetScene> = {
         caption: 'Does the same job as a switch, but for Wi-Fi — bridges radio frames onto the wired network.',
       },
       {
-        id: 'arp',
-        label: 'ARP',
-        kind: 'concept',
-        x: 790,
-        y: 260,
-        caption:
-          'How a device finds a MAC address: it broadcasts "who has this IP?" to everyone on the segment, and whoever owns it replies. No login, no proof required — just trust.',
-      },
-      {
         id: 'descend-l0',
         label: 'Physical',
         kind: 'concept',
@@ -339,7 +366,9 @@ export const SCENES: Record<string, NetScene> = {
     edges: [
       { from: 'mac', to: 'switch' },
       { from: 'switch', to: 'ap' },
-      { from: 'ap', to: 'arp' },
+      { from: 'switch', to: 'arp-asker' },
+      { from: 'switch', to: 'arp-target' },
+      { from: 'arp-asker', to: 'arp-target' },
       { from: 'switch', to: 'descend-l0' },
     ],
   },

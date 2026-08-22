@@ -28,6 +28,18 @@ const initialSvg = renderScene(entryScene);
 
   <div class="net-canvas" set:html={initialSvg} />
 
+  <div class="net-sequence" hidden>
+    <div class="net-sequence-controls">
+      <button type="button" class="net-watch" aria-disabled="false"></button>
+      <fieldset class="net-cache-toggle" hidden>
+        <legend class="visually-hidden">Visit type</legend>
+        <label><input type="radio" value="first" checked class="visually-hidden" /> First visit</label>
+        <label><input type="radio" value="cached" class="visually-hidden" /> Cached</label>
+      </fieldset>
+    </div>
+    <ol class="net-steps" aria-live="polite"></ol>
+  </div>
+
   <dl class="net-static-detail">
     {entryScene.nodes.map((n) => (
       <>
@@ -76,6 +88,33 @@ const initialSvg = renderScene(entryScene);
 
   .net-detail { border-top: 1px solid var(--line); padding-top: var(--sp-4); margin-top: var(--sp-4); min-height: 4rem; }
   .net-detail-hint { color: var(--text-2); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0; }
+
+  .net-sequence { margin: var(--sp-4) 0 0; }
+  .net-sequence-controls { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
+  .net-watch {
+    background: var(--bg-2); border: 1px solid var(--accent); color: var(--accent);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em;
+    padding: var(--sp-2) var(--sp-4); cursor: pointer;
+  }
+  .net-watch:hover { background: var(--accent); color: var(--bg-0); }
+  .net-watch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .net-watch[aria-disabled='true'] { opacity: 0.5; cursor: default; }
+
+  .net-cache-toggle { gap: var(--sp-1); margin: 0; padding: 0; border: none; }
+  /* Same [hidden]-vs-own-display fix as .net-static-detail above: a
+     fieldset defaults to display:block, and this needs display:flex only
+     while visible. */
+  .net-cache-toggle:not([hidden]) { display: flex; }
+  .net-cache-toggle label {
+    display: inline-flex; align-items: center; padding: var(--sp-1) var(--sp-3);
+    border: 1px solid var(--line); color: var(--text-2);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .net-cache-toggle label:has(input:checked) { border-color: var(--accent); color: var(--accent); }
+  .net-cache-toggle label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .net-steps { margin: var(--sp-4) 0 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: var(--sp-2); }
 </style>
 
 <style is:global>
@@ -98,7 +137,15 @@ const initialSvg = renderScene(entryScene);
   .net-node .dot { fill: var(--topic-cyber); }
   .net-node--device .dot { fill: var(--accent); }
   .net-node--drill .dot { fill: var(--accent); }
-  .net-node .halo { fill: none; stroke: var(--line-bright); stroke-opacity: 0; transition: stroke-opacity 150ms ease-out; }
+  /* fill: transparent, not fill: none — SVG's `visiblePainted` pointer-
+     events (the default) only counts an unstroked shape as hit-testable
+     where it's actually painted. `none` paints nothing, so the halo's
+     interior was a dead zone: the <g>'s own bounding box (circle + label
+     below it) frequently centers in the gap between them, and automated
+     clicks/some assistive tech that target an element's center point
+     would land on nothing. `transparent` still paints (zero-alpha), so
+     the full halo disc — not just the small inner dot — is clickable. */
+  .net-node .halo { fill: transparent; stroke: var(--line-bright); stroke-opacity: 0; transition: stroke-opacity 150ms ease-out; }
   .net-node--drill .halo { stroke: var(--accent); stroke-opacity: 0.35; }
   .net-node:hover .halo,
   .net-node:focus-visible .halo { stroke-opacity: 0.55; }
@@ -135,4 +182,18 @@ const initialSvg = renderScene(entryScene);
     padding: var(--sp-2) var(--sp-3); cursor: pointer;
   }
   .net-continue:hover { background: var(--accent); color: var(--bg-0); }
+
+  /* Packet playback (Phase B) — packets.ts creates/positions this circle
+     and toggles these classes; transition timing is set inline by
+     packets.ts itself (STEP_MOVE_MS), not here, so there is one place
+     that number lives. */
+  .net-packet { fill: var(--accent); }
+  .net-edge.is-active { stroke: var(--accent); stroke-width: 2; }
+  .net-node--active .dot { fill: var(--accent); }
+  .net-node--active .halo { stroke: var(--accent); stroke-opacity: 0.6; }
+  @keyframes net-pulse { 0%, 100% { stroke-opacity: 0.35; } 50% { stroke-opacity: 0.9; } }
+  .net-node--pulse .halo { stroke: var(--accent); animation: net-pulse 500ms ease-in-out; }
+
+  .net-steps li { color: var(--text-1); max-width: 62ch; }
+  .net-steps li[aria-current] { color: var(--text-0); font-weight: 600; }
 </style>
