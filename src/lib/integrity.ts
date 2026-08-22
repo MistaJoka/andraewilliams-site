@@ -22,6 +22,7 @@ const REF_FIELDS: Record<string, string[]> = {
   tools: ['topics'],
   series: ['topics'],
   resources: ['topics'],
+  knowledge: ['topics'],
 };
 
 function at(data: Record<string, unknown>, path: string): unknown {

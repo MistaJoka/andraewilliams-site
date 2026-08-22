@@ -92,6 +92,19 @@ const lab = defineCollection({
   }),
 });
 
+const knowledge = defineCollection({
+  loader: glob({ pattern: MD, base: './src/content/knowledge' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(200),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    topics: z.array(reference('topics')).min(1),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
 const tools = defineCollection({
   loader: glob({ pattern: MD, base: './src/content/tools' }),
   schema: z.object({
@@ -163,4 +176,4 @@ const posts = defineCollection({
     }),
 });
 
-export const collections = { posts, projects, lab, tools, series, resources, topics };
+export const collections = { posts, projects, lab, tools, series, resources, topics, knowledge };
