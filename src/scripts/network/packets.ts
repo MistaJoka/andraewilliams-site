@@ -31,6 +31,10 @@ export interface PacketSequence {
   steps: PacketStep[];
   /** Present only where a cached/repeat-visit shortcut makes sense. */
   cachedSteps?: PacketStep[];
+  /** Node ids to mark visually "compromised" once this sequence finishes
+   *  (e.g. an attacker's forged reply succeeding) — cleared by mount.ts's
+   *  stopPlayback() on the next interaction. */
+  compromises?: string[];
 }
 
 export interface PlaybackHandle {
@@ -94,6 +98,36 @@ export const SEQUENCES: Record<string, PacketSequence> = {
     cachedSteps: [
       { from: 'arp-asker', to: 'arp-asker', caption: 'Already in the ARP cache from a previous lookup — no broadcast needed.' },
     ],
+  },
+};
+
+// A separate table from SEQUENCES, not a third field on it: caching is a
+// mode of the same normal flow, spoofing is a categorically different
+// scenario. Named generically (not e.g. SPOOF_SEQUENCES) since the
+// capstone this pays off explicitly notes the same trick works at other
+// layers — a future round adding a second attack sequence elsewhere
+// shouldn't need a rename.
+export const MITM_SEQUENCES: Record<string, PacketSequence> = {
+  l1: {
+    sceneId: 'l1',
+    label: '⚠ See it get spoofed',
+    title: 'ARP spoofing',
+    steps: [
+      { from: 'arp-asker', to: 'arp-target', caption: 'Broadcast — Your Laptop asks the whole segment: "Who has this address?"' },
+      {
+        from: 'attacker',
+        to: 'arp-asker',
+        caption:
+          'The Attacker answers first: "That\'s me — here\'s my MAC address." Your Laptop has no way to tell this reply is a lie.',
+      },
+      {
+        from: 'attacker',
+        to: 'attacker',
+        caption:
+          'From now on, traffic Your Laptop thinks is going to Your Router really goes through the Attacker first. This same trick works at almost every layer — see below.',
+      },
+    ],
+    compromises: ['arp-asker', 'attacker'],
   },
 };
 

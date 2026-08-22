@@ -1,11 +1,13 @@
 // Lifecycle controller for the network diagram: click-to-drill-down
-// between scenes, a breadcrumb trail, keyboard support, and (Phase B)
-// triggered packet-flow playback. The playback engine itself lives in
+// between scenes, a breadcrumb trail, keyboard support, and (Phase B/C)
+// triggered packet-flow playback — normal sequences and, on scenes that
+// have one, an attack sequence. The playback engine itself lives in
 // packets.ts and only overlays the existing SVG — everything here is
 // still just DOM chrome + orchestration, the same split Phase A used.
-import { SCENES, ENTRY_SCENE_ID } from './scenes';
+import { SCENES, ENTRY_SCENE_ID, type NetScene } from './scenes';
 import { renderScene } from './render';
-import { SEQUENCES, playSequence, type PlaybackHandle } from './packets';
+import { SEQUENCES, MITM_SEQUENCES, playSequence, type PacketSequence, type PlaybackHandle } from './packets';
+import { buildSubnetTool } from './subnet-tool';
 
 const stacks = new WeakMap<HTMLElement, string[]>();
 const playbacks = new WeakMap<HTMLElement, PlaybackHandle | null>();
@@ -24,6 +26,8 @@ function chromeOf(stage: HTMLElement) {
     sequenceRoot: stage.querySelector<HTMLElement>('.net-sequence'),
     watchButton: stage.querySelector<HTMLButtonElement>('.net-watch'),
     cacheToggle: stage.querySelector<HTMLElement>('.net-cache-toggle'),
+    spoofTrigger: stage.querySelector<HTMLElement>('.net-spoof-trigger'),
+    spoofButton: stage.querySelector<HTMLButtonElement>('.net-spoof'),
     steps: stage.querySelector<HTMLOListElement>('.net-steps'),
   };
 }
@@ -66,6 +70,8 @@ function showDetail(stage: HTMLElement, nodeId: string) {
   caption.textContent = node.caption;
   detail.append(label, caption);
 
+  if (node.tool === 'subnet') detail.append(buildSubnetTool());
+
   const child = node.drillInto ? SCENES[node.drillInto] : undefined;
   if (child) {
     const btn = document.createElement('button');
@@ -94,46 +100,109 @@ function wireNodes(stage: HTMLElement) {
   });
 }
 
-// Shows/hides the Watch button and cache toggle for whichever scene is
-// now current, and resets the button's idle label. Safe to call whether
-// or not the scene has a sequence at all (entry, l0).
+// Shows/hides the Watch button, cache toggle and spoof trigger for
+// whichever scene is now current, and resets each button's idle label.
+// The three are independent: a scene can have a normal sequence, an
+// attack sequence, both, or neither (entry, l0).
 function updateSequenceChrome(stage: HTMLElement, sceneId: string) {
-  const { sequenceRoot, watchButton, cacheToggle } = chromeOf(stage);
+  const { sequenceRoot, watchButton, cacheToggle, spoofTrigger, spoofButton } = chromeOf(stage);
   const sequence = SEQUENCES[sceneId];
-  if (sequenceRoot) sequenceRoot.hidden = !sequence;
-  if (!sequence) return;
+  const mitm = MITM_SEQUENCES[sceneId];
+  if (sequenceRoot) sequenceRoot.hidden = !sequence && !mitm;
+
   if (watchButton) {
-    watchButton.textContent = sequence.label;
-    watchButton.dataset.idleLabel = sequence.label;
-    watchButton.setAttribute('aria-disabled', 'false');
+    watchButton.hidden = !sequence;
+    if (sequence) {
+      watchButton.textContent = sequence.label;
+      watchButton.dataset.idleLabel = sequence.label;
+      watchButton.setAttribute('aria-disabled', 'false');
+    }
   }
-  if (cacheToggle) cacheToggle.hidden = !sequence.cachedSteps;
+  if (cacheToggle) cacheToggle.hidden = !sequence?.cachedSteps;
+
+  if (spoofTrigger) spoofTrigger.hidden = !mitm;
+  if (spoofButton && mitm) {
+    spoofButton.textContent = mitm.label;
+    spoofButton.dataset.idleLabel = mitm.label;
+    spoofButton.setAttribute('aria-disabled', 'false');
+  }
 }
 
 // Cancels any in-flight playback for this stage and resets its chrome to
-// idle. Called on every scene change and on every node/breadcrumb click,
-// so a sequence never keeps animating into a diagram the user has since
-// navigated away from, or fights a click the user just made.
+// idle — always, not just when a handle is currently tracked: a sequence
+// that finished naturally (via startPlayback's done.then) can still have
+// left a "compromised" mark on the diagram that the next interaction
+// should clear. Called on every scene change and on every node/breadcrumb
+// click, so a sequence never keeps animating into a diagram the user has
+// since navigated away from, or fights a click the user just made.
 function stopPlayback(stage: HTMLElement) {
   const handle = playbacks.get(stage);
-  if (!handle) return;
-  handle.cancel();
-  playbacks.set(stage, null);
+  if (handle) {
+    handle.cancel();
+    playbacks.set(stage, null);
+  }
 
-  const { watchButton, steps, cacheToggle } = chromeOf(stage);
-  if (watchButton) {
+  const { canvas, watchButton, spoofButton, steps, cacheToggle } = chromeOf(stage);
+  if (watchButton && !watchButton.hidden) {
     watchButton.setAttribute('aria-disabled', 'false');
     watchButton.textContent = watchButton.dataset.idleLabel ?? watchButton.textContent ?? '';
+  }
+  if (spoofButton && !spoofButton.hidden) {
+    spoofButton.setAttribute('aria-disabled', 'false');
+    spoofButton.textContent = spoofButton.dataset.idleLabel ?? spoofButton.textContent ?? '';
   }
   if (steps) steps.innerHTML = '';
   cacheToggle?.querySelectorAll<HTMLInputElement>('input').forEach((r, i) => {
     r.checked = i === 0;
   });
+  canvas?.querySelectorAll('.net-node--compromised').forEach((el) => el.classList.remove('net-node--compromised'));
+}
+
+// Shared by the Watch and Spoof buttons: reset the step list, disable the
+// button that started this, play, then on natural completion relabel for
+// replay and apply any compromised-node marks the sequence declares.
+// Callers are responsible for calling stopPlayback() first — this never
+// does it itself, so it can be used for either trigger uniformly.
+function startPlayback(
+  stage: HTMLElement,
+  scene: NetScene,
+  svg: SVGSVGElement,
+  sequence: PacketSequence,
+  useCached: boolean,
+  triggerButton: HTMLButtonElement,
+) {
+  const { steps } = chromeOf(stage);
+  if (!steps) return;
+
+  steps.innerHTML = '';
+  triggerButton.setAttribute('aria-disabled', 'true');
+
+  const handle = playSequence(svg, scene, sequence, useCached, (step) => {
+    steps.querySelector('[aria-current]')?.removeAttribute('aria-current');
+    const li = document.createElement('li');
+    li.textContent = step.caption;
+    li.setAttribute('aria-current', 'step');
+    steps.append(li);
+  });
+  playbacks.set(stage, handle);
+
+  handle.done.then(() => {
+    // A node click or scene change may have already cancelled this exact
+    // handle (or started a new one) while it was finishing its last delay
+    // — only apply the "completed" state if it's still the one in flight.
+    if (playbacks.get(stage) !== handle) return;
+    playbacks.set(stage, null);
+    triggerButton.setAttribute('aria-disabled', 'false');
+    triggerButton.textContent = `↻ Replay: ${sequence.title}`;
+    steps.querySelector('[aria-current]')?.removeAttribute('aria-current');
+    sequence.compromises?.forEach((id) => {
+      svg.querySelector(`[data-node-id="${id}"]`)?.classList.add('net-node--compromised');
+    });
+  });
 }
 
 function wireSequence(stage: HTMLElement) {
-  const { watchButton, cacheToggle, steps } = chromeOf(stage);
-  if (!watchButton) return;
+  const { watchButton, cacheToggle, spoofButton } = chromeOf(stage);
 
   // `name` can't be hardcoded in the static template: two stage instances
   // on one page would otherwise cross-select each other's radio group,
@@ -145,40 +214,34 @@ function wireSequence(stage: HTMLElement) {
     });
   }
 
-  watchButton.addEventListener('click', () => {
-    if (watchButton.getAttribute('aria-disabled') === 'true') return;
-
+  const currentScene = () => {
     const stack = stacks.get(stage);
-    const sceneId = stack?.[stack.length - 1];
-    const scene = sceneId ? SCENES[sceneId] : undefined;
-    const sequence = sceneId ? SEQUENCES[sceneId] : undefined;
-    const svg = chromeOf(stage).canvas?.querySelector<SVGSVGElement>('svg.net-svg');
-    if (!scene || !sequence || !svg || !steps) return;
+    const id = stack?.[stack.length - 1];
+    return id ? SCENES[id] : undefined;
+  };
+  const svgOf = () => chromeOf(stage).canvas?.querySelector<SVGSVGElement>('svg.net-svg');
 
+  watchButton?.addEventListener('click', () => {
+    if (watchButton.getAttribute('aria-disabled') === 'true') return;
+    const scene = currentScene();
+    const sequence = scene ? SEQUENCES[scene.id] : undefined;
+    const svg = svgOf();
+    if (!scene || !sequence || !svg) return;
+
+    stopPlayback(stage);
     const useCached = cacheToggle?.querySelector<HTMLInputElement>('input:checked')?.value === 'cached';
-    steps.innerHTML = '';
-    watchButton.setAttribute('aria-disabled', 'true');
+    startPlayback(stage, scene, svg, sequence, !!useCached, watchButton);
+  });
 
-    const handle = playSequence(svg, scene, sequence, !!useCached, (step) => {
-      steps.querySelector('[aria-current]')?.removeAttribute('aria-current');
-      const li = document.createElement('li');
-      li.textContent = step.caption;
-      li.setAttribute('aria-current', 'step');
-      steps.append(li);
-    });
-    playbacks.set(stage, handle);
+  spoofButton?.addEventListener('click', () => {
+    if (spoofButton.getAttribute('aria-disabled') === 'true') return;
+    const scene = currentScene();
+    const mitm = scene ? MITM_SEQUENCES[scene.id] : undefined;
+    const svg = svgOf();
+    if (!scene || !mitm || !svg) return;
 
-    handle.done.then(() => {
-      // A node click or scene change may have already cancelled this
-      // exact handle (or started a new one) while it was finishing its
-      // last delay — only apply the "completed" state if it's still the
-      // one in flight.
-      if (playbacks.get(stage) !== handle) return;
-      playbacks.set(stage, null);
-      watchButton.setAttribute('aria-disabled', 'false');
-      watchButton.textContent = `↻ Replay: ${sequence.title}`;
-      steps.querySelector('[aria-current]')?.removeAttribute('aria-current');
-    });
+    stopPlayback(stage);
+    startPlayback(stage, scene, svg, mitm, false, spoofButton);
   });
 }
 

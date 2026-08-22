@@ -37,6 +37,9 @@ const initialSvg = renderScene(entryScene);
         <label><input type="radio" value="cached" class="visually-hidden" /> Cached</label>
       </fieldset>
     </div>
+    <div class="net-spoof-trigger" hidden>
+      <button type="button" class="net-spoof" aria-disabled="false"></button>
+    </div>
     <ol class="net-steps" aria-live="polite"></ol>
   </div>
 
@@ -113,6 +116,24 @@ const initialSvg = renderScene(entryScene);
   }
   .net-cache-toggle label:has(input:checked) { border-color: var(--accent); color: var(--accent); }
   .net-cache-toggle label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* A separate zone with its own top rule, not a third control folded
+     into .net-sequence-controls — caching is a mode of the same normal
+     flow, spoofing is a categorically different (attack) scenario, and
+     the layout says so as plainly as the color does. No :not([hidden])
+     guard needed here: a plain <div> stays at its default display:block,
+     which never conflicts with [hidden]'s display:none — that fix is
+     only required when an element's own rule sets a non-default display
+     (grid/flex) at equal specificity, per .net-cache-toggle above. */
+  .net-spoof-trigger { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--line); }
+  .net-spoof {
+    background: var(--bg-2); border: 1px solid var(--status-broken); color: var(--status-broken);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em;
+    padding: var(--sp-2) var(--sp-4); cursor: pointer;
+  }
+  .net-spoof:hover { background: var(--status-broken); color: var(--bg-0); }
+  .net-spoof:focus-visible { outline: 2px solid var(--status-broken); outline-offset: 3px; }
+  .net-spoof[aria-disabled='true'] { opacity: 0.5; cursor: default; }
 
   .net-steps { margin: var(--sp-4) 0 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: var(--sp-2); }
 </style>
@@ -196,4 +217,55 @@ const initialSvg = renderScene(entryScene);
 
   .net-steps li { color: var(--text-1); max-width: 62ch; }
   .net-steps li[aria-current] { color: var(--text-0); font-weight: 600; }
+
+  /* Attacker node (Phase C) — reuses the site's existing danger token
+     rather than inventing a new color; --status-broken is already used
+     consistently for "something is wrong" across the Tools section. */
+  .net-node--attacker .dot { fill: var(--status-broken); }
+  .net-node--attacker .halo { stroke: var(--status-broken); }
+  .net-node--attacker .net-label { fill: var(--status-broken); }
+  /* Compound selector, not source order: .net-node--active/--pulse are
+     equal specificity to .net-node--attacker's own rules above, so
+     without this the attacker node would flash the generic in-transit
+     blue mid-animation — exactly when staying visually "attacker" matters
+     most. Three classes beats two regardless of order. */
+  .net-node--attacker.net-node--active .dot { fill: var(--status-broken); }
+  .net-node--attacker.net-node--active .halo { stroke: var(--status-broken); }
+  .net-node--attacker.net-node--pulse .halo { stroke: var(--status-broken); }
+
+  /* Persists after a spoof sequence completes (cleared by mount.ts's
+     stopPlayback on the next interaction) — a lingering "this is
+     compromised now" mark, distinct from the transient in-flight
+     --active/--pulse states above. */
+  .net-node--compromised .halo { stroke: var(--status-broken); stroke-opacity: 0.6; }
+
+  /* Subnet slider — injected into .net-detail by subnet-tool.ts when the
+     L2 "Subnetting" node is selected. Global for the same reason
+     .net-continue/.net-detail-label are: created via document.createElement,
+     never present in the build-time template Astro's scoped-style
+     compiler processes. */
+  .subnet-tool { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--line); }
+  .subnet-tool-field { display: flex; align-items: center; gap: var(--sp-3); margin: 0 0 var(--sp-4); }
+  .subnet-tool-field span {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .subnet-tool-field input[type='range'] { flex: 1; accent-color: var(--accent); }
+  .subnet-tool-field output { font-family: var(--font-mono); color: var(--accent); min-width: 3ch; }
+
+  .subnet-bits { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin: 0 0 var(--sp-4); }
+  .subnet-octet { display: flex; gap: 2px; }
+  .subnet-bit { width: 10px; height: 20px; background: var(--line); }
+  .subnet-bit.is-network { background: var(--accent); }
+  .subnet-bit.is-host { background: var(--topic-cyber); }
+
+  .subnet-stats {
+    display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-1) var(--sp-4);
+    font-size: var(--step--1); margin: 0 0 var(--sp-3);
+  }
+  .subnet-stats dt { font-family: var(--font-mono); color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; }
+  .subnet-stats dd { margin: 0; color: var(--text-0); font-family: var(--font-mono); }
+
+  .subnet-link { margin: 0; font-size: var(--step--1); }
+  .subnet-link a { color: var(--accent); }
 </style>

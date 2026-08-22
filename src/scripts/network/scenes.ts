@@ -16,13 +16,15 @@
 export interface NetNode {
   id: string;
   label: string;
-  kind: 'device' | 'concept';
+  kind: 'device' | 'concept' | 'attacker';
   x: number;
   y: number;
   /** Shown in the detail panel when this node is focused or clicked. */
   caption: string;
   /** Id of the scene this node descends into, if any. */
   drillInto?: string;
+  /** Mounts an embedded interactive tool below the caption, if set. */
+  tool?: 'subnet';
 }
 
 export interface NetEdge {
@@ -263,7 +265,8 @@ export const SCENES: Record<string, NetScene> = {
         x: 640,
         y: 140,
         caption:
-          'A subnet mask splits an IP address into a network part and a host part — it is what lets a router instantly know "is this destination on my local network, or do I need to forward it?"',
+          'A subnet mask splits an IP address into a network part and a host part — it is what lets a router instantly know "is this destination on my local network, or do I need to forward it?" Drag the slider below to see what changing that split actually does.',
+        tool: 'subnet',
       },
       {
         id: 'router2',
@@ -354,6 +357,15 @@ export const SCENES: Record<string, NetScene> = {
         caption: 'Does the same job as a switch, but for Wi-Fi — bridges radio frames onto the wired network.',
       },
       {
+        id: 'attacker',
+        label: 'Attacker',
+        kind: 'attacker',
+        x: 280,
+        y: 260,
+        caption:
+          "Another device on the exact same local segment — plugged into the same switch as everyone else here. ARP has no built-in way to check who's telling the truth, so nothing stops this device from answering too. Click \"See it get spoofed\" below to watch what happens when it does.",
+      },
+      {
         id: 'descend-l0',
         label: 'Physical',
         kind: 'concept',
@@ -369,6 +381,7 @@ export const SCENES: Record<string, NetScene> = {
       { from: 'switch', to: 'arp-asker' },
       { from: 'switch', to: 'arp-target' },
       { from: 'arp-asker', to: 'arp-target' },
+      { from: 'switch', to: 'attacker' },
       { from: 'switch', to: 'descend-l0' },
     ],
   },

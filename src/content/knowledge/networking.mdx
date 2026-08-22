@@ -6,7 +6,7 @@ topics: [cyber]
 tags: [networking, fundamentals, osi, tcp-ip, arp, subnetting]
 ---
 import NetworkStage from '../../components/network/NetworkStage.astro';
-import { Tldr } from '@blocks';
+import { Tldr, WhyItMatters } from '@blocks';
 
 <Tldr>
 Every attack, every tool, and every concept in ethical hacking sits on top of networking — skip this and everything else gets built on sand. The diagram below is built to be watched and clicked through, not memorized: start at the big picture, then drill down one level at a time to Level 0.
@@ -17,3 +17,9 @@ Most networking material teaches this as seven abstract layers to recite. That's
 <NetworkStage />
 
 Sitting with a level before it "clicks" is normal, and it's where the actual learning happens — the people who push through that discomfort are the ones who end up good at this.
+
+<WhyItMatters>
+You just watched one device answer a question it had no right to answer, and traffic reroute through it without asking permission. That's not unique to ARP. A forged DNS reply at Level 4, a rogue DHCP or routing announcement at Level 2, a fake Wi-Fi access point at Level 0 — all the same trick on a different layer: get between two honest parties before they notice, by being fast and unauthenticated.
+
+Every real defense against this class of attack is really just adding authentication somewhere the stack previously had none. TLS proves the server is who it claims to be. 802.1X gates who's even allowed to plug into the switch. DNSSEC proves a DNS answer wasn't forged in transit. None of it stops an attacker from being on the network. All of it stops an attacker from being trusted once they are.
+</WhyItMatters>
