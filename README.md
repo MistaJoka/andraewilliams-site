@@ -130,7 +130,7 @@ canvas; nothing loads until the reader asks for it.
 
 - Domains are rows in `src/data/savage-domains.yaml` (`code` is the citation prefix, e.g. `BDY`).
 - A standard is `src/content/savage/<domain>/<slug>.mdx`. The folder must match the `domain` ref, and `order` must be unique within the domain — both fail the build otherwise. Cited as `CODE·NN`.
-- Body convention, in order: `## What it looks like` · `## The gap` · `## How to get there` · `## Measures`. Voice: one-line commandment in `ceiling`, then plain prose. Measures are falsifiable.
+- Body convention, in order: `## What it looks like` · `## The gap` · `## How to get there` · `## Measures` · `## Canon`. Voice: one-line commandment in `ceiling`, then plain prose. Measures are falsifiable. Canon is 3-5 real, verifiable books/papers/texts as a bullet list — never invented titles.
 - Never add `topics` to these schemas and never give these pages a generated OG card — both would leak the area into public surfaces.
 
 ### Social preview images
