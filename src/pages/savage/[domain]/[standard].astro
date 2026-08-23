@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SavageNav from '../../../components/savage/SavageNav.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import { formatDate } from '../../../lib/format';
+import '../../../styles/savage.css';
+
+export async function getStaticPaths() {
+  const standards = await getCollection('savageStandards', ({ data }) => !data.draft);
+  return standards.map((entry) => {
+    // Entry id is `<domain>/<slug>`; the folder must match the `domain` ref.
+    const [folder, ...rest] = entry.id.split('/');
+    if (folder !== entry.data.domain.id) {
+      throw new Error(`savage/${entry.id}: folder "${folder}" does not match domain "${entry.data.domain.id}"`);
+    }
+    return { params: { domain: folder, standard: rest.join('/') }, props: { entry } };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const domain = (await getEntry(entry.data.domain))!;
+const siblings = (await getCollection('savageStandards', ({ data }) => !data.draft && data.domain.id === domain.id))
+  .sort((a, b) => a.data.order - b.data.order);
+const i = siblings.findIndex((s) => s.id === entry.id);
+const prev = siblings[i - 1];
+const next = siblings[i + 1];
+const pad = (n: number) => String(n).padStart(2, '0');
+const slug = (id: string) => id.split('/').pop();
+const cite = `${domain.data.code}·${pad(entry.data.order)}`;
+---
+<BaseLayout title={`${cite} ${entry.data.title} — The Savage Bible`} description={entry.data.summary} noindex bodyClass="savage">
+  <SavageNav trail={[{ href: `/savage/${domain.id}/`, label: domain.data.label }, { label: cite }]} />
+  <header class="sv-head">
+    <p class="sv-eyebrow"><span class="sv-cite">{cite}</span></p>
+    <h1>{entry.data.title}</h1>
+    <p class="sv-creed">{entry.data.ceiling}</p>
+    <p class="sv-lede">{entry.data.summary}</p>
+    {entry.data.updated && <p class="sv-eyebrow">Updated {formatDate(entry.data.updated)}</p>}
+  </header>
+
+  <div class="sv-prose"><Content /></div>
+
+  <nav class="sv-pager" aria-label="Standards">
+    <span>{prev && <a href={`/savage/${domain.id}/${slug(prev.id)}/`}>← {domain.data.code}·{pad(prev.data.order)} {prev.data.title}</a>}</span>
+    <span>{next && <a href={`/savage/${domain.id}/${slug(next.id)}/`}>{domain.data.code}·{pad(next.data.order)} {next.data.title} →</a>}</span>
+  </nav>
+</BaseLayout>

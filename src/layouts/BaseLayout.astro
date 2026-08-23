@@ -19,6 +19,9 @@ interface Props {
    *  the site-wide card so every URL has a real preview image. */
   ogImage?: string;
   ogImageAlt?: string;
+  /** Hidden areas: reachable by URL, never by crawler. */
+  noindex?: boolean;
+  bodyClass?: string;
 }
 const {
   title,
@@ -27,6 +30,8 @@ const {
   publishedTime,
   ogImage = '/og/default.png',
   ogImageAlt,
+  noindex = false,
+  bodyClass,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -43,6 +48,7 @@ const fullTitle = title === 'Home' ? 'Andrae Williams — Software, Applied AI &
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#05070d" />
 
     <meta property="og:type" content={type} />
@@ -61,7 +67,7 @@ const fullTitle = title === 'Home' ? 'Andrae Williams — Software, Applied AI &
     <link rel="alternate" type="application/rss+xml" title="Andrae Williams" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
-  <body>
+  <body class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main" class="wrap">

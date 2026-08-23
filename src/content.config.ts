@@ -163,4 +163,38 @@ const posts = defineCollection({
     }),
 });
 
-export const collections = { posts, projects, lab, tools, series, resources, topics };
+// The Savage Bible — a hidden reference area (/savage/). Deliberately has
+// no `topics` field: it stays out of the knowledge graph, topic hubs,
+// search index, RSS and sitemap. Reachable by URL and the homepage
+// easter egg only.
+const savageDomains = defineCollection({
+  loader: file('src/data/savage-domains.yaml'),
+  schema: z.object({
+    id: z.string().regex(/^[a-z0-9-]+$/, 'domain id must be lowercase letters, digits and hyphens only'),
+    label: z.string(),
+    // Short code used in citation ids (BDY·03). Uppercase so it reads as a
+    // reference, not a word.
+    code: z.string().regex(/^[A-Z]{2,4}$/, 'code must be 2–4 uppercase letters'),
+    creed: z.string().max(160),
+    blurb: z.string().max(200),
+    order: z.number().int().positive(),
+  }),
+});
+
+const savageStandards = defineCollection({
+  loader: glob({ pattern: MD, base: './src/content/savage' }),
+  schema: z.object({
+    title: z.string().max(80),
+    // The commandment. One line, no hedging — this is the ceiling.
+    ceiling: z.string().max(160),
+    summary: z.string().max(200),
+    domain: reference('savageDomains'),
+    // Position within the domain; integrity.ts enforces uniqueness so a
+    // citation id never points at two standards.
+    order: z.number().int().positive(),
+    updated: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { posts, projects, lab, tools, series, resources, topics, savageDomains, savageStandards };

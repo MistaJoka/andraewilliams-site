@@ -22,6 +22,7 @@ const REF_FIELDS: Record<string, string[]> = {
   tools: ['topics'],
   series: ['topics'],
   resources: ['topics'],
+  savageStandards: ['domain'],
 };
 
 function at(data: Record<string, unknown>, path: string): unknown {
@@ -72,6 +73,22 @@ async function check(): Promise<void> {
       errors.push(
         `series/${s.id} → seriesOrder ${over.join(', ')} exceeds plannedParts ${s.data.plannedParts}`,
       );
+    }
+  }
+
+  // Savage standards are cited as CODE·NN, so `order` must be unique
+  // within a domain or a citation points at two things.
+  const byDomain = new Map<string, Map<number, string[]>>();
+  for (const s of await getCollection('savageStandards')) {
+    const orders = byDomain.get(s.data.domain.id) ?? new Map<number, string[]>();
+    orders.set(s.data.order, [...(orders.get(s.data.order) ?? []), s.id]);
+    byDomain.set(s.data.domain.id, orders);
+  }
+  for (const [domain, orders] of byDomain) {
+    for (const [order, ids] of orders) {
+      if (ids.length > 1) {
+        errors.push(`savageDomains/${domain} → duplicate order ${order}: ${ids.join(', ')}`);
+      }
     }
   }
 

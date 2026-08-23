@@ -7,5 +7,9 @@ import sitemap from '@astrojs/sitemap';
 // absolute URLs. It is also what canonical/OG tags are resolved against.
 export default defineConfig({
   site: 'https://www.andraewilliams.com',
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    // /savage/ is a hidden area: built and reachable, never advertised.
+    sitemap({ filter: (page) => !page.includes('/savage/') }),
+  ],
 });
