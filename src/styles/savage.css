@@ -15,7 +15,7 @@ body.savage::before { display: none; }
 .sv-head h1 { font-size: var(--step-3); margin: var(--sp-3) 0; max-width: 24ch; }
 .sv-creed {
   font-size: var(--step-1); color: var(--text-0); max-width: 58ch;
-  border-left: 3px solid var(--accent); padding-left: var(--sp-4); margin: var(--sp-4) 0 0;
+  border-left: 3px solid var(--accent); padding-left: var(--sp-4); margin: var(--sp-4) 0 var(--sp-4);
 }
 .sv-lede { color: var(--text-1); max-width: 62ch; }
 
