@@ -29,7 +29,7 @@ export function renderScene(scene: NetScene): string {
       const r = n.drillInto ? 9 : 6;
       const label = n.drillInto ? `▾ ${n.label}` : n.label;
       return `
-        <g class="net-node net-node--${n.kind}${n.drillInto ? ' net-node--drill' : ''}"
+        <g class="net-node net-node--${n.kind}${n.drillInto ? ' net-node--drill' : ''}${n.security ? ' net-node--has-security' : ''}"
            data-node-id="${n.id}"
            tabindex="0" role="button"
            aria-label="${esc(n.label)}${n.drillInto ? ' — opens the next level' : ''}">

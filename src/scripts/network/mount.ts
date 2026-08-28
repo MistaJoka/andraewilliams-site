@@ -29,6 +29,7 @@ function chromeOf(stage: HTMLElement) {
     spoofTrigger: stage.querySelector<HTMLElement>('.net-spoof-trigger'),
     spoofButton: stage.querySelector<HTMLButtonElement>('.net-spoof'),
     steps: stage.querySelector<HTMLOListElement>('.net-steps'),
+    securityToggle: stage.querySelector<HTMLInputElement>('.net-security-toggle'),
   };
 }
 
@@ -57,7 +58,7 @@ function renderBreadcrumb(stage: HTMLElement, stack: string[]) {
 
 function showDetail(stage: HTMLElement, nodeId: string) {
   const stack = stacks.get(stage);
-  const { detail } = chromeOf(stage);
+  const { detail, securityToggle } = chromeOf(stage);
   const scene = stack && SCENES[stack[stack.length - 1]!];
   const node = scene?.nodes.find((n) => n.id === nodeId);
   if (!detail || !node) return;
@@ -80,6 +81,22 @@ function showDetail(stage: HTMLElement, nodeId: string) {
     btn.textContent = `Continue to ${child.title} →`;
     btn.addEventListener('click', () => navigate(stage, [...(stacks.get(stage) ?? []), child.id]));
     detail.append(btn);
+  }
+
+  // Read live at click time, not via a change listener — matches how
+  // .net-cache-toggle is already read once per Watch click rather than
+  // reactively. An already-open panel doesn't re-render when the toggle
+  // flips; it takes effect on the next node click.
+  if (node.security && securityToggle?.checked) {
+    const security = document.createElement('div');
+    security.className = 'net-security';
+    const label = document.createElement('p');
+    label.className = 'net-security-label';
+    label.textContent = 'Ethical hacking';
+    const body = document.createElement('p');
+    body.textContent = node.security;
+    security.append(label, body);
+    detail.append(security);
   }
 }
 

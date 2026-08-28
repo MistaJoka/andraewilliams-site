@@ -25,6 +25,8 @@ export interface NetNode {
   drillInto?: string;
   /** Mounts an embedded interactive tool below the caption, if set. */
   tool?: 'subnet';
+  /** Shown in the detail panel, behind the "Show ethical-hacking relevance" toggle. */
+  security?: string;
 }
 
 export interface NetEdge {
@@ -134,6 +136,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 140,
         caption:
           'Translates the name you typed into the IP address that actually gets routed. Without this step, nothing below knows where to send anything.',
+        security:
+          'DNS spoofing/cache poisoning turns a trusted domain into an attacker-controlled IP — the redirect is often just the delivery mechanism for a phishing page, not the attack itself. The victim typed the right address; the answer that came back was the lie.',
       },
       {
         id: 'webserver',
@@ -143,6 +147,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 140,
         caption:
           'Receives the HTTP request and sends back the page — completely unaware of the ARP broadcasts, TCP handshakes, and router hops that got it there.',
+        security:
+          'The Server response header and default error pages often reveal exact software and version — recon before anyone looks up a matching exploit. Stripping or genericizing that header is cheap, and still skipped constantly.',
       },
       {
         id: 'descend-l3',
@@ -204,6 +210,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 260,
         caption:
           'The "apartment number" at the destination IP. Port 443 means HTTPS is expected here — the web server software is what is actually listening on it.',
+        security:
+          "This is exactly what Nmap is probing for. A SYN scan sends the opening handshake packet to a range of ports and reads what comes back — SYN-ACK means something's listening, RST means it isn't — without ever finishing the handshake or leaving a full connection in anyone's logs.",
       },
       {
         id: 'udp',
@@ -213,6 +221,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 200,
         caption:
           'No handshake, no guarantee of delivery — just send it. Used when speed matters more than certainty, like live video or DNS itself.',
+        security:
+          "No handshake also means no reliable way to verify a packet's source — the basis for reflection/amplification DDoS, where a small spoofed request to an open resolver comes back many times larger, aimed at whoever's address got forged. UDP port scans exist too, just noisier: no SYN/RST to read, only silence or an ICMP error.",
       },
       {
         id: 'descend-l2',
@@ -248,6 +258,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 140,
         caption:
           "The \"street address\" of a device on a network — globally unique, or translated to look that way, so a router anywhere can decide which direction to forward you.",
+        security:
+          "Nothing in the IP header proves the source address is real — it's just a field the sender fills in, unchecked by default. Spoofed source addresses can bypass IP-based access rules, frame another machine for an attack, or feed the reflection-style floods that abuse connectionless protocols with nobody double-checking who's really asking.",
       },
       {
         id: 'router1',
@@ -257,6 +269,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 140,
         caption:
           'Reads the destination IP, checks its routing table, and forwards the packet toward the next router — never the whole path, just the next hop.',
+        security:
+          'Consumer and small-business routers are still routinely left on factory admin credentials — a password printed right on the case, or just "admin" for both fields. Whoever controls this box controls DNS for the whole network, controls what gets port-forwarded in, and sees every device that joins it.',
       },
       {
         id: 'subnet',
@@ -267,6 +281,8 @@ export const SCENES: Record<string, NetScene> = {
         caption:
           'A subnet mask splits an IP address into a network part and a host part — it is what lets a router instantly know "is this destination on my local network, or do I need to forward it?" Drag the slider below to see what changing that split actually does.',
         tool: 'subnet',
+        security:
+          'Scoping an engagement often starts here: the client hands over a CIDR block, and everything outside that boundary is off-limits by contract, not just convenience. The same math that defines a subnet\'s boundary is what a tool like Nmap uses to ping-sweep every live host inside it in one pass — same slider, different intent.',
       },
       {
         id: 'router2',
@@ -339,6 +355,8 @@ export const SCENES: Record<string, NetScene> = {
         y: 140,
         caption:
           "A hardware address burned into every network card. Unlike an IP, it isn't about location — it's a fixed serial number for that specific device.",
+        security:
+          'A network card in promiscuous mode captures every frame on the segment, not just the ones addressed to its own MAC — this is how Wireshark sees traffic that was never meant for that machine. A modern switch limits this to whatever traffic the switch actually sends your way; a hub, or shared Wi-Fi, hands over everything.',
       },
       {
         id: 'switch',
@@ -347,6 +365,8 @@ export const SCENES: Record<string, NetScene> = {
         x: 400,
         y: 140,
         caption: 'Learns which device is on which physical port by watching traffic, then forwards frames only to the right port — nowhere else.',
+        security:
+          "A switch's MAC address table only holds so many entries. Flood it with more forged source MACs than it can track — a MAC flooding attack — and some switches fail open, broadcasting every frame to every port like a hub instead of just the right one, handing promiscuous-mode capture back its old advantage.",
       },
       {
         id: 'ap',
@@ -355,6 +375,8 @@ export const SCENES: Record<string, NetScene> = {
         x: 640,
         y: 140,
         caption: 'Does the same job as a switch, but for Wi-Fi — bridges radio frames onto the wired network.',
+        security:
+          "Nothing forces a device to cryptographically verify the access point it's joining — plenty of devices auto-join any network name they've connected to before, no prompt, no warning. A rogue AP broadcasting that same familiar name only has to be in range and slightly stronger than the real one to win that race.",
       },
       {
         id: 'attacker',
@@ -400,6 +422,8 @@ export const SCENES: Record<string, NetScene> = {
         x: 200,
         y: 160,
         caption: 'An Ethernet cable carries your data as changes in electrical voltage — literally pulses on a wire.',
+        security:
+          "A cable doesn't need to be cut to be tapped — an inductive tap or a cheap in-line splitter reads the signal without interrupting it, and without tripping whatever alert would fire if the link actually dropped.",
       },
       {
         id: 'fiber',
@@ -408,6 +432,8 @@ export const SCENES: Record<string, NetScene> = {
         x: 440,
         y: 160,
         caption: 'Carries data as pulses of light through glass — what most of the actual internet backbone runs on, hop to hop, ocean to ocean.',
+        security:
+          "Fiber is harder to tap invisibly than copper — splicing one in usually causes a measurable dip in signal strength — but it isn't immune: a sharp enough bend in the cable leaks light that can be read from outside it.",
       },
       {
         id: 'radio',
@@ -416,6 +442,8 @@ export const SCENES: Record<string, NetScene> = {
         x: 680,
         y: 160,
         caption: 'Wi-Fi and cellular skip the cable entirely — the same 1s and 0s, encoded as radio signals through open air.',
+        security:
+          'Radio is inherently broadcast — anyone with an antenna in range receives the same signal, encrypted or not. WPA2/WPA3 encrypts the payload, but plenty of networks still run open, and even encrypted ones leak metadata: which devices are talking, how often, and roughly how much.',
       },
       {
         id: 'nic',

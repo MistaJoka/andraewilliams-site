@@ -26,6 +26,10 @@ const initialSvg = renderScene(entryScene);
   <h2 class="net-scene-title" tabindex="-1">{entryScene.title}</h2>
   <p class="net-intro">{entryScene.intro}</p>
 
+  <label class="net-security-toggle-row">
+    <input type="checkbox" class="net-security-toggle visually-hidden" /> Show ethical-hacking relevance
+  </label>
+
   <div class="net-canvas" set:html={initialSvg} />
 
   <div class="net-sequence" hidden>
@@ -72,6 +76,25 @@ const initialSvg = renderScene(entryScene);
   .net-scene-title { font-size: var(--step-1); color: var(--text-0); margin: 0 0 var(--sp-2); }
   .net-scene-title:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   .net-intro { color: var(--text-1); max-width: 62ch; margin: 0 0 var(--sp-4); }
+
+  /* Same border-pill idiom as .net-cache-toggle label below, but red
+     rather than accent-blue when checked — this toggle reveals
+     attacker-relevant content, not a normal-flow variant. A sibling of
+     .net-intro, not nested inside it: showScene() overwrites
+     .net-intro's textContent on every navigation, which would silently
+     delete a checkbox nested inside that <p>. Placed outside .net-canvas
+     too, so scene navigation (canvas.innerHTML replacement) never
+     touches it and its native .checked state survives drill-down for
+     free — no JS persistence code needed. */
+  .net-security-toggle-row {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    margin: 0 0 var(--sp-4); padding: var(--sp-1) var(--sp-3);
+    border: 1px solid var(--line); color: var(--text-2);
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .net-security-toggle-row:has(input:checked) { border-color: var(--status-broken); color: var(--status-broken); }
+  .net-security-toggle-row:has(input:focus-visible) { outline: 2px solid var(--status-broken); outline-offset: 2px; }
 
   .net-canvas { border: 1px solid var(--line); background: var(--bg-0); overflow-x: auto; }
 
@@ -192,7 +215,15 @@ const initialSvg = renderScene(entryScene);
   .net-breadcrumb button:hover,
   .net-breadcrumb button:focus-visible { color: var(--accent); }
 
-  .net-detail-label {
+  /* Compound selector, not a bare class: the article layout's
+     `.prose […] p` rule (2 classes/attrs + the `p` element, specificity
+     0,2,1) outranks a bare `.net-detail-label` (0,1,0) — and even
+     outranks `.net-detail p` (0,1,1), which is the rule this label
+     actually loses to inside the article. `.network-stage .net-detail
+     .net-detail-label` stacks three real ancestor classes (0,3,0),
+     clearing 0,2,1 outright rather than risking a same-specificity tie
+     decided by stylesheet order. */
+  .network-stage .net-detail .net-detail-label {
     font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--accent); margin: 0 0 var(--sp-2);
   }
@@ -203,6 +234,25 @@ const initialSvg = renderScene(entryScene);
     padding: var(--sp-2) var(--sp-3); cursor: pointer;
   }
   .net-continue:hover { background: var(--accent); color: var(--bg-0); }
+
+  /* Security-relevance overlay (Phase D) — appended last in showDetail()
+     when node.security is set and the toggle is checked. Same border-
+     left "flag" idiom as Block.astro's `crit` tone and
+     ComposePortChecker's collision list: flat background + 2px rail, not
+     alpha-blended color. The label needs 3 stacked ancestor classes, not
+     2 — see the .net-detail-label fix above: this content renders inside
+     an MDX article's `.prose […] p` rule (0,2,1), which a 2-class
+     `.net-security .net-security-label` (0,2,0) still loses to. */
+  .net-security {
+    margin-top: var(--sp-3);
+    border-left: 2px solid var(--status-broken);
+    background: var(--bg-0);
+    padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
+  }
+  .net-detail .net-security .net-security-label {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--status-broken); margin: 0 0 var(--sp-2);
+  }
 
   /* Packet playback (Phase B) — packets.ts creates/positions this circle
      and toggles these classes; transition timing is set inline by
@@ -238,6 +288,28 @@ const initialSvg = renderScene(entryScene);
      compromised now" mark, distinct from the transient in-flight
      --active/--pulse states above. */
   .net-node--compromised .halo { stroke: var(--status-broken); stroke-opacity: 0.6; }
+
+  /* Security-relevance overlay (Phase D) — a dashed halo, revealed only
+     while .net-security-toggle is checked, on the 13 nodes render.ts has
+     already marked --has-security purely from data (same data-driven,
+     toggle-unaware mechanism --drill already uses). Deliberately not the
+     drill nodes' solid-halo treatment (would falsely imply "this
+     descends") and not a text glyph (an emoji-class character risks a
+     colored system-emoji-font fallback inside SVG <text>, breaking the
+     monochrome palette). :not(--active):not(--pulse) matters: three of
+     the 13 flagged nodes (dns, webserver, router1) sit on an existing
+     Watch sequence's path, and this selector's specificity would
+     otherwise always beat .net-node--active/--pulse's and freeze their
+     in-flight blue highlight into a static dashed ring for the whole
+     animation. Excluding those states lets the transient highlight win
+     while it's active, exactly like every other node. */
+  .network-stage:has(.net-security-toggle:checked)
+    .net-node--has-security:not(.net-node--active):not(.net-node--pulse)
+    .halo {
+    stroke: var(--status-broken);
+    stroke-dasharray: 3 2;
+    stroke-opacity: 0.45;
+  }
 
   /* Subnet slider — injected into .net-detail by subnet-tool.ts when the
      L2 "Subnetting" node is selected. Global for the same reason
