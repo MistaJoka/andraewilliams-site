@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/savage.css';
+
+const [domains, standards] = await Promise.all([
+  getCollection('savageDomains'),
+  getCollection('savageStandards', ({ data }) => !data.draft),
+]);
+const ordered = [...domains].sort((a, b) => a.data.order - b.data.order);
+const count = (id: string) => standards.filter((s) => s.data.domain.id === id).length;
+---
+<BaseLayout title="The Savage Bible" description="The ceiling. A reference standard for a person, top to bottom." noindex bodyClass="savage">
+  <header class="sv-head">
+    <p class="sv-eyebrow">Reference · Hidden</p>
+    <h1>The Savage Bible</h1>
+    <p class="sv-creed">Savage: the highest standard of a person, in every domain, with no exceptions and no days off.</p>
+    <p class="sv-lede">
+      This is not advice and it is not a plan. It is a ceiling — the 100% definition of what a
+      modern person can be, written down so the gap between here and there is never vague.
+      Ten domains. Each holds numbered standards. Each standard opens with the commandment, then
+      says what it looks like, what falling short looks like, how to close the gap, and how to
+      measure it. Cite a standard by its id, e.g. <span class="sv-cite">BDY·01</span>.
+    </p>
+  </header>
+
+  <ol class="sv-list">
+    {ordered.map((d) => (
+      <li>
+        <a href={`/savage/${d.id}/`}>
+          <span class="sv-cite">{d.data.code}</span>
+          <span class="t">{d.data.label}</span>
+          <p class="c">{d.data.creed}</p>
+          <span class="n">{count(d.id)} standard{count(d.id) === 1 ? '' : 's'} · {d.data.blurb}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>
