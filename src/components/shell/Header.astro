@@ -26,8 +26,13 @@ const isActive = (href: string) => (href === '/' ? here === '/' : here.startsWit
          gate on it with a plain ~ sibling selector. Still zero JS: the
          checkbox is natively focusable and toggles on Space/click, and
          the label forwards clicks to it. -->
-    <input type="checkbox" id="nav-toggle-input" class="nav-toggle-input visually-hidden" />
-    <label for="nav-toggle-input" class="nav-toggle" aria-label="Toggle navigation menu">
+    <input
+      type="checkbox"
+      id="nav-toggle-input"
+      class="nav-toggle-input visually-hidden"
+      aria-label="Toggle navigation menu"
+    />
+    <label for="nav-toggle-input" class="nav-toggle">
       <span class="bars" aria-hidden="true"></span>
     </label>
 
