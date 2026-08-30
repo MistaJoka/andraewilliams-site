@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "check:links": "node scripts/check-links.mjs",
+    "signal:doctor": "node scripts/sync-signal.mjs --doctor",
+    "signal:sync": "node scripts/sync-signal.mjs",
     "verify": "npm run build && npm run check && npm run check:links"
   },
   "dependencies": {
@@ -25,7 +27,8 @@
     "@astrojs/check": "^0.9.10",
     "@resvg/resvg-js": "^2.6.2",
     "satori": "^0.29.1",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "yaml": "^2.9.0"
   },
   "engines": {
     "node": ">=22.12.0"

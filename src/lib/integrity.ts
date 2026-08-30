@@ -22,6 +22,7 @@ const REF_FIELDS: Record<string, string[]> = {
   tools: ['topics'],
   series: ['topics'],
   resources: ['topics'],
+  signal: ['topics', 'related'],
   savageStandards: ['domain'],
 };
 

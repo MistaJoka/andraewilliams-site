@@ -8,7 +8,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob, file } from 'astro/loaders';
-import { POST_TYPES, DIFFICULTY, STATUS } from './lib/enums';
+import { POST_TYPES, DIFFICULTY, STATUS, TRACKS } from './lib/enums';
 
 const MD = '**/[^_]*.{md,mdx}';
 
@@ -163,6 +163,41 @@ const posts = defineCollection({
     }),
 });
 
+// Distilled clippings, synced from the Obsidian vault by
+// scripts/sync-signal.mjs. These are machine-written compressions of other
+// people's articles and videos, which is why they are their own collection
+// rather than posts: `posts` is Andrae's writing and says so above.
+//
+// `track` is the vault's own reading taxonomy and is the primary facet on
+// /signal/. `topics` is deliberately optional — over half the corpus
+// (webdev, creative, meta-learning) has no honest site hub, and an entry
+// with no topic is the normal case, not a defect.
+const signal = defineCollection({
+  loader: glob({ pattern: MD, base: './src/content/signal' }),
+  schema: z.object({
+    title: z.string().max(120),
+    description: z.string().max(300),
+    track: z.enum(TRACKS),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    // Attribution is not optional. The page credits the original before it
+    // says anything of its own.
+    source: z.object({
+      url: z.url(),
+      title: z.string(),
+      author: z.string().optional(),
+      kind: z.enum(['VIDEO', 'ARTICLE', 'COURSE']),
+    }),
+    topics: z.array(reference('topics')).default([]),
+    // Rewritten from the vault's ## Connections. The sync drops any link
+    // whose target is not published, so these always resolve.
+    related: z.array(reference('signal')).default([]),
+    built: z.string().optional(),
+    model: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
 // The Savage Bible — a hidden reference area (/savage/). Deliberately has
 // no `topics` field: it stays out of the knowledge graph, topic hubs,
 // search index, RSS and sitemap. Reachable by URL and the homepage
@@ -197,4 +232,4 @@ const savageStandards = defineCollection({
   }),
 });
 
-export const collections = { posts, projects, lab, tools, series, resources, topics, savageDomains, savageStandards };
+export const collections = { posts, projects, lab, tools, series, resources, topics, signal, savageDomains, savageStandards };

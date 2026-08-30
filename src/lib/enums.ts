@@ -17,3 +17,9 @@ export const STATUS = ['IDEA', 'TESTING', 'WORKING', 'BROKEN', 'PRODUCTION', 'AR
 export type PostType = (typeof POST_TYPES)[number];
 export type Difficulty = (typeof DIFFICULTY)[number];
 export type Status = (typeof STATUS)[number];
+
+// The Obsidian vault's reading taxonomy, carried through by
+// scripts/sync-signal.mjs. Distinct from `topics` on purpose: these
+// classify what Andrae read, not what the site is about.
+export const TRACKS = ['agents', 'rag-data', 'security', 'creative', 'webdev', 'meta-learning'] as const;
+export type Track = (typeof TRACKS)[number];

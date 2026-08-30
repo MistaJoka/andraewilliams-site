@@ -6,13 +6,15 @@ import { renderOgCard, OG_WIDTH, OG_HEIGHT } from '../../lib/og';
 import { resolveToken } from '../../lib/palette';
 import { cardSpec } from '../../lib/card-spec';
 import { formatDifficulty, seriesCounter } from '../../lib/format';
+import { TRACK_META, SIGNAL_ACCENT } from '../../lib/signal';
 
 export async function getStaticPaths() {
-  const [posts, projects, lab, tools] = await Promise.all([
+  const [posts, projects, lab, tools, signal] = await Promise.all([
     getCollection('posts', ({ data }) => !data.draft),
     getCollection('projects', ({ data }) => !data.draft),
     getCollection('lab', ({ data }) => !data.draft),
     getCollection('tools', ({ data }) => !data.draft),
+    getCollection('signal', ({ data }) => !data.draft),
   ]);
 
   const paths: { params: { slug: string }; props: Record<string, unknown> }[] = [];
@@ -71,6 +73,21 @@ export async function getStaticPaths() {
         description: t.data.description,
         footnote: t.data.tools.slice(0, 4).join(' · '),
         token: '--accent',
+      },
+    });
+  }
+
+  for (const s of signal) {
+    paths.push({
+      params: { slug: `signal/${s.id}` },
+      props: {
+        eyebrow: `SIGNAL · ${TRACK_META[s.data.track].label}`,
+        title: s.data.title,
+        // The card credits the source: these are compressions of someone
+        // else's work, and the share preview should say so too.
+        description: s.data.description,
+        footnote: [s.data.source.author, s.data.source.kind].filter(Boolean).join(' · '),
+        token: SIGNAL_ACCENT,
       },
     });
   }

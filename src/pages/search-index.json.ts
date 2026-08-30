@@ -17,6 +17,7 @@ const NAV: Doc[] = [
   { t: 'Tools', d: 'Offline, in-browser utilities', k: 'NAV', u: '/tools/', g: 'calculators converters utilities' },
   { t: 'Work', d: 'Things I actually built', k: 'NAV', u: '/projects/', g: 'work builds projects' },
   { t: 'Resources', d: 'Curated reference library', k: 'NAV', u: '/resources/', g: 'tools links' },
+  { t: 'Signal', d: 'Sources worth keeping, compressed', k: 'NAV', u: '/signal/', g: 'clippings distilled reading summaries' },
   { t: 'About', d: 'Who this is', k: 'NAV', u: '/about/', g: 'bio contact' },
 ];
 
@@ -46,6 +47,17 @@ export const GET: APIRoute = async () => {
   }
   for (const t of await getCollection('tools', ({ data }) => !data.draft)) {
     docs.push({ t: t.data.title, d: t.data.description.slice(0, 110), k: 'TOOL', u: `/tools/${t.id}/`, g: [...t.data.tags, ...t.data.tools].join(' ') });
+  }
+  for (const s of await getCollection('signal', ({ data }) => !data.draft)) {
+    docs.push({
+      t: s.data.title,
+      d: s.data.description.slice(0, 110),
+      k: 'SIGNAL',
+      u: `/signal/${s.id}/`,
+      g: [s.data.track, s.data.source.author, s.data.source.kind, ...s.data.topics.map((t) => t.id)]
+        .filter(Boolean)
+        .join(' '),
+    });
   }
   for (const r of await getCollection('resources')) {
     docs.push({ t: r.data.title, d: r.data.why.slice(0, 110), k: 'RESOURCE', u: `/resources/#${r.id}`, g: [...r.data.tags, r.data.kind].join(' ') });
