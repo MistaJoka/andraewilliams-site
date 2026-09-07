@@ -1,18 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-// Grouped by domain rather than one flat list, so AI/networking/etc. can
-// land as new groups without restructuring this page. A domain with no
-// topics yet just doesn't render — no placeholder "coming soon" noise.
-const domains = [
-  {
-    name: 'Security',
-    topics: [
-      { href: '/password-cracking/', title: 'Password Cracking', blurb: 'Why "P@ssw0rd!" falls in under a second, and what actually holds up.' },
-      { href: '/phishing/', title: 'Phishing', blurb: 'Read a URL like an attacker built it — try the inspector yourself.' },
-    ],
-  },
-];
+import { DOMAINS } from '../lib/domains';
 ---
 <BaseLayout
   title="Home"
@@ -22,28 +10,28 @@ const domains = [
     <p class="eyebrow">Explained plainly</p>
     <h1>Complex topics, explained plainly.</h1>
     <p class="hero-lede">
-      TL;DR and ELI5 come first on every topic — go deeper only if you want to.
-      Security's the first domain here, inspired by <em>Go Hack Yourself</em>
-      by Bryson Payne: understand it by trying it. More domains land the
-      same way as they're ready.
+      TL;DR and ELI5 come first on every topic — go deeper only if you want
+      to. Every domain below follows the same idea: understand it by
+      trying it, not just reading about it.
     </p>
   </header>
 
-  {domains.map((d) => (
-    <section aria-labelledby={`domain-${d.name}`}>
-      <h2 id={`domain-${d.name}`} class="eyebrow section-heading">{d.name}</h2>
-      <ul class="topic-list">
-        {d.topics.map((t) => (
-          <li>
-            <a href={t.href}>
-              <span class="topic-title">{t.title}</span>
-              <span class="topic-blurb">{t.blurb}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
+  <section aria-labelledby="domains-heading">
+    <h2 id="domains-heading" class="eyebrow section-heading">Domains</h2>
+    <ul class="domain-list">
+      {DOMAINS.map((d) => (
+        <li>
+          <a href={`/${d.slug}/`}>
+            <span class="domain-top">
+              <span class="domain-title">{d.name}</span>
+              <span class="domain-count">{d.topics.length} topic{d.topics.length === 1 ? '' : 's'}</span>
+            </span>
+            <span class="domain-blurb">{d.blurb}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
 </BaseLayout>
 
 <style>
@@ -51,15 +39,16 @@ const domains = [
   .hero h1 { font-size: var(--step-4); margin: var(--sp-3) 0 var(--sp-4); max-width: 20ch; }
   .hero-lede { color: var(--text-1); font-size: var(--step-1); }
   .section-heading { margin-bottom: var(--sp-4); }
-  section + section { margin-top: var(--sp-6); }
 
-  .topic-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
-  .topic-list a {
-    display: grid; gap: var(--sp-1); padding: var(--sp-4);
+  .domain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .domain-list a {
+    display: grid; gap: var(--sp-2); padding: var(--sp-4);
     border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
     transition: border-color 150ms ease-out, background 150ms ease-out;
   }
-  .topic-list a:hover { border-color: var(--accent); background: var(--bg-2); }
-  .topic-title { color: var(--text-0); font-weight: 700; }
-  .topic-blurb { color: var(--text-1); }
+  .domain-list a:hover { border-color: var(--accent); background: var(--bg-2); }
+  .domain-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); }
+  .domain-title { color: var(--text-0); font-weight: 700; font-size: var(--step-1); }
+  .domain-count { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  .domain-blurb { color: var(--text-1); }
 </style>
