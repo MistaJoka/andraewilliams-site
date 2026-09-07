@@ -7,6 +7,7 @@ interface Props {
 }
 const { title, description } = Astro.props;
 const fullTitle = title === 'Home' ? 'Andrae Williams — Security, ELI5' : `${title} — Andrae Williams`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 <!doctype html>
 <html lang="en">
@@ -15,8 +16,18 @@ const fullTitle = title === 'Home' ? 'Andrae Williams — Security, ELI5' : `${t
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#05070d" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="Andrae Williams" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

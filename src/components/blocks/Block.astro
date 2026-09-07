@@ -17,7 +17,7 @@ const TONES: Record<string, { rail: string; label: string }> = {
   warn: { rail: 'var(--status-testing)', label: 'var(--status-testing)' },
   crit: { rail: 'var(--status-broken)', label: 'var(--status-broken)' },
   ok: { rail: 'var(--status-working)', label: 'var(--status-working)' },
-  deep: { rail: 'var(--accent-dim)', label: 'var(--accent-dim)' },
+  deep: { rail: 'var(--accent-deep)', label: 'var(--accent-deep)' },
 };
 ---
 <section class:list={['block', { emphasis }]} style={`--block-rail: ${TONES[tone].rail}; --block-label: ${TONES[tone].label}`}>

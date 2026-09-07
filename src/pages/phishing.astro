@@ -61,12 +61,14 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
       <span class="dc-val" id="dc-domain">—</span>
     </div>
 
-    <table class="check-table" id="check-table" aria-live="polite">
-      <thead>
-        <tr><th>Check</th><th>Result</th><th>Why it matters</th></tr>
-      </thead>
-      <tbody id="check-body"></tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="check-table" id="check-table" aria-live="polite">
+        <thead>
+          <tr><th>Check</th><th>Result</th><th>Why it matters</th></tr>
+        </thead>
+        <tbody id="check-body"></tbody>
+      </table>
+    </div>
   </section>
 
   <FailureModes>
@@ -252,7 +254,8 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
   .dc-key { color: var(--text-1); }
   .dc-val { color: var(--accent); font-weight: 700; word-break: break-all; }
 
-  .check-table { width: 100%; border-collapse: collapse; margin-top: var(--sp-5); font-family: var(--font-mono); font-size: var(--step--1); }
+  .table-scroll { margin-top: var(--sp-5); overflow-x: auto; }
+  .check-table { width: 100%; min-width: 34rem; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--step--1); }
   .check-table th { text-align: left; color: var(--text-2); font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.7rem; padding: var(--sp-2) var(--sp-2) var(--sp-1); border-bottom: 1px solid var(--line-bright); }
   .check-table td { padding: var(--sp-2); border-bottom: 1px solid var(--line); color: var(--text-1); vertical-align: top; }
   .check-table tr:last-child td { border-bottom: none; }

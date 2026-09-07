@@ -20,6 +20,9 @@
   /* --- primary accent --- */
   --accent: #56a8ff;
   --accent-dim: #2f79cc;
+  /* Deep-dive tone: --accent-dim only clears ~4.53:1 as text (AA is 4.5),
+     too thin a margin for a label. This clears ~11:1. */
+  --accent-deep: #22d3ee;
 
   /* --- topic accents: signal, not rainbow --- */
   --topic-ai: #56a8ff;
