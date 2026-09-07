@@ -1,0 +1,330 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
+---
+<BaseLayout
+  title="How LLMs Predict Text"
+  description="A large language model doesn't look up answers. It predicts the next word. Here's a real, tiny version of that trick, running in your browser."
+>
+  <p class="eyebrow"><a href="/ai/">← AI</a></p>
+  <h1>How LLMs Predict Text</h1>
+
+  <div class="depth-toggle" role="group" aria-label="Reading depth">
+    <button type="button" class="depth-btn" data-level="0" aria-pressed="true">ELI5</button>
+    <button type="button" class="depth-btn" data-level="1">Beginner</button>
+    <button type="button" class="depth-btn" data-level="2">Intermediate</button>
+    <button type="button" class="depth-btn" data-level="3">Deep Dive</button>
+  </div>
+
+  <Tldr>
+    An LLM doesn't know facts the way a database does. It predicts the
+    <strong>most statistically likely next word</strong>, one word at a
+    time, based on patterns learned from a huge amount of text. Scale that
+    simple trick up enough, and it produces essays, code, and conversation.
+  </Tldr>
+
+  <Eli5>
+    Imagine finishing a friend's sentences because you've heard them talk
+    a thousand times before. You're not reading their mind — you're
+    guessing the next word from patterns. That's the whole trick, just
+    done at a scale no human could match.
+  </Eli5>
+
+  <div data-min-level="1" hidden>
+    <WhyItMatters>
+      <ul>
+        <li>This is why LLMs sound confident even when they're <strong>wrong</strong> — fluent-sounding text and true text are produced by the same mechanism.</li>
+        <li>It's why more context in your prompt changes the output — you're changing what the model conditions its guess on.</li>
+        <li>It's why the same question worded differently can get a different answer — different words, different prediction.</li>
+      </ul>
+    </WhyItMatters>
+  </div>
+
+  <div data-min-level="2" hidden>
+    <HowItWorks>
+      <p>Two things decide how good the prediction is:</p>
+      <ol>
+        <li><strong>Context window</strong> — how much prior text the model looks back at.</li>
+        <li><strong>Training data + model size</strong> — how nuanced the learned patterns are.</li>
+      </ol>
+      <p>
+        The lab below uses a context window of exactly <strong>one word</strong>
+        and a training set of a few hundred words. Real models use context
+        windows of thousands to hundreds of thousands of tokens, trained on
+        a meaningful fraction of all text on the internet. Same idea, wildly different scale.
+      </p>
+    </HowItWorks>
+  </div>
+
+  <section class="lab" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself: a real (tiny) predictor</h2>
+    <p class="lab-note">
+      Runs entirely in your browser. This model was trained — just now, on
+      your machine — on a ~230-word toy story about a cat and a dog. That's
+      the whole "model." Everything below is real math on real (tiny) data,
+      not a canned demo.
+    </p>
+
+    <div class="corpus-stats" id="corpus-stats" aria-live="polite">
+      <div class="cs-cell"><span class="cs-key">Training words</span><span class="cs-val" id="stat-total">—</span></div>
+      <div class="cs-cell"><span class="cs-key">Vocabulary</span><span class="cs-val" id="stat-vocab">—</span></div>
+      <div class="cs-cell"><span class="cs-key">Learned contexts</span><span class="cs-val" id="stat-contexts">—</span></div>
+      <div class="cs-cell"><span class="cs-key">Context window</span><span class="cs-val">1 word</span></div>
+    </div>
+
+    <label for="seed-input" class="pw-label">Type a word or short phrase (try "the cat", "the dog", "the mailman"):</label>
+    <input id="seed-input" type="text" autocomplete="off" spellcheck="false" placeholder="the cat" value="the cat" />
+
+    <div class="table-scroll">
+      <table class="predict-table" id="predict-table" aria-live="polite">
+        <thead>
+          <tr><th>Next word candidate</th><th>Seen this often</th><th>Model's confidence</th></tr>
+        </thead>
+        <tbody id="predict-body"></tbody>
+      </table>
+    </div>
+
+    <div class="generate-row">
+      <button type="button" id="generate-btn" class="ex-btn">Generate 15 more words →</button>
+    </div>
+    <p class="generated-output" id="generated-output" aria-live="polite"></p>
+  </section>
+
+  <div data-min-level="1" hidden>
+    <FailureModes>
+      <ul>
+        <li><strong>"It looked that up."</strong> It didn't. It predicted plausible-sounding text. Sometimes plausible and true line up; sometimes they don't.</li>
+        <li><strong>"It's just autocomplete, so it's not impressive."</strong> The mechanism is genuinely that simple. What's impressive is what that mechanism can do at a large enough scale — the toy above literally cannot hold a coherent thought past a few words; a real model can, from the same core idea plus orders of magnitude more scale.</li>
+        <li><strong>"It sounded confident, so it's probably right."</strong> Confidence and correctness come from unrelated places in this architecture. Fluency is cheap; verify anything that matters.</li>
+      </ul>
+    </FailureModes>
+  </div>
+
+  <div data-min-level="3" hidden>
+    <DeepDive>
+      <p>
+        Real models differ from this toy in three specific ways — same core
+        idea, different execution:
+      </p>
+      <ul>
+        <li>
+          <strong>Subword tokens, not whole words.</strong> Real models
+          split text into subword pieces ("tokens") so they can represent
+          any word — including ones never seen in training — as a sequence
+          of familiar fragments.
+        </li>
+        <li>
+          <strong>Attention, not a fixed window.</strong> Our toy only ever
+          looks at the single previous word. A transformer's attention
+          mechanism lets every token look back at every other token in the
+          context, weighting each one dynamically — not a hard cutoff.
+        </li>
+        <li>
+          <strong>Learned parameters, not a lookup table.</strong> Our
+          predictions come from literally counting word pairs. Real models
+          encode patterns across billions of parameters learned from
+          training — there's no table to point at, but the underlying
+          question being answered at every step is the same one this toy
+          answers: <em>given everything so far, what comes next?</em>
+        </li>
+      </ul>
+    </DeepDive>
+  </div>
+
+  <WhatILearned>
+    Fluent text is not the same thing as correct text — they come from the
+    same prediction mechanism, so fluency tells you nothing about accuracy.
+    Treat an unverified claim from an LLM the way you'd treat one from a
+    stranger: plausible until checked, not true because it sounded sure.
+  </WhatILearned>
+
+  <Sources
+    sources={[
+      {
+        title: 'Attention Is All You Need',
+        url: 'https://arxiv.org/abs/1706.03762',
+        note: 'The 2017 paper that introduced the transformer architecture nearly every modern LLM is built on.',
+      },
+      {
+        title: 'OpenAI Tokenizer',
+        url: 'https://platform.openai.com/tokenizer',
+        note: 'Paste real text and see exactly how a real model breaks it into tokens.',
+      },
+      {
+        title: 'Large language model — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Large_language_model',
+        note: 'A broader overview of how these models are trained and scaled, if you want the fuller picture.',
+      },
+    ]}
+  />
+</BaseLayout>
+
+<script>
+  const CORPUS = `The cat sat on the mat. The cat likes to nap in the sun. The dog ran across the yard.
+  The dog likes to bark at the mailman. The cat and the dog are friends. The cat sat by the window
+  and watched the birds. The dog sat by the door and waited for the mail. The sun was warm and the
+  cat felt sleepy. The yard was green and the dog loved to run. The mailman came to the door every
+  day. The cat did not like the mailman. The dog did not like the vacuum. The vacuum was loud and
+  scared the dog. The cat hid under the bed when the vacuum came out. Every morning the cat ate
+  breakfast by the window. Every morning the dog waited by the door for a walk. The walk was the
+  best part of the dog's day. The nap was the best part of the cat's day. The birds sang in the tree
+  by the window. The tree was tall and full of leaves. In the evening the family sat by the fire.
+  The cat curled up on the warm rug. The dog lay down next to the cat. They were tired after a long
+  day. The stars came out and the house grew quiet. The cat closed its eyes and began to dream. The
+  dog let out a big yawn and fell asleep too.`;
+
+  const words = CORPUS.toLowerCase().replace(/[.,!?']/g, '').split(/\s+/).filter(Boolean);
+  const bigram = new Map<string, Map<string, number>>();
+  for (let i = 0; i < words.length - 1; i++) {
+    const ctx = words[i];
+    const next = words[i + 1];
+    if (!bigram.has(ctx)) bigram.set(ctx, new Map());
+    const m = bigram.get(ctx)!;
+    m.set(next, (m.get(next) ?? 0) + 1);
+  }
+
+  document.getElementById('stat-total')!.textContent = String(words.length);
+  document.getElementById('stat-vocab')!.textContent = String(new Set(words).size);
+  document.getElementById('stat-contexts')!.textContent = String(bigram.size);
+
+  interface Candidate { word: string; count: number; pct: number; }
+
+  function predict(context: string, topN = 5): Candidate[] | null {
+    const lastWord = context.trim().toLowerCase().split(/\s+/).pop();
+    if (!lastWord) return null;
+    const m = bigram.get(lastWord);
+    if (!m) return null;
+    const total = Array.from(m.values()).reduce((a, b) => a + b, 0);
+    return Array.from(m.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, topN)
+      .map(([word, count]) => ({ word, count, pct: (count / total) * 100 }));
+  }
+
+  function generate(seed: string, numWords = 15): string {
+    const seq = seed.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    for (let i = 0; i < numWords; i++) {
+      const last = seq[seq.length - 1];
+      const m = bigram.get(last);
+      if (!m) break;
+      const total = Array.from(m.values()).reduce((a, b) => a + b, 0);
+      let r = Math.random() * total;
+      let chosen: string | undefined;
+      for (const [w, c] of m) {
+        r -= c;
+        if (r <= 0) { chosen = w; break; }
+      }
+      seq.push(chosen ?? Array.from(m.keys())[0]);
+    }
+    return seq.join(' ');
+  }
+
+  const input = document.getElementById('seed-input') as HTMLInputElement;
+  const body = document.getElementById('predict-body')!;
+
+  function updatePredictions() {
+    const candidates = predict(input.value);
+    body.innerHTML = '';
+    if (!candidates) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 3;
+      td.textContent = 'No match — this word never appeared in the toy training text.';
+      td.className = 'predict-empty';
+      tr.append(td);
+      body.append(tr);
+      return;
+    }
+    for (const c of candidates) {
+      const tr = document.createElement('tr');
+      const wordTd = document.createElement('td');
+      wordTd.textContent = c.word;
+      wordTd.className = 'predict-word';
+      const countTd = document.createElement('td');
+      countTd.textContent = `${c.count}×`;
+      const pctTd = document.createElement('td');
+      pctTd.textContent = `${c.pct.toFixed(1)}%`;
+      pctTd.className = 'predict-pct';
+      tr.append(wordTd, countTd, pctTd);
+      body.append(tr);
+    }
+  }
+
+  input.addEventListener('input', updatePredictions);
+  updatePredictions();
+
+  document.getElementById('generate-btn')!.addEventListener('click', () => {
+    const seed = input.value.trim() || 'the cat';
+    document.getElementById('generated-output')!.textContent = generate(seed, 15);
+  });
+
+  // Depth toggle: same shared key as every other topic page, so a
+  // reader's chosen floor carries over between topics.
+  const DEPTH_KEY = 'siteDepth';
+  const depthButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.depth-btn'));
+  const gated = Array.from(document.querySelectorAll<HTMLElement>('[data-min-level]'));
+
+  function applyDepth(level: number) {
+    depthButtons.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.level) === level)));
+    gated.forEach((el) => { el.hidden = Number(el.dataset.minLevel) > level; });
+    try { localStorage.setItem(DEPTH_KEY, String(level)); } catch {}
+  }
+
+  let initialDepth = 0;
+  try {
+    const stored = localStorage.getItem(DEPTH_KEY);
+    if (stored !== null) initialDepth = Math.min(3, Math.max(0, parseInt(stored, 10) || 0));
+  } catch {}
+  applyDepth(initialDepth);
+
+  depthButtons.forEach((b) => b.addEventListener('click', () => applyDepth(Number(b.dataset.level))));
+</script>
+
+<style>
+  .depth-toggle { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-4) 0 var(--sp-6); }
+  .depth-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em;
+    padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border: 1px solid var(--line-bright);
+    color: var(--text-1); cursor: pointer;
+  }
+  .depth-btn:hover { border-color: var(--accent); color: var(--text-0); }
+  .depth-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg-0); font-weight: 700; }
+
+  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
+
+  .corpus-stats {
+    margin-bottom: var(--sp-4); display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line);
+  }
+  .cs-cell { background: var(--bg-0); padding: var(--sp-2); display: grid; gap: 2px; text-align: center; }
+  .cs-key { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.06em; color: var(--text-2); text-transform: uppercase; }
+  .cs-val { font-family: var(--font-mono); font-size: var(--step-0); font-weight: 700; color: var(--accent); }
+  @media (max-width: 40rem) { .corpus-stats { grid-template-columns: repeat(2, 1fr); } }
+
+  .pw-label { display: block; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--text-1); margin-bottom: var(--sp-2); }
+  #seed-input {
+    width: 100%; font-family: var(--font-mono); font-size: var(--step-1); padding: var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0);
+  }
+  #seed-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .table-scroll { margin-top: var(--sp-4); overflow-x: auto; }
+  .predict-table { width: 100%; min-width: 28rem; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--step--1); }
+  .predict-table th { text-align: left; color: var(--text-2); font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.7rem; padding: var(--sp-2) var(--sp-2) var(--sp-1); border-bottom: 1px solid var(--line-bright); }
+  .predict-table td { padding: var(--sp-2); border-bottom: 1px solid var(--line); color: var(--text-1); }
+  .predict-word { color: var(--text-0); font-weight: 700; }
+  .predict-pct { color: var(--accent); font-weight: 700; text-align: right; }
+  .predict-empty { color: var(--text-2); font-style: italic; }
+  .predict-table tr:last-child td { border-bottom: none; }
+
+  .generate-row { margin-top: var(--sp-4); }
+  .ex-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  }
+  .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
+  .generated-output { margin-top: var(--sp-3); font-family: var(--font-mono); color: var(--text-0); min-height: 1.6em; }
+</style>

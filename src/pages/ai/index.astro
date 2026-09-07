@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { DOMAINS } from '../../lib/domains';
+
+const domain = DOMAINS.find((d) => d.slug === 'ai')!;
+---
+<BaseLayout title={domain.name} description={domain.blurb}>
+  <p class="eyebrow"><a href="/">← Domains</a></p>
+  <h1>{domain.name}</h1>
+  <p class="domain-lede">{domain.blurb}</p>
+
+  <ul class="topic-list">
+    {domain.topics.map((t) => (
+      <li>
+        <a href={t.href}>
+          <span class="topic-title">{t.title}</span>
+          <span class="topic-blurb">{t.blurb}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<style>
+  .domain-lede { color: var(--text-1); font-size: var(--step-1); margin: var(--sp-3) 0 var(--sp-6); max-width: 58ch; }
+
+  .topic-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .topic-list a {
+    display: grid; gap: var(--sp-1); padding: var(--sp-4);
+    border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
+    transition: border-color 150ms ease-out, background 150ms ease-out;
+  }
+  .topic-list a:hover { border-color: var(--accent); background: var(--bg-2); }
+  .topic-title { color: var(--text-0); font-weight: 700; }
+  .topic-blurb { color: var(--text-1); }
+</style>

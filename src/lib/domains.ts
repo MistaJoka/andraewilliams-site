@@ -24,4 +24,12 @@ export const DOMAINS: Domain[] = [
       { href: '/phishing/', title: 'Phishing', blurb: 'Read a URL like an attacker built it — try the inspector yourself.' },
     ],
   },
+  {
+    slug: 'ai',
+    name: 'AI',
+    blurb: 'How the systems actually work under the hood — no hype, no magic.',
+    topics: [
+      { href: '/how-llms-predict-text/', title: 'How LLMs Predict Text', blurb: 'A real (tiny) word-prediction model, built live in your browser, so you can watch it guess.' },
+    ],
+  },
 ];
