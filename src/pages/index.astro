@@ -1,39 +1,49 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Flat list for now — a real index/collection can replace this once
-// there's enough here to need filtering.
-const topics = [
-  { href: '/password-cracking/', title: 'Password Cracking', blurb: 'Why "P@ssw0rd!" falls in under a second, and what actually holds up.' },
-  { href: '/phishing/', title: 'Phishing', blurb: 'Read a URL like an attacker built it — try the inspector yourself.' },
+// Grouped by domain rather than one flat list, so AI/networking/etc. can
+// land as new groups without restructuring this page. A domain with no
+// topics yet just doesn't render — no placeholder "coming soon" noise.
+const domains = [
+  {
+    name: 'Security',
+    topics: [
+      { href: '/password-cracking/', title: 'Password Cracking', blurb: 'Why "P@ssw0rd!" falls in under a second, and what actually holds up.' },
+      { href: '/phishing/', title: 'Phishing', blurb: 'Read a URL like an attacker built it — try the inspector yourself.' },
+    ],
+  },
 ];
 ---
 <BaseLayout
   title="Home"
-  description="Cybersecurity, explained plainly. ELI5 and TL;DR first, hands-on labs where it helps, inspired by Go Hack Yourself."
+  description="Complex technical topics, explained plainly. ELI5 and TL;DR first, hands-on labs where it helps."
 >
   <header class="hero">
-    <p class="eyebrow">Security, ELI5</p>
-    <h1>Complex security topics, explained plainly.</h1>
+    <p class="eyebrow">Explained plainly</p>
+    <h1>Complex topics, explained plainly.</h1>
     <p class="hero-lede">
       TL;DR and ELI5 come first on every topic — go deeper only if you want to.
-      Inspired by <em>Go Hack Yourself</em> by Bryson Payne: understand it by trying it.
+      Security's the first domain here, inspired by <em>Go Hack Yourself</em>
+      by Bryson Payne: understand it by trying it. More domains land the
+      same way as they're ready.
     </p>
   </header>
 
-  <section aria-labelledby="topics-heading">
-    <h2 id="topics-heading" class="eyebrow section-heading">Topics</h2>
-    <ul class="topic-list">
-      {topics.map((t) => (
-        <li>
-          <a href={t.href}>
-            <span class="topic-title">{t.title}</span>
-            <span class="topic-blurb">{t.blurb}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
+  {domains.map((d) => (
+    <section aria-labelledby={`domain-${d.name}`}>
+      <h2 id={`domain-${d.name}`} class="eyebrow section-heading">{d.name}</h2>
+      <ul class="topic-list">
+        {d.topics.map((t) => (
+          <li>
+            <a href={t.href}>
+              <span class="topic-title">{t.title}</span>
+              <span class="topic-blurb">{t.blurb}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </BaseLayout>
 
 <style>
@@ -41,6 +51,7 @@ const topics = [
   .hero h1 { font-size: var(--step-4); margin: var(--sp-3) 0 var(--sp-4); max-width: 20ch; }
   .hero-lede { color: var(--text-1); font-size: var(--step-1); }
   .section-heading { margin-bottom: var(--sp-4); }
+  section + section { margin-top: var(--sp-6); }
 
   .topic-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
   .topic-list a {

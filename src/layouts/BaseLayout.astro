@@ -6,7 +6,7 @@ interface Props {
   description: string;
 }
 const { title, description } = Astro.props;
-const fullTitle = title === 'Home' ? 'Andrae Williams — Security, ELI5' : `${title} — Andrae Williams`;
+const fullTitle = title === 'Home' ? 'Andrae Williams — Explained Plainly' : `${title} — Andrae Williams`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 <!doctype html>
