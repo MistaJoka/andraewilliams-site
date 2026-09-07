@@ -1,0 +1,45 @@
+---
+import '../styles/base.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const fullTitle = title === 'Home' ? 'Andrae Williams — Security, ELI5' : `${title} — Andrae Williams`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#05070d" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <nav class="wrap">
+        <a href="/" class="site-title">andraewilliams.com</a>
+      </nav>
+    </header>
+    <main id="main" class="wrap">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .wrap { max-width: 68ch; margin: 0 auto; padding: 0 var(--sp-5); }
+  .site-header { border-bottom: 1px solid var(--line); padding: var(--sp-4) 0; margin-bottom: var(--sp-6); }
+  .site-header .wrap { max-width: 68ch; }
+  .site-title { font-family: var(--font-mono); font-size: var(--step-0); letter-spacing: 0.04em; text-decoration: none; color: var(--text-0); }
+  .skip-link {
+    position: absolute; left: -9999px; top: 0; background: var(--accent); color: var(--bg-0);
+    padding: var(--sp-2) var(--sp-3); z-index: 10;
+  }
+  .skip-link:focus { left: var(--sp-3); top: var(--sp-3); }
+  main { padding-bottom: var(--sp-7); }
+</style>
