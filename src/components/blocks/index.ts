@@ -5,3 +5,4 @@ export { default as WhyItMatters } from './WhyItMatters.astro';
 export { default as HowItWorks } from './HowItWorks.astro';
 export { default as FailureModes } from './FailureModes.astro';
 export { default as WhatILearned } from './WhatILearned.astro';
+export { default as DeepDive } from './DeepDive.astro';

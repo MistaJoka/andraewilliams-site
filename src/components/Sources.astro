@@ -1,0 +1,33 @@
+---
+// Standard "go deeper" footer for every topic page: real, external,
+// primary sources — not further ELI5 content. Keep it short; this isn't
+// a bibliography, it's three places worth actually reading.
+interface Source {
+  title: string;
+  url: string;
+  note: string;
+}
+interface Props {
+  sources: Source[];
+}
+const { sources } = Astro.props;
+---
+<section class="sources" aria-labelledby="sources-heading">
+  <h2 id="sources-heading" class="eyebrow section-heading">Go deeper</h2>
+  <ul class="sources-list">
+    {sources.map((s) => (
+      <li>
+        <a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a>
+        <span class="sources-note">{s.note}</span>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .sources { margin-top: var(--sp-7); padding-top: var(--sp-5); border-top: 1px solid var(--line); }
+  .section-heading { margin-bottom: var(--sp-3); }
+  .sources-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .sources-list a { font-weight: 700; }
+  .sources-note { display: block; color: var(--text-2); font-size: var(--step--1); margin-top: 2px; }
+</style>
