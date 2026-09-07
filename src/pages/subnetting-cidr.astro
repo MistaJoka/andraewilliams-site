@@ -1,0 +1,321 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
+---
+<BaseLayout
+  title="Subnetting & CIDR"
+  description="Every '/24' you've ever typed splits an IP address into two parts. Here's the actual 32-bit math behind it, live."
+>
+  <p class="eyebrow"><a href="/networking/">← Networking</a></p>
+  <h1>Subnetting &amp; CIDR</h1>
+
+  <div class="depth-toggle" role="group" aria-label="Reading depth">
+    <button type="button" class="depth-btn" data-level="0" aria-pressed="true">ELI5</button>
+    <button type="button" class="depth-btn" data-level="1">Beginner</button>
+    <button type="button" class="depth-btn" data-level="2">Intermediate</button>
+    <button type="button" class="depth-btn" data-level="3">Deep Dive</button>
+  </div>
+
+  <Tldr>
+    An IP address like <code>192.168.1.10/24</code> is really two things
+    glued together: a <strong>network</strong> part and a <strong>host</strong>
+    part. The <code>/24</code> just says where the split happens. Every
+    other number — how many devices fit, what the valid range is — falls
+    out of that one split.
+  </Tldr>
+
+  <Eli5>
+    Think of a street address: "123 Main Street, Apartment 4B." The street
+    finds the building. The apartment number finds you inside it. An IP
+    address works the same way — the network part finds the building, the
+    host part finds the device inside it. The <code>/24</code> just tells
+    you where "street" ends and "apartment" begins.
+  </Eli5>
+
+  <div data-min-level="1" hidden>
+    <WhyItMatters>
+      <ul>
+        <li>Every cloud console (AWS, GCP, Azure) asks you to pick a CIDR block before it'll create a network for you.</li>
+        <li>"Why can't these two devices talk to each other" is very often a subnet mismatch, not a cable or a firewall.</li>
+        <li>Firewall rules, VPNs, and VLANs are all written in terms of CIDR ranges — this is the alphabet the rest of networking is written in.</li>
+      </ul>
+    </WhyItMatters>
+  </div>
+
+  <div data-min-level="2" hidden>
+    <HowItWorks>
+      <p>Everything below comes from three steps, done in binary:</p>
+      <ol>
+        <li>Turn the IP into 32 bits.</li>
+        <li>The <code>/n</code> says the first <code>n</code> bits are the network — apply that as a mask (AND) to get the <strong>network address</strong>.</li>
+        <li>Flip the mask and OR it with the network address to get the <strong>broadcast address</strong> — the top of the range.</li>
+      </ol>
+      <p>Everything else — usable range, total addresses, host count — is arithmetic on those two numbers.</p>
+    </HowItWorks>
+  </div>
+
+  <section class="lab" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself</h2>
+    <p class="lab-note">Runs entirely in your browser. Nothing is sent anywhere.</p>
+
+    <div class="examples">
+      <button type="button" class="ex-btn" data-cidr="192.168.1.10/24">Typical home network</button>
+      <button type="button" class="ex-btn" data-cidr="10.0.0.5/8">Huge private range</button>
+      <button type="button" class="ex-btn" data-cidr="172.16.5.200/30">Tiny 4-address subnet</button>
+      <button type="button" class="ex-btn" data-cidr="192.168.1.0/31">Point-to-point link</button>
+    </div>
+
+    <label for="cidr-input" class="pw-label">IP address / prefix:</label>
+    <input id="cidr-input" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.1.10/24" value="192.168.1.10/24" />
+
+    <div class="bits-display" id="bits-display" aria-live="polite"></div>
+
+    <div class="table-scroll">
+      <table class="cidr-table" id="cidr-table" aria-live="polite">
+        <tbody id="cidr-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div data-min-level="1" hidden>
+    <FailureModes>
+      <ul>
+        <li><strong>"/24 means 24 hosts."</strong> It means 24 network bits — that leaves 8 host bits, which is 254 usable addresses, not 24.</li>
+        <li><strong>"A smaller number means a smaller network."</strong> Backwards. <code>/8</code> is enormous (16 million+ addresses); <code>/30</code> is tiny (4 addresses).</li>
+        <li><strong>"Every subnet loses 2 addresses to network/broadcast."</strong> Only when the prefix is 30 or smaller. <code>/31</code> and <code>/32</code> reserve nothing — see the point-to-point example above.</li>
+      </ul>
+    </FailureModes>
+  </div>
+
+  <div data-min-level="3" hidden>
+    <DeepDive>
+      <ul>
+        <li>
+          <strong>VLSM (Variable Length Subnet Masking).</strong> Real
+          networks aren't cut into equal-size blocks. A site might carve
+          one <code>/24</code> into a <code>/26</code> for one department
+          and two <code>/27</code>s for two others — sized to actual need,
+          not a fixed grid.
+        </li>
+        <li>
+          <strong>Route summarization.</strong> ISPs don't advertise every
+          individual customer's tiny subnet to the rest of the internet —
+          they combine adjacent CIDR blocks that share a common prefix
+          into one larger announcement, which is the entire reason CIDR
+          replaced the older class-based addressing system in the first
+          place.
+        </li>
+        <li>
+          <strong>This calculator is address-space-agnostic.</strong> It
+          does the same bit math whether the input is a private range
+          (<code>10.0.0.0/8</code>, <code>192.168.0.0/16</code>) or a
+          public one — privacy of the range is a routing-policy decision,
+          not a property of the arithmetic.
+        </li>
+      </ul>
+    </DeepDive>
+  </div>
+
+  <WhatILearned>
+    CIDR notation always answers one question: how many bits are "the
+    building" versus "the apartment." Once you know that split, every
+    other number — network, broadcast, range, host count — is just
+    arithmetic you (or a calculator) can derive, not something to memorize
+    per prefix length.
+  </WhatILearned>
+
+  <Sources
+    sources={[
+      {
+        title: 'RFC 4632 — Classless Inter-Domain Routing (CIDR)',
+        url: 'https://www.rfc-editor.org/rfc/rfc4632',
+        note: 'The actual standard this entire page is built on.',
+      },
+      {
+        title: 'RFC 1918 — Address Allocation for Private Internets',
+        url: 'https://www.rfc-editor.org/rfc/rfc1918',
+        note: 'Where ranges like 192.168.0.0/16 and 10.0.0.0/8 come from.',
+      },
+      {
+        title: 'RFC 3021 — Using 31-Bit Prefixes on Point-to-Point Links',
+        url: 'https://www.rfc-editor.org/rfc/rfc3021',
+        note: 'The reasoning behind the /31 "no wasted addresses" example above.',
+      },
+    ]}
+  />
+</BaseLayout>
+
+<script>
+  function ipToInt(octets: number[]): number {
+    return ((octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]) >>> 0;
+  }
+  function intToIp(n: number): string {
+    return [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+  }
+  function parse(value: string): { ip: number; prefix: number } | null {
+    const m = value.trim().match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d{1,2})$/);
+    if (!m) return null;
+    const octets = m.slice(1, 5).map(Number);
+    const prefix = Number(m[5]);
+    if (octets.some((o) => o > 255) || prefix > 32) return null;
+    return { ip: ipToInt(octets), prefix };
+  }
+
+  interface CidrResult {
+    prefix: number;
+    ip: number;
+    network: string; broadcast: string; netmask: string; wildcard: string;
+    first: string; last: string; total: number; usable: number;
+  }
+
+  function computeCidr(value: string): CidrResult | null {
+    const parsed = parse(value);
+    if (!parsed) return null;
+    const { ip, prefix } = parsed;
+    // `<< 32` is a no-op in JS (shift amounts mask to 5 bits), so /0 needs
+    // its own branch rather than falling out of the general formula.
+    const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+    const network = (ip & mask) >>> 0;
+    const broadcast = (network | (~mask >>> 0)) >>> 0;
+    const wildcard = ~mask >>> 0;
+    const total = 2 ** (32 - prefix);
+    // /31 and /32 have no reserved network/broadcast (RFC 3021) — every
+    // address in the range is usable.
+    const pointToPoint = prefix >= 31;
+    const usable = pointToPoint ? total : Math.max(0, total - 2);
+    const first = pointToPoint ? network : (network + 1) >>> 0;
+    const last = pointToPoint ? broadcast : (broadcast - 1) >>> 0;
+    return {
+      prefix, ip,
+      network: intToIp(network), broadcast: intToIp(broadcast), netmask: intToIp(mask),
+      wildcard: intToIp(wildcard), first: intToIp(first), last: intToIp(last),
+      total, usable,
+    };
+  }
+
+  function bitsHtml(ipInt: number, prefix: number): string {
+    const bin = (ipInt >>> 0).toString(2).padStart(32, '0');
+    let html = '';
+    for (let i = 0; i < 32; i++) {
+      if (i > 0 && i % 8 === 0) html += ' ';
+      const cls = i < prefix ? 'bit-net' : 'bit-host';
+      html += `<span class="${cls}">${bin[i]}</span>`;
+    }
+    return html;
+  }
+
+  const input = document.getElementById('cidr-input') as HTMLInputElement;
+  const bitsDisplay = document.getElementById('bits-display')!;
+  const body = document.getElementById('cidr-body')!;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.ex-btn');
+
+  const ROWS: [string, keyof CidrResult][] = [
+    ['Network address', 'network'],
+    ['Broadcast address', 'broadcast'],
+    ['Subnet mask', 'netmask'],
+    ['Wildcard mask', 'wildcard'],
+    ['First usable', 'first'],
+    ['Last usable', 'last'],
+    ['Total addresses', 'total'],
+    ['Usable hosts', 'usable'],
+  ];
+
+  function update() {
+    const result = computeCidr(input.value);
+    if (!result) {
+      bitsDisplay.innerHTML = '<p class="bits-error">Not a valid IPv4 CIDR — try something like 192.168.1.10/24.</p>';
+      body.innerHTML = '';
+      return;
+    }
+    bitsDisplay.innerHTML = `
+      <div class="bits-row"><span class="bits-label">Network bits (${result.prefix})</span><span class="bits-legend net">■</span> <span class="bits-legend host">■</span><span class="bits-label">Host bits (${32 - result.prefix})</span></div>
+      <div class="bits-value">${bitsHtml(result.ip, result.prefix)}</div>
+    `;
+    body.innerHTML = '';
+    for (const [label, key] of ROWS) {
+      const tr = document.createElement('tr');
+      const labelTd = document.createElement('td');
+      labelTd.textContent = label;
+      const valTd = document.createElement('td');
+      const val = result[key];
+      valTd.textContent = typeof val === 'number' ? val.toLocaleString('en-US') : String(val);
+      valTd.className = 'cidr-val';
+      tr.append(labelTd, valTd);
+      body.append(tr);
+    }
+  }
+
+  input.addEventListener('input', update);
+  update();
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      input.value = btn.dataset.cidr ?? '';
+      update();
+    });
+  });
+
+  // Depth toggle: same shared key as every other topic page.
+  const DEPTH_KEY = 'siteDepth';
+  const depthButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.depth-btn'));
+  const gated = Array.from(document.querySelectorAll<HTMLElement>('[data-min-level]'));
+
+  function applyDepth(level: number) {
+    depthButtons.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.level) === level)));
+    gated.forEach((el) => { el.hidden = Number(el.dataset.minLevel) > level; });
+    try { localStorage.setItem(DEPTH_KEY, String(level)); } catch {}
+  }
+
+  let initialDepth = 0;
+  try {
+    const stored = localStorage.getItem(DEPTH_KEY);
+    if (stored !== null) initialDepth = Math.min(3, Math.max(0, parseInt(stored, 10) || 0));
+  } catch {}
+  applyDepth(initialDepth);
+
+  depthButtons.forEach((b) => b.addEventListener('click', () => applyDepth(Number(b.dataset.level))));
+</script>
+
+<style>
+  .depth-toggle { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-4) 0 var(--sp-6); }
+  .depth-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em;
+    padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border: 1px solid var(--line-bright);
+    color: var(--text-1); cursor: pointer;
+  }
+  .depth-btn:hover { border-color: var(--accent); color: var(--text-0); }
+  .depth-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg-0); font-weight: 700; }
+
+  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
+
+  .examples { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+  .ex-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  }
+  .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
+
+  .pw-label { display: block; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--text-1); margin-bottom: var(--sp-2); }
+  #cidr-input {
+    width: 100%; font-family: var(--font-mono); font-size: var(--step-1); padding: var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0);
+  }
+  #cidr-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .bits-display { margin-top: var(--sp-4); padding: var(--sp-3); background: var(--bg-0); border: 1px solid var(--line-bright); }
+  .bits-row { display: flex; align-items: center; gap: var(--sp-2); font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); margin-bottom: var(--sp-2); flex-wrap: wrap; }
+  .bits-legend.net { color: var(--accent); }
+  .bits-legend.host { color: var(--text-2); }
+  .bits-value { font-family: var(--font-mono); font-size: var(--step-0); letter-spacing: 0.05em; word-break: break-all; line-height: 1.8; }
+  .bits-value :global(.bit-net) { color: var(--accent); font-weight: 700; }
+  .bits-value :global(.bit-host) { color: var(--text-2); }
+  .bits-error { color: var(--status-broken); font-size: var(--step--1); margin: 0; }
+
+  .table-scroll { margin-top: var(--sp-4); overflow-x: auto; }
+  .cidr-table { width: 100%; min-width: 24rem; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--step--1); }
+  .cidr-table td { padding: var(--sp-2); border-bottom: 1px solid var(--line); color: var(--text-1); }
+  .cidr-table tr:last-child td { border-bottom: none; }
+  .cidr-val { color: var(--text-0); font-weight: 700; text-align: right; }
+</style>

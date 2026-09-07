@@ -32,4 +32,12 @@ export const DOMAINS: Domain[] = [
       { href: '/how-llms-predict-text/', title: 'How LLMs Predict Text', blurb: 'A real (tiny) word-prediction model, built live in your browser, so you can watch it guess.' },
     ],
   },
+  {
+    slug: 'networking',
+    name: 'Networking',
+    blurb: 'The math and mechanics underneath every network, made visible instead of memorized.',
+    topics: [
+      { href: '/subnetting-cidr/', title: 'Subnetting & CIDR', blurb: 'A real subnet calculator, plus the 32-bit binary split behind every "/24" you\'ve typed without thinking about it.' },
+    ],
+  },
 ];
