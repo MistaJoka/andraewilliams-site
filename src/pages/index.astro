@@ -23,9 +23,9 @@ const seriesById = Object.fromEntries(
 // plus a short plain list — not the full filterable Feed grid, which
 // lives at /feed/ only.
 const byDate = [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-const featured = byDate.find((p) => p.data.featured) ?? byDate[0]!;
-const recentNotes = byDate.filter((p) => p.id !== featured.id).slice(0, 4);
-const featuredSeries = featured.data.series ? seriesById[featured.data.series.id] : undefined;
+const featured = byDate.find((p) => p.data.featured) ?? byDate[0];
+const recentNotes = featured ? byDate.filter((p) => p.id !== featured.id).slice(0, 4) : [];
+const featuredSeries = featured?.data.series ? seriesById[featured.data.series.id] : undefined;
 
 // Selected work: all shipped projects, newest first, each topped in its
 // own real topic accent rather than a hardcoded colour.
@@ -95,7 +95,7 @@ const offHoursTopics = orderedTopics.filter((t) => t.data.order > 4);
 
   <section class="notes" aria-labelledby="notes-heading">
     <h2 id="notes-heading" class="eyebrow section-heading">Notes</h2>
-    <FeaturedPost post={featured} series={featuredSeries} />
+    {featured && <FeaturedPost post={featured} series={featuredSeries} />}
     <ul class="notes-list">
       {recentNotes.map((p) => (
         <li>
