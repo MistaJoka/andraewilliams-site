@@ -3,34 +3,142 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { DOMAINS } from '../../lib/domains';
 
 const domain = DOMAINS.find((d) => d.slug === 'ai')!;
+
+// A gear train, not a decoration: each topic is a real stage that drives
+// the next one. Teeth count sets both visual size and rotation speed
+// (more teeth = bigger + slower, same as a real meshed gear train), and
+// adjacent gears spin opposite directions because that's what meshed
+// gears actually do.
+const GEAR_TEETH = [20, 16, 14, 10];
+const FLOW = ['predicts text from', 'context feeds', 'the agent loop writes to', 'which feeds back into'];
+
+function gearPath(teeth: number, outerR: number, innerR: number): string {
+  const points: [number, number][] = [];
+  const toothAngle = (Math.PI * 2) / teeth;
+  for (let i = 0; i < teeth; i++) {
+    const a0 = i * toothAngle;
+    const a1 = a0 + toothAngle * 0.25;
+    const a2 = a0 + toothAngle * 0.5;
+    const a3 = a0 + toothAngle * 0.75;
+    points.push([innerR * Math.cos(a0), innerR * Math.sin(a0)]);
+    points.push([outerR * Math.cos(a1), outerR * Math.sin(a1)]);
+    points.push([outerR * Math.cos(a2), outerR * Math.sin(a2)]);
+    points.push([innerR * Math.cos(a3), innerR * Math.sin(a3)]);
+  }
+  return 'M' + points.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' L') + ' Z';
+}
+
+const gears = domain.topics.map((topic, i) => {
+  const teeth = GEAR_TEETH[i] ?? 12;
+  const outerR = teeth * 2.4;
+  const innerR = outerR * 0.8;
+  const hubR = outerR * 0.32;
+  const size = outerR * 2 + 8;
+  return {
+    topic,
+    teeth,
+    size,
+    path: gearPath(teeth, outerR, innerR),
+    hubR,
+    duration: (teeth * 0.9).toFixed(1),
+    reverse: i % 2 === 1,
+    overlap: Math.round(outerR * 0.28),
+  };
+});
 ---
 <BaseLayout title={domain.name} description={domain.blurb}>
   <p class="eyebrow"><a href="/">← Domains</a></p>
   <h1>{domain.name}</h1>
   <p class="domain-lede">{domain.blurb}</p>
 
-  <ul class="topic-list">
-    {domain.topics.map((t) => (
-      <li>
-        <a href={t.href}>
-          <span class="topic-title">{t.title}</span>
-          <span class="topic-blurb">{t.blurb}</span>
+  <section class="command-center" aria-labelledby="gears-heading">
+    <h2 id="gears-heading" class="eyebrow section-heading">The gear train</h2>
+    <p class="lab-note">
+      Four real, connected stages — turn one and the rest actually move
+      with it. Click any gear to go to that topic.
+    </p>
+
+    <div class="gear-row">
+      {gears.map((g, i) => (
+        <a
+          href={g.topic.href}
+          class="gear-link"
+          style={`margin-left: ${i === 0 ? 0 : -g.overlap}px;`}
+          title={g.topic.blurb}
+        >
+          <svg
+            class="gear-svg"
+            width={g.size}
+            height={g.size}
+            viewBox={`${-g.size / 2} ${-g.size / 2} ${g.size} ${g.size}`}
+            aria-hidden="true"
+            style={`animation-duration: ${g.duration}s; animation-direction: ${g.reverse ? 'reverse' : 'normal'};`}
+          >
+            <path class="gear-tooth" d={g.path} />
+            <circle class="gear-hub" r={g.hubR} />
+          </svg>
+          <span class="gear-label">{g.topic.title}</span>
         </a>
-      </li>
-    ))}
-  </ul>
+      ))}
+    </div>
+
+    <p class="gear-flow">
+      {gears.map((g, i) => (
+        <>
+          <span class="flow-node">{g.topic.title}</span>
+          {i < gears.length - 1 && <span class="flow-arrow">→ {FLOW[i]} →</span>}
+        </>
+      ))}
+      <span class="flow-arrow flow-loop">↺ back into context</span>
+    </p>
+  </section>
 </BaseLayout>
 
 <style>
   .domain-lede { color: var(--text-1); font-size: var(--step-1); margin: var(--sp-3) 0 var(--sp-6); max-width: 58ch; }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-5); }
 
-  .topic-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
-  .topic-list a {
-    display: grid; gap: var(--sp-1); padding: var(--sp-4);
-    border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
-    transition: border-color 150ms ease-out, background 150ms ease-out;
+  .command-center { margin-top: var(--sp-4); padding: var(--sp-5); border: 1px solid var(--line-bright); background: var(--bg-1); }
+
+  .gear-row {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+    gap: var(--sp-6) 0; padding: var(--sp-5) 0; overflow-x: auto;
   }
-  .topic-list a:hover { border-color: var(--accent); background: var(--bg-2); }
-  .topic-title { color: var(--text-0); font-weight: 700; }
-  .topic-blurb { color: var(--text-1); }
+  .gear-link {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+    text-decoration: none; padding-top: var(--sp-2);
+  }
+  .gear-svg { display: block; transition: filter 200ms; animation-name: spin; animation-timing-function: linear; animation-iteration-count: infinite; }
+  .gear-tooth { fill: var(--bg-0); stroke: var(--accent); stroke-width: 1.5; }
+  .gear-hub { fill: var(--accent); }
+  .gear-link:hover .gear-tooth, .gear-link:focus-visible .gear-tooth { stroke: var(--status-working); }
+  .gear-link:hover .gear-hub, .gear-link:focus-visible .gear-hub { fill: var(--status-working); }
+  .gear-link:hover .gear-svg, .gear-link:focus-visible .gear-svg {
+    filter: drop-shadow(0 0 8px var(--status-working)) drop-shadow(0 0 16px color-mix(in srgb, var(--status-working) 50%, transparent));
+  }
+  .gear-label {
+    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em; text-align: center;
+    color: var(--text-1); max-width: 9rem;
+  }
+  .gear-link:hover .gear-label, .gear-link:focus-visible .gear-label { color: var(--text-0); }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .gear-svg { animation: none; }
+  }
+
+  .gear-flow {
+    margin: var(--sp-4) 0 0; padding-top: var(--sp-4); border-top: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); justify-content: center;
+  }
+  .flow-node { color: var(--accent); font-weight: 700; }
+  .flow-arrow { color: var(--text-2); }
+  .flow-loop { color: var(--status-working); font-weight: 700; }
+
+  @media (max-width: 40rem) {
+    .gear-row { gap: var(--sp-5) 0; }
+    .gear-link { margin-left: 0 !important; }
+  }
 </style>
