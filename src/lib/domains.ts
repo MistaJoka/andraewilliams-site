@@ -10,6 +10,10 @@ export interface Topic {
   /** hrefs of other topics this one actually depends on or feeds into —
    *  a real dependency/causal link, not "same domain so why not". */
   related?: string[];
+  /** ISO date this topic's facts were last checked. Enforced by
+   *  domains.test.ts, which fails once a topic goes stale (see
+   *  STALE_AFTER_DAYS there) — a real gate, not just a display field. */
+  lastVerified: string;
 }
 
 export interface Domain {
@@ -32,11 +36,13 @@ export const DOMAINS: Domain[] = [
         href: '/password-cracking/', title: 'Password Cracking',
         blurb: 'Why "P@ssw0rd!" falls in under a second, and what actually holds up.',
         related: ['/phishing/'],
+        lastVerified: '2026-09-07',
       },
       {
         href: '/phishing/', title: 'Phishing',
         blurb: 'Read a URL like an attacker built it — try the inspector yourself.',
         related: ['/password-cracking/', '/subnetting-cidr/'],
+        lastVerified: '2026-09-07',
       },
     ],
   },
@@ -50,24 +56,28 @@ export const DOMAINS: Domain[] = [
         href: '/how-llms-predict-text/', title: 'How LLMs Predict Text',
         blurb: 'A real (tiny) word-prediction model, built live in your browser, so you can watch it guess.',
         related: ['/context-engineering/'],
+        lastVerified: '2026-09-07',
       },
       {
         href: '/context-engineering/', title: 'Context Engineering',
         blurb: 'Prompt engineering was about wording. This is about what the model even gets to see — try the budget simulator.',
         isNew: true,
         related: ['/how-llms-predict-text/', '/agentic-engineering/', '/ai-memory/'],
+        lastVerified: '2026-09-07',
       },
       {
         href: '/agentic-engineering/', title: 'Agentic Engineering',
         blurb: 'Why a single prompt became a loop. Watch a toy agent think, act, and observe in real time.',
         isNew: true,
         related: ['/context-engineering/', '/ai-memory/'],
+        lastVerified: '2026-09-07',
       },
       {
         href: '/ai-memory/', title: 'Memory',
         blurb: 'More context window isn’t memory. Watch a real salience-and-recall system decide what’s worth keeping.',
         isNew: true,
         related: ['/context-engineering/', '/agentic-engineering/'],
+        lastVerified: '2026-09-07',
       },
     ],
   },
@@ -82,6 +92,7 @@ export const DOMAINS: Domain[] = [
         blurb: 'A real subnet calculator, plus the 32-bit binary split behind every "/24" you\'ve typed without thinking about it.',
         isNew: true,
         related: ['/phishing/'],
+        lastVerified: '2026-09-07',
       },
     ],
   },
@@ -93,4 +104,11 @@ export function findTopic(href: string): Topic | undefined {
     if (topic) return topic;
   }
   return undefined;
+}
+
+/** Every {domain, topic} pair flattened -- for the staleness test and
+ *  anything else that needs to iterate topics without caring which
+ *  domain they're under. */
+export function allTopics(): { domain: Domain; topic: Topic }[] {
+  return DOMAINS.flatMap((domain) => domain.topics.map((topic) => ({ domain, topic })));
 }

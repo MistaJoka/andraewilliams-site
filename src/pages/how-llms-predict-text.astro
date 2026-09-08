@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
+import VerifiedDate from '../components/VerifiedDate.astro';
 ---
 <BaseLayout
   title="How LLMs Predict Text"
@@ -10,6 +11,7 @@ import RelatedTopics from '../components/RelatedTopics.astro';
 >
   <p class="eyebrow"><a href="/ai/">← AI</a></p>
   <h1>How LLMs Predict Text</h1>
+  <VerifiedDate />
 
   <Tldr>
     An LLM doesn't know facts the way a database does — it has no lookup

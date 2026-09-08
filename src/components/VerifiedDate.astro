@@ -1,0 +1,19 @@
+---
+// Looks up the current page's own lastVerified date by pathname, same
+// no-props pattern as RelatedTopics -- nothing for a page to keep in
+// sync by hand as domains.ts changes.
+import { findTopic } from '../lib/domains';
+
+const topic = findTopic(Astro.url.pathname);
+const formatted = topic
+  ? new Date(`${topic.lastVerified}T00:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })
+  : null;
+---
+{formatted && <p class="verified-date">Verified {formatted}</p>}
+
+<style>
+  .verified-date {
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    letter-spacing: 0.04em; margin: var(--sp-2) 0 var(--sp-5);
+  }
+</style>

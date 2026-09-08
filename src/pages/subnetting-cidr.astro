@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
+import VerifiedDate from '../components/VerifiedDate.astro';
 ---
 <BaseLayout
   title="Subnetting & CIDR"
@@ -10,6 +11,7 @@ import RelatedTopics from '../components/RelatedTopics.astro';
 >
   <p class="eyebrow"><a href="/networking/">← Networking</a></p>
   <h1>Subnetting &amp; CIDR</h1>
+  <VerifiedDate />
 
   <Tldr>
     An IP address like <code>192.168.1.10/24</code> is really two numbers
