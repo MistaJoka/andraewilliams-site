@@ -1,8 +1,19 @@
 ---
+// One dynamic route for every domain that just lists its topics
+// plainly. AI is excluded on purpose -- it has its own hand-built gear
+// command center at src/pages/ai/index.astro instead of this template.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DOMAINS } from '../../lib/domains';
+import { DOMAINS, type Domain } from '../../lib/domains';
 
-const domain = DOMAINS.find((d) => d.slug === 'security')!;
+export function getStaticPaths() {
+  return DOMAINS.filter((d) => d.slug !== 'ai').map((d) => ({
+    params: { domain: d.slug },
+    props: { domain: d },
+  }));
+}
+
+interface Props { domain: Domain }
+const { domain } = Astro.props;
 ---
 <BaseLayout title={domain.name} description={domain.blurb}>
   <p class="eyebrow"><a href="/">← Domains</a></p>
