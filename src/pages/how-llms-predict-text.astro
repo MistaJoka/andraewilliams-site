@@ -202,12 +202,15 @@ import Sources from '../components/Sources.astro';
       .map(([word, count]) => ({ word, count, pct: (count / total) * 100 }));
   }
 
-  function generate(seed: string, numWords = 15): string {
+  // A generator so the UI can reveal each word as it's actually sampled,
+  // not as a typewriter effect played over text computed all at once.
+  function* generateSteps(seed: string, numWords = 15): Generator<string> {
     const seq = seed.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    yield seq.join(' ');
     for (let i = 0; i < numWords; i++) {
       const last = seq[seq.length - 1];
       const m = bigram.get(last);
-      if (!m) break;
+      if (!m) return;
       const total = Array.from(m.values()).reduce((a, b) => a + b, 0);
       let r = Math.random() * total;
       let chosen: string | undefined;
@@ -216,8 +219,8 @@ import Sources from '../components/Sources.astro';
         if (r <= 0) { chosen = w; break; }
       }
       seq.push(chosen ?? Array.from(m.keys())[0]);
+      yield seq.join(' ');
     }
-    return seq.join(' ');
   }
 
   const input = document.getElementById('seed-input') as HTMLInputElement;
@@ -236,6 +239,7 @@ import Sources from '../components/Sources.astro';
       body.append(tr);
       return;
     }
+    const fills: { el: HTMLElement; pct: number }[] = [];
     for (const c of candidates) {
       const tr = document.createElement('tr');
       const wordTd = document.createElement('td');
@@ -243,20 +247,60 @@ import Sources from '../components/Sources.astro';
       wordTd.className = 'predict-word';
       const countTd = document.createElement('td');
       countTd.textContent = `${c.count}×`;
-      const pctTd = document.createElement('td');
-      pctTd.textContent = `${c.pct.toFixed(1)}%`;
-      pctTd.className = 'predict-pct';
-      tr.append(wordTd, countTd, pctTd);
+      const barTd = document.createElement('td');
+      barTd.className = 'predict-bar-cell';
+      const track = document.createElement('div');
+      track.className = 'bar-track';
+      const fill = document.createElement('div');
+      fill.className = 'bar-fill';
+      fill.style.width = '0%';
+      track.append(fill);
+      const pctLabel = document.createElement('span');
+      pctLabel.className = 'predict-pct';
+      pctLabel.textContent = `${c.pct.toFixed(1)}%`;
+      barTd.append(track, pctLabel);
+      tr.append(wordTd, countTd, barTd);
       body.append(tr);
+      fills.push({ el: fill, pct: c.pct });
     }
+    // Bars start at 0% (painted above) and only get their real width next
+    // frame, so the CSS transition actually has something to animate from
+    // instead of snapping straight to the target on first paint.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      for (const f of fills) f.el.style.width = `${f.pct}%`;
+    }));
   }
 
   input.addEventListener('input', updatePredictions);
   updatePredictions();
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let generateTimer: number | undefined;
+
   document.getElementById('generate-btn')!.addEventListener('click', () => {
+    if (generateTimer) { clearInterval(generateTimer); generateTimer = undefined; }
     const seed = input.value.trim() || 'the cat';
-    document.getElementById('generated-output')!.textContent = generate(seed, 15);
+    const outEl = document.getElementById('generated-output')!;
+    const steps = generateSteps(seed, 15);
+
+    if (prefersReducedMotion) {
+      let last = '';
+      for (const value of steps) last = value;
+      outEl.textContent = last;
+      return;
+    }
+
+    const first = steps.next();
+    if (!first.done) outEl.textContent = first.value;
+    generateTimer = window.setInterval(() => {
+      const { value, done } = steps.next();
+      if (done) {
+        clearInterval(generateTimer);
+        generateTimer = undefined;
+        return;
+      }
+      outEl.textContent = value;
+    }, 180);
   });
 
   // Depth toggle: same shared key as every other topic page, so a
@@ -316,9 +360,16 @@ import Sources from '../components/Sources.astro';
   .predict-table th { text-align: left; color: var(--text-2); font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.7rem; padding: var(--sp-2) var(--sp-2) var(--sp-1); border-bottom: 1px solid var(--line-bright); }
   .predict-table td { padding: var(--sp-2); border-bottom: 1px solid var(--line); color: var(--text-1); }
   .predict-word { color: var(--text-0); font-weight: 700; }
-  .predict-pct { color: var(--accent); font-weight: 700; text-align: right; }
   .predict-empty { color: var(--text-2); font-style: italic; }
   .predict-table tr:last-child td { border-bottom: none; }
+
+  .predict-bar-cell { display: flex; align-items: center; gap: var(--sp-3); min-width: 9rem; }
+  .bar-track { flex: 1; height: 0.8em; background: var(--bg-0); border: 1px solid var(--line); overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); transition: width 400ms ease-out; }
+  .predict-pct { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) {
+    .bar-fill { transition: none; }
+  }
 
   .generate-row { margin-top: var(--sp-4); }
   .ex-btn {
