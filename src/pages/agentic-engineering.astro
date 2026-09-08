@@ -126,40 +126,7 @@ import Sources from '../components/Sources.astro';
 
 <script>
   import { scrambleText as decode } from '../lib/decode';
-
-  interface Package { id: string; weightKg: number; }
-  interface Step { type: 'thought' | 'action' | 'observation' | 'final'; text: string; }
-
-  const PACKAGES: Package[] = [
-    { id: 'A', weightKg: 12 },
-    { id: 'B', weightKg: 47 },
-    { id: 'C', weightKg: 8 },
-    { id: 'D', weightKg: 33 },
-    { id: 'E', weightKg: 41 },
-  ];
-
-  // The "tool": returns exactly one package's weight per call, same as a
-  // real API the agent can't see all the results of at once.
-  function checkWeight(id: string): number | null {
-    return PACKAGES.find((p) => p.id === id)?.weightKg ?? null;
-  }
-
-  function* runAgent(): Generator<Step> {
-    yield { type: 'thought', text: `Task: find the heaviest of ${PACKAGES.length} packages. I can only check one at a time.` };
-    let best: { id: string; weightKg: number } | null = null;
-    for (const pkg of PACKAGES) {
-      yield { type: 'action', text: `checkWeight("${pkg.id}")` };
-      const weight = checkWeight(pkg.id)!;
-      yield { type: 'observation', text: `${weight} kg` };
-      if (!best || weight > best.weightKg) {
-        best = { id: pkg.id, weightKg: weight };
-        yield { type: 'thought', text: `New heaviest so far: ${pkg.id} at ${weight} kg.` };
-      } else {
-        yield { type: 'thought', text: `${pkg.id} (${weight} kg) is lighter than current best (${best.id}, ${best.weightKg} kg). Continuing.` };
-      }
-    }
-    yield { type: 'final', text: `Checked all ${PACKAGES.length} packages. Heaviest: ${best!.id} at ${best!.weightKg} kg.` };
-  }
+  import { runAgent, type Step } from '../lib/agent';
 
   const log = document.getElementById('trace-log')!;
   const runBtn = document.getElementById('run-btn') as HTMLButtonElement;

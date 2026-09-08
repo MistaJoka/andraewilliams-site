@@ -143,36 +143,9 @@ import Sources from '../components/Sources.astro';
 </BaseLayout>
 
 <script>
-  interface MemoryEntry { text: string; score: number; }
+  import { salience, retrieve, SALIENCE_THRESHOLD, type MemoryEntry } from '../lib/memory';
 
-  const SALIENT_KEYWORDS = ['prefer', 'always', 'never', 'remember', 'favorite', 'hate', 'love', "i'm", 'i am', 'my name', 'birthday', 'deadline', 'allerg'];
-  const STOPWORDS = new Set(['i', 'a', 'an', 'the', 'is', 'my', 'to', 'of', 'and', 'in', 'on', 'for', 'it', 'this', 'that', "i'm", 'should']);
-  const SALIENCE_THRESHOLD = 3;
   const WORKING_MEMORY_SIZE = 5;
-
-  function salience(text: string): number {
-    const lower = text.toLowerCase();
-    let score = 0;
-    for (const kw of SALIENT_KEYWORDS) if (lower.includes(kw)) score += 2;
-    if (/\d/.test(text)) score += 1;
-    const properNouns = (text.match(/\b[A-Z][a-z]+\b/g) ?? []).filter((w) => text.indexOf(w) !== 0).length;
-    score += Math.min(properNouns, 2);
-    return score;
-  }
-
-  function keywords(text: string): string[] {
-    return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter((w) => w && !STOPWORDS.has(w));
-  }
-
-  function retrieve(query: string, entries: MemoryEntry[]): MemoryEntry | null {
-    const qWords = new Set(keywords(query));
-    let best: { entry: MemoryEntry; overlap: number } | null = null;
-    for (const entry of entries) {
-      const overlap = keywords(entry.text).filter((w) => qWords.has(w)).length;
-      if (overlap > 0 && (!best || overlap > best.overlap)) best = { entry, overlap };
-    }
-    return best?.entry ?? null;
-  }
 
   const working: string[] = [];
   const longTerm: MemoryEntry[] = [];
