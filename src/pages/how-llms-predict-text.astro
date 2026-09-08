@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
 ---
 <BaseLayout
   title="How LLMs Predict Text"
@@ -136,6 +137,8 @@ import Sources from '../components/Sources.astro';
     Treat an unverified claim from an LLM the way you'd treat one from a
     stranger: plausible until checked, not true because it sounded sure.
   </WhatILearned>
+
+  <RelatedTopics />
 
   <Sources
     sources={[

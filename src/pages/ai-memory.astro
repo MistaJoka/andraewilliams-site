@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
 ---
 <BaseLayout
   title="Memory"
@@ -120,6 +121,8 @@ import Sources from '../components/Sources.astro';
     compressed, and search it back out on purpose." A system that can't do
     the second half isn't remembering, it's just archiving.
   </WhatILearned>
+
+  <RelatedTopics />
 
   <Sources
     sources={[

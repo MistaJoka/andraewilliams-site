@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
 ---
 <BaseLayout
   title="Context Engineering"
@@ -112,6 +113,8 @@ import Sources from '../components/Sources.astro';
     prompt," ask "what's actually earning a place in the context, and what
     got in by accident."
   </WhatILearned>
+
+  <RelatedTopics />
 
   <Sources
     sources={[

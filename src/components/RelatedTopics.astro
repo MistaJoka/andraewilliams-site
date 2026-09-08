@@ -1,0 +1,40 @@
+---
+// Real dependency links between topics (declared once, per-topic, in
+// src/lib/domains.ts) -- not "same domain so why not." Looks up the
+// current page's own `related` list by pathname, so a page just drops
+// in <RelatedTopics /> with no props to keep in sync by hand. Renders
+// nothing if the current topic has no related links yet.
+import { findTopic } from '../lib/domains';
+
+const currentTopic = findTopic(Astro.url.pathname);
+const topics = (currentTopic?.related ?? []).map(findTopic).filter((t) => t !== undefined);
+---
+{topics.length > 0 && (
+  <section class="related-topics" aria-labelledby="related-heading">
+    <h2 id="related-heading" class="eyebrow section-heading">Related topics</h2>
+    <ul class="related-list">
+      {topics.map((t) => (
+        <li>
+          <a href={t.href}>
+            <span class="related-title">{t.title}</span>
+            <span class="related-blurb">{t.blurb}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .related-topics { margin-top: var(--sp-7); padding-top: var(--sp-5); border-top: 1px solid var(--line); }
+  .section-heading { margin-bottom: var(--sp-3); }
+  .related-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+  .related-list a {
+    display: grid; gap: var(--sp-1); padding: var(--sp-4);
+    border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
+    transition: border-color 150ms ease-out, background 150ms ease-out;
+  }
+  .related-list a:hover { border-color: var(--accent); background: var(--bg-2); }
+  .related-title { color: var(--text-0); font-weight: 700; }
+  .related-blurb { color: var(--text-1); }
+</style>

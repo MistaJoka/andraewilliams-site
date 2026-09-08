@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
 ---
 <BaseLayout
   title="Phishing"
@@ -131,6 +132,8 @@ import Sources from '../components/Sources.astro';
       <li>When unsure, don't click the link at all. Open the site yourself, from a bookmark or a search.</li>
     </ul>
   </WhatILearned>
+
+  <RelatedTopics />
 
   <Sources
     sources={[

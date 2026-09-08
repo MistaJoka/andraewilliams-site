@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
 import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
 ---
 <BaseLayout
   title="Agentic Engineering"
@@ -102,6 +103,8 @@ import Sources from '../components/Sources.astro';
     intelligence people notice is mostly the loop doing its job: gather
     information, reassess, and try again, exactly the way a person would.
   </WhatILearned>
+
+  <RelatedTopics />
 
   <Sources
     sources={[

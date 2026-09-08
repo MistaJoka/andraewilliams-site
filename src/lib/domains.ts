@@ -7,6 +7,9 @@ export interface Topic {
   blurb: string;
   /** Shows a NEW badge on domain index pages. Flip off once it isn't. */
   isNew?: boolean;
+  /** hrefs of other topics this one actually depends on or feeds into —
+   *  a real dependency/causal link, not "same domain so why not". */
+  related?: string[];
 }
 
 export interface Domain {
@@ -25,8 +28,16 @@ export const DOMAINS: Domain[] = [
     icon: '▚',
     blurb: 'Cybersecurity, made approachable — inspired by Go Hack Yourself by Bryson Payne.',
     topics: [
-      { href: '/password-cracking/', title: 'Password Cracking', blurb: 'Why "P@ssw0rd!" falls in under a second, and what actually holds up.' },
-      { href: '/phishing/', title: 'Phishing', blurb: 'Read a URL like an attacker built it — try the inspector yourself.' },
+      {
+        href: '/password-cracking/', title: 'Password Cracking',
+        blurb: 'Why "P@ssw0rd!" falls in under a second, and what actually holds up.',
+        related: ['/phishing/'],
+      },
+      {
+        href: '/phishing/', title: 'Phishing',
+        blurb: 'Read a URL like an attacker built it — try the inspector yourself.',
+        related: ['/password-cracking/', '/subnetting-cidr/'],
+      },
     ],
   },
   {
@@ -35,10 +46,29 @@ export const DOMAINS: Domain[] = [
     icon: '⚙',
     blurb: 'How the systems actually work under the hood — no hype, no magic.',
     topics: [
-      { href: '/how-llms-predict-text/', title: 'How LLMs Predict Text', blurb: 'A real (tiny) word-prediction model, built live in your browser, so you can watch it guess.' },
-      { href: '/context-engineering/', title: 'Context Engineering', blurb: 'Prompt engineering was about wording. This is about what the model even gets to see — try the budget simulator.', isNew: true },
-      { href: '/agentic-engineering/', title: 'Agentic Engineering', blurb: 'Why a single prompt became a loop. Watch a toy agent think, act, and observe in real time.', isNew: true },
-      { href: '/ai-memory/', title: 'Memory', blurb: 'More context window isn’t memory. Watch a real salience-and-recall system decide what’s worth keeping.', isNew: true },
+      {
+        href: '/how-llms-predict-text/', title: 'How LLMs Predict Text',
+        blurb: 'A real (tiny) word-prediction model, built live in your browser, so you can watch it guess.',
+        related: ['/context-engineering/'],
+      },
+      {
+        href: '/context-engineering/', title: 'Context Engineering',
+        blurb: 'Prompt engineering was about wording. This is about what the model even gets to see — try the budget simulator.',
+        isNew: true,
+        related: ['/how-llms-predict-text/', '/agentic-engineering/', '/ai-memory/'],
+      },
+      {
+        href: '/agentic-engineering/', title: 'Agentic Engineering',
+        blurb: 'Why a single prompt became a loop. Watch a toy agent think, act, and observe in real time.',
+        isNew: true,
+        related: ['/context-engineering/', '/ai-memory/'],
+      },
+      {
+        href: '/ai-memory/', title: 'Memory',
+        blurb: 'More context window isn’t memory. Watch a real salience-and-recall system decide what’s worth keeping.',
+        isNew: true,
+        related: ['/context-engineering/', '/agentic-engineering/'],
+      },
     ],
   },
   {
@@ -47,7 +77,20 @@ export const DOMAINS: Domain[] = [
     icon: '▤',
     blurb: 'The math and mechanics underneath every network, made visible instead of memorized.',
     topics: [
-      { href: '/subnetting-cidr/', title: 'Subnetting & CIDR', blurb: 'A real subnet calculator, plus the 32-bit binary split behind every "/24" you\'ve typed without thinking about it.', isNew: true },
+      {
+        href: '/subnetting-cidr/', title: 'Subnetting & CIDR',
+        blurb: 'A real subnet calculator, plus the 32-bit binary split behind every "/24" you\'ve typed without thinking about it.',
+        isNew: true,
+        related: ['/phishing/'],
+      },
     ],
   },
 ];
+
+export function findTopic(href: string): Topic | undefined {
+  for (const domain of DOMAINS) {
+    const topic = domain.topics.find((t) => t.href === href);
+    if (topic) return topic;
+  }
+  return undefined;
+}
