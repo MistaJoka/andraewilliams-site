@@ -1,5 +1,6 @@
 ---
 import '../styles/base.css';
+import CommandPalette from '../components/CommandPalette.astro';
 
 interface Props {
   title: string;
@@ -44,8 +45,9 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <nav class="wrap">
+      <nav class="wrap header-nav">
         <a href="/" class="site-title">andraewilliams.com</a>
+        <CommandPalette />
       </nav>
     </header>
     <main id="main" class="wrap">
@@ -58,6 +60,7 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
   .wrap { max-width: 68ch; margin: 0 auto; padding: 0 var(--sp-5); }
   .site-header { border-bottom: 1px solid var(--line); padding: var(--sp-4) 0; margin-bottom: var(--sp-6); }
   .site-header .wrap { max-width: 68ch; }
+  .header-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
   .site-title { font-family: var(--font-mono); font-size: var(--step-0); letter-spacing: 0.04em; text-decoration: none; color: var(--text-0); }
   .skip-link {
     position: absolute; left: -9999px; top: 0; background: var(--accent); color: var(--bg-0);

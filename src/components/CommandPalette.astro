@@ -1,0 +1,197 @@
+---
+// Site-wide ⌘K search. Fetches /search-index.json lazily on first open
+// (built from the same DOMAINS array everything else reads from -- see
+// src/pages/search-index.json.ts), then scores/filters client-side.
+// Small enough site that a plain scoring function beats pulling in a
+// fuzzy-search dependency.
+---
+<button type="button" class="search-trigger" id="search-trigger" aria-haspopup="dialog">
+  <span>Search</span>
+  <kbd>⌘K</kbd>
+</button>
+
+<dialog id="palette" aria-label="Search">
+  <form method="dialog" class="palette-form">
+    <label class="visually-hidden" for="palette-input">Search topics and domains</label>
+    <input
+      id="palette-input"
+      type="search"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="Search topics and domains…"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="palette-results"
+      aria-autocomplete="list"
+    />
+  </form>
+  <ul id="palette-results" role="listbox" aria-label="Results"></ul>
+  <p class="palette-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>↵</kbd> open · <kbd>esc</kbd> close</p>
+</dialog>
+
+<script>
+  interface SearchEntry { kind: 'domain' | 'topic'; title: string; description: string; url: string; }
+
+  const trigger = document.getElementById('search-trigger')!;
+  const dialog = document.getElementById('palette') as HTMLDialogElement;
+  const input = document.getElementById('palette-input') as HTMLInputElement;
+  const results = document.getElementById('palette-results')!;
+
+  let entries: SearchEntry[] | null = null;
+  let matches: SearchEntry[] = [];
+  let activeIndex = 0;
+
+  function score(entry: SearchEntry, query: string): number {
+    const title = entry.title.toLowerCase();
+    const hay = `${title} ${entry.description.toLowerCase()}`;
+    if (title === query) return 1000;
+    if (title.startsWith(query)) return 800 - title.length;
+    if (title.split(/\s+/).some((w) => w.startsWith(query))) return 500 - title.length;
+    if (hay.includes(query)) return 200 - title.length;
+    return -1;
+  }
+
+  function render() {
+    results.innerHTML = '';
+    if (!matches.length) {
+      const li = document.createElement('li');
+      li.className = 'palette-empty';
+      li.textContent = input.value.trim() ? 'Nothing matches.' : 'Nothing here yet.';
+      results.append(li);
+      return;
+    }
+    matches.forEach((entry, i) => {
+      const li = document.createElement('li');
+      li.id = `palette-opt-${i}`;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', String(i === activeIndex));
+      li.className = i === activeIndex ? 'active' : '';
+      const a = document.createElement('a');
+      a.href = entry.url;
+      a.tabIndex = -1;
+      const kind = document.createElement('span');
+      kind.className = 'palette-kind';
+      kind.textContent = entry.kind === 'domain' ? 'DOMAIN' : 'TOPIC';
+      const title = document.createElement('span');
+      title.className = 'palette-title';
+      title.textContent = entry.title;
+      const desc = document.createElement('span');
+      desc.className = 'palette-desc';
+      desc.textContent = entry.description;
+      a.append(kind, title, desc);
+      li.append(a);
+      results.append(li);
+    });
+    input.setAttribute('aria-activedescendant', `palette-opt-${activeIndex}`);
+  }
+
+  function update() {
+    const query = input.value.trim().toLowerCase();
+    activeIndex = 0;
+    if (!query) {
+      matches = entries ?? [];
+    } else {
+      matches = (entries ?? [])
+        .map((e) => ({ e, s: score(e, query) }))
+        .filter((r) => r.s > 0)
+        .sort((a, b) => b.s - a.s)
+        .map((r) => r.e);
+    }
+    render();
+  }
+
+  async function open() {
+    if (dialog.open) return;
+    dialog.showModal();
+    if (!entries) {
+      try {
+        entries = await (await fetch('/search-index.json')).json();
+      } catch {
+        entries = [];
+      }
+    }
+    update();
+    input.value = '';
+    input.focus();
+  }
+
+  trigger.addEventListener('click', open);
+  document.addEventListener('keydown', (e) => {
+    const inField = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement)?.tagName ?? '');
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      dialog.open ? dialog.close() : open();
+    } else if (e.key === '/' && !inField && !dialog.open) {
+      e.preventDefault();
+      open();
+    }
+  });
+  input.addEventListener('input', update);
+  dialog.addEventListener('keydown', (e) => {
+    if (!matches.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIndex = (activeIndex + 1) % matches.length;
+      render();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIndex = (activeIndex - 1 + matches.length) % matches.length;
+      render();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      window.location.href = matches[activeIndex].url;
+    }
+  });
+  // Click on the backdrop (the <dialog> element itself, not its content) closes it.
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>
+
+<style>
+  .search-trigger {
+    display: flex; align-items: center; gap: var(--sp-2);
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2);
+    background: var(--bg-1); border: 1px solid var(--line-bright); padding: var(--sp-2) var(--sp-3);
+    cursor: pointer;
+  }
+  .search-trigger:hover { border-color: var(--accent); color: var(--text-0); }
+  .search-trigger kbd {
+    font-family: var(--font-mono); font-size: 0.7rem; background: var(--bg-0);
+    border: 1px solid var(--line-bright); padding: 0.05em 0.4em;
+  }
+
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
+  #palette {
+    width: min(36rem, 90vw); padding: 0; border: 1px solid var(--line-bright);
+    background: var(--bg-1); color: var(--text-0);
+  }
+  #palette::backdrop { background: color-mix(in srgb, black 60%, transparent); }
+  .palette-form { padding: var(--sp-3); border-bottom: 1px solid var(--line); }
+  #palette-input {
+    width: 100%; font-family: var(--font-mono); font-size: var(--step-1); padding: var(--sp-2);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0);
+  }
+  #palette-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  #palette-results { list-style: none; margin: 0; padding: var(--sp-2); max-height: 20rem; overflow-y: auto; }
+  #palette-results li a {
+    display: grid; grid-template-columns: auto 1fr; gap: 0 var(--sp-3); padding: var(--sp-2) var(--sp-3);
+    text-decoration: none; color: var(--text-1);
+  }
+  #palette-results li.active a, #palette-results li a:hover { background: var(--bg-2); color: var(--text-0); }
+  .palette-kind { grid-row: span 2; font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent); letter-spacing: 0.06em; align-self: start; padding-top: 0.2em; }
+  .palette-title { color: var(--text-0); font-weight: 700; }
+  .palette-desc { grid-column: 2; color: var(--text-2); font-size: var(--step--1); }
+  .palette-empty { padding: var(--sp-3); color: var(--text-2); font-style: italic; }
+
+  .palette-hint {
+    margin: 0; padding: var(--sp-2) var(--sp-3); border-top: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); display: flex; gap: var(--sp-2);
+  }
+  .palette-hint kbd { background: var(--bg-0); border: 1px solid var(--line-bright); padding: 0 0.3em; }
+</style>
