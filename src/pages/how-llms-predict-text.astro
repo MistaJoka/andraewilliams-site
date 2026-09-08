@@ -159,6 +159,8 @@ import Sources from '../components/Sources.astro';
 </BaseLayout>
 
 <script>
+  import { scrambleText as decode, prefersReducedMotion } from '../lib/decode';
+
   const CORPUS = `The cat sat on the mat. The cat likes to nap in the sun. The dog ran across the yard.
   The dog likes to bark at the mailman. The cat and the dog are friends. The cat sat by the window
   and watched the birds. The dog sat by the door and waited for the mail. The sun was warm and the
@@ -272,29 +274,20 @@ import Sources from '../components/Sources.astro';
   input.addEventListener('input', updatePredictions);
   updatePredictions();
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let generateTimer: number | undefined;
 
   // Decode effect: a freshly-sampled word cycles through noise glyphs
   // before locking to its real value, like a terminal resolving a signal.
-  const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+=<>/\\';
-  const SCRAMBLE_FRAMES = 8;
-  const SCRAMBLE_FRAME_MS = 40;
+  // Core animation lives in src/lib/decode.ts; this page just owns the
+  // 'scramble' glow class around it.
   const WORD_PAUSE_MS = 100;
 
   function scrambleWord(span: HTMLElement, finalWord: string, onDone: () => void) {
-    let frame = 0;
-    const timer = window.setInterval(() => {
-      frame++;
-      if (frame > SCRAMBLE_FRAMES) {
-        clearInterval(timer);
-        span.textContent = finalWord;
-        span.classList.remove('scramble');
-        onDone();
-        return;
-      }
-      span.textContent = Array.from({ length: finalWord.length }, () => SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]).join('');
-    }, SCRAMBLE_FRAME_MS);
+    decode(span, finalWord, {
+      frames: 8,
+      frameMs: 40,
+      onDone: () => { span.classList.remove('scramble'); onDone(); },
+    });
   }
 
   document.getElementById('generate-btn')!.addEventListener('click', () => {
@@ -304,7 +297,7 @@ import Sources from '../components/Sources.astro';
     outEl.textContent = '';
     const steps = generateSteps(seed, 15);
 
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion()) {
       let last = '';
       for (const value of steps) last = value;
       outEl.textContent = last;

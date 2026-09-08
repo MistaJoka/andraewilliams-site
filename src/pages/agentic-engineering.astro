@@ -125,6 +125,8 @@ import Sources from '../components/Sources.astro';
 </BaseLayout>
 
 <script>
+  import { scrambleText as decode } from '../lib/decode';
+
   interface Package { id: string; weightKg: number; }
   interface Step { type: 'thought' | 'action' | 'observation' | 'final'; text: string; }
 
@@ -159,8 +161,6 @@ import Sources from '../components/Sources.astro';
     yield { type: 'final', text: `Checked all ${PACKAGES.length} packages. Heaviest: ${best!.id} at ${best!.weightKg} kg.` };
   }
 
-  const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+=<>/\\';
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const log = document.getElementById('trace-log')!;
   const runBtn = document.getElementById('run-btn') as HTMLButtonElement;
   let runTimer: number | undefined;
@@ -168,25 +168,6 @@ import Sources from '../components/Sources.astro';
   const LABELS: Record<Step['type'], string> = {
     thought: 'THOUGHT', action: 'ACTION', observation: 'OBSERVATION', final: 'FINAL',
   };
-
-  function scrambleInto(el: HTMLElement, finalText: string, frames = 6, frameMs = 30, onDone?: () => void) {
-    if (prefersReducedMotion) {
-      el.textContent = finalText;
-      onDone?.();
-      return;
-    }
-    let frame = 0;
-    const timer = window.setInterval(() => {
-      frame++;
-      if (frame > frames) {
-        clearInterval(timer);
-        el.textContent = finalText;
-        onDone?.();
-        return;
-      }
-      el.textContent = Array.from({ length: finalText.length }, () => SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]).join('');
-    }, frameMs);
-  }
 
   function run() {
     if (runTimer) { clearTimeout(runTimer); runTimer = undefined; }
@@ -209,7 +190,7 @@ import Sources from '../components/Sources.astro';
       log.scrollTop = log.scrollHeight;
 
       if (step.type === 'observation') {
-        scrambleInto(text, step.text, 6, 30, () => { runTimer = window.setTimeout(next, 220); });
+        decode(text, step.text, { onDone: () => { runTimer = window.setTimeout(next, 220); } });
       } else {
         text.textContent = step.text;
         runTimer = window.setTimeout(next, step.type === 'final' ? 0 : 350);

@@ -154,6 +154,8 @@ import Sources from '../components/Sources.astro';
 </BaseLayout>
 
 <script>
+  import { scrambleText as decode } from '../lib/decode';
+
   const input = document.getElementById('url-input') as HTMLInputElement;
   const domainEl = document.getElementById('dc-domain')!;
   const body = document.getElementById('check-body')!;
@@ -251,27 +253,12 @@ import Sources from '../components/Sources.astro';
   }
 
   // Decode effect: results resolve through noise glyphs before settling,
-  // same visual language as the AI lab and password-cracking page.
-  const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+=<>/\\';
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function scrambleText(el: HTMLElement, finalText: string, frames = 6, frameMs = 30) {
-    if (prefersReducedMotion || el.textContent === finalText) {
-      el.textContent = finalText;
-      return;
-    }
-    let frame = 0;
-    el.classList.add('decoding');
-    const timer = window.setInterval(() => {
-      frame++;
-      if (frame > frames) {
-        clearInterval(timer);
-        el.textContent = finalText;
-        el.classList.remove('decoding');
-        return;
-      }
-      el.textContent = Array.from({ length: finalText.length }, () => SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]).join('');
-    }, frameMs);
+  // same visual language as the AI lab and password-cracking page. Core
+  // animation lives in src/lib/decode.ts; this page just owns the
+  // 'decoding' glow class around it.
+  function scrambleText(el: HTMLElement, finalText: string) {
+    if (el.textContent !== finalText) el.classList.add('decoding');
+    decode(el, finalText, { onDone: () => el.classList.remove('decoding') });
   }
 
   function update() {
