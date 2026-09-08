@@ -8,7 +8,8 @@
     "build": "rm -rf node_modules/.astro .astro && astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "verify": "npm run build && npm run check"
+    "test": "vitest run",
+    "verify": "npm run build && npm run check && npm run test"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
