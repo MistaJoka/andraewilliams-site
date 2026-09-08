@@ -194,15 +194,37 @@ import Sources from '../components/Sources.astro';
     };
   }
 
-  function bitsHtml(ipInt: number, prefix: number): string {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let sweepTimer: number | undefined;
+
+  // Visualizes the AND-mask operation: a scanning cursor sweeps left to
+  // right across all 32 bits, lighting each one network- or host-colored
+  // as it passes -- the moment it crosses the prefix boundary is the
+  // entire point of this page, made visible instead of just stated.
+  function sweepBits(container: HTMLElement, ipInt: number, prefix: number) {
+    if (sweepTimer) { clearInterval(sweepTimer); sweepTimer = undefined; }
     const bin = (ipInt >>> 0).toString(2).padStart(32, '0');
-    let html = '';
+    container.innerHTML = '';
+    const spans: HTMLElement[] = [];
     for (let i = 0; i < 32; i++) {
-      if (i > 0 && i % 8 === 0) html += ' ';
-      const cls = i < prefix ? 'bit-net' : 'bit-host';
-      html += `<span class="${cls}">${bin[i]}</span>`;
+      if (i > 0 && i % 8 === 0) container.append(document.createTextNode(' '));
+      const span = document.createElement('span');
+      span.className = 'bit-pending';
+      span.textContent = bin[i];
+      container.append(span);
+      spans.push(span);
     }
-    return html;
+    if (prefersReducedMotion) {
+      spans.forEach((s, i) => { s.className = i < prefix ? 'bit-net' : 'bit-host'; });
+      return;
+    }
+    let i = 0;
+    sweepTimer = window.setInterval(() => {
+      if (i > 0) spans[i - 1].classList.remove('bit-sweeping');
+      if (i >= 32) { clearInterval(sweepTimer); sweepTimer = undefined; return; }
+      spans[i].className = `${i < prefix ? 'bit-net' : 'bit-host'} bit-sweeping`;
+      i++;
+    }, 18);
   }
 
   const input = document.getElementById('cidr-input') as HTMLInputElement;
@@ -224,14 +246,16 @@ import Sources from '../components/Sources.astro';
   function update() {
     const result = computeCidr(input.value);
     if (!result) {
+      if (sweepTimer) { clearInterval(sweepTimer); sweepTimer = undefined; }
       bitsDisplay.innerHTML = '<p class="bits-error">Not a valid IPv4 CIDR — try something like 192.168.1.10/24.</p>';
       body.innerHTML = '';
       return;
     }
     bitsDisplay.innerHTML = `
       <div class="bits-row"><span class="bits-label">Network bits (${result.prefix})</span><span class="bits-legend net">■</span> <span class="bits-legend host">■</span><span class="bits-label">Host bits (${32 - result.prefix})</span></div>
-      <div class="bits-value">${bitsHtml(result.ip, result.prefix)}</div>
+      <div class="bits-value"></div>
     `;
+    sweepBits(bitsDisplay.querySelector('.bits-value')!, result.ip, result.prefix);
     body.innerHTML = '';
     for (const [label, key] of ROWS) {
       const tr = document.createElement('tr');
@@ -309,8 +333,10 @@ import Sources from '../components/Sources.astro';
   .bits-legend.net { color: var(--accent); }
   .bits-legend.host { color: var(--text-2); }
   .bits-value { font-family: var(--font-mono); font-size: var(--step-0); letter-spacing: 0.05em; word-break: break-all; line-height: 1.8; }
-  .bits-value :global(.bit-net) { color: var(--accent); font-weight: 700; }
-  .bits-value :global(.bit-host) { color: var(--text-2); }
+  .bits-value :global(.bit-net) { color: var(--accent); font-weight: 700; transition: color 200ms; }
+  .bits-value :global(.bit-host) { color: var(--text-2); transition: color 200ms; }
+  .bits-value :global(.bit-pending) { color: var(--line-bright); }
+  .bits-value :global(.bit-sweeping) { text-shadow: 0 0 8px currentColor, 0 0 16px currentColor; }
   .bits-error { color: var(--status-broken); font-size: var(--step--1); margin: 0; }
 
   .table-scroll { margin-top: var(--sp-4); overflow-x: auto; }
