@@ -30,6 +30,9 @@ export const DOMAINS: Domain[] = [
     blurb: 'How the systems actually work under the hood — no hype, no magic.',
     topics: [
       { href: '/how-llms-predict-text/', title: 'How LLMs Predict Text', blurb: 'A real (tiny) word-prediction model, built live in your browser, so you can watch it guess.' },
+      { href: '/context-engineering/', title: 'Context Engineering', blurb: 'Prompt engineering was about wording. This is about what the model even gets to see — try the budget simulator.' },
+      { href: '/agentic-engineering/', title: 'Agentic Engineering', blurb: 'Why a single prompt became a loop. Watch a toy agent think, act, and observe in real time.' },
+      { href: '/ai-memory/', title: 'Memory', blurb: 'More context window isn’t memory. Watch a real salience-and-recall system decide what’s worth keeping.' },
     ],
   },
   {

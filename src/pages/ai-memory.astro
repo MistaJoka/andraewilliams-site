@@ -1,0 +1,267 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
+---
+<BaseLayout
+  title="Memory"
+  description="A bigger context window is not memory. Real memory is deciding what's worth keeping and finding it again later — watch a real (tiny) version of that decide, live."
+>
+  <p class="eyebrow"><a href="/ai/">← AI</a></p>
+  <h1>Memory</h1>
+
+  <Tldr>
+    A longer context window is not memory — it's just a bigger notebook
+    that still gets full. Real memory is two separate problems: deciding
+    <strong>what's worth keeping</strong> when you can't keep everything
+    (salience), and finding the right thing again later when it becomes
+    relevant (retrieval). A system that "remembers" is really just a
+    system that scores incoming information and searches its own past
+    notes — nothing more mystical than that.
+  </Tldr>
+
+  <Eli5>
+    You don't remember every word anyone's ever said to you — you'd never
+    fit it. Instead your brain does two things without you noticing:
+    <ul>
+      <li>it decides a few things are worth keeping (a friend's birthday, a promise you made) and lets the rest fade</li>
+      <li>later, when something reminds you of it, you dig the right memory back out</li>
+    </ul>
+    AI memory works the same way on purpose: score what's worth saving,
+    save a compressed version, and search it later when a new question
+    seems related. The lab below does exactly that, with real (simple)
+    scoring you can watch happen.
+  </Eli5>
+
+  <WhyItMatters>
+    <ul>
+      <li>Without deciding what to keep, a long-running assistant either forgets everything each session or drowns its context in irrelevant history.</li>
+      <li>Retrieval is what makes memory <em>useful</em> instead of just stored — a memory nobody can find again might as well not exist.</li>
+      <li>This is a genuinely active engineering problem, not a solved one — most of the interesting failures in AI memory come from getting salience or retrieval wrong, not from "not remembering enough."</li>
+    </ul>
+  </WhyItMatters>
+
+  <HowItWorks>
+    <p>The lab below runs a real (deliberately simple) two-stage pipeline:</p>
+    <ol>
+      <li><strong>Salience scoring</strong> — each new turn gets scored for how "worth remembering" it looks (keywords like "prefer" or "remember," presence of names or dates). Only turns crossing a threshold get written to long-term storage.</li>
+      <li><strong>Keyword retrieval</strong> — a later query gets compared word-by-word against everything in long-term storage, and the best overlapping match comes back.</li>
+    </ol>
+  </HowItWorks>
+
+  <section class="lab" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself</h2>
+    <p class="lab-note">Runs entirely in your browser. Nothing you type is sent anywhere.</p>
+
+    <label for="turn-input" class="pw-label">Add a turn to the conversation:</label>
+    <input id="turn-input" type="text" autocomplete="off" spellcheck="false" placeholder="type something, or try an example below" />
+    <div class="examples">
+      <button type="button" class="ex-btn" data-turn="hey what's the weather like today">Small talk</button>
+      <button type="button" class="ex-btn" data-turn="I prefer dark mode in every app I use">A preference</button>
+      <button type="button" class="ex-btn" data-turn="my birthday is on March 3rd">A date</button>
+      <button type="button" class="ex-btn" data-turn="I never want emails after 6pm, remember that">An instruction</button>
+      <button type="button" class="ex-btn" data-turn="I'm allergic to peanuts, please remember for restaurant recs">Something important</button>
+    </div>
+
+    <div class="memory-grid">
+      <div class="memory-col">
+        <h3 class="memory-title">Working memory <span class="memory-sub">(last 5 turns, verbatim)</span></h3>
+        <ul class="item-list" id="working-list"><li class="item-empty">Nothing yet — add a turn above.</li></ul>
+      </div>
+      <div class="memory-col">
+        <h3 class="memory-title">Long-term store <span class="memory-sub">(salience score ≥ 3)</span></h3>
+        <ul class="item-list" id="longterm-list"><li class="item-empty">Nothing saved yet.</li></ul>
+      </div>
+    </div>
+
+    <label for="recall-input" class="pw-label recall-label">Recall — ask about something you said earlier:</label>
+    <input id="recall-input" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. when should emails stop" />
+    <div class="recall-result" id="recall-result">—</div>
+  </section>
+
+  <FailureModes>
+    <ul>
+      <li><strong>"I prefer dark mode in every app I use" never gets saved above.</strong> Try it — it scores below the threshold. Real preference, missed anyway. Simple keyword heuristics genuinely miss real signal; this isn't a display bug, it's an honest limitation worth seeing happen.</li>
+      <li><strong>Ask "what food should I avoid" after saving the peanut allergy — it won't find it.</strong> Zero shared words between the query and the stored text. This exact failure is why real systems use semantic (embedding-based) search instead of keyword overlap — see Deep Dive.</li>
+      <li><strong>"More memory is always better."</strong> A memory system that saves everything is just a context window with extra steps. Stale, wrong, or outdated memories actively mislead — forgetting on purpose is a feature, not a gap.</li>
+    </ul>
+  </FailureModes>
+
+  <DeepDive>
+    <ul>
+      <li>
+        <strong>Semantic search fixes the keyword-overlap problem.</strong>
+        Real memory systems embed text into vectors that capture meaning,
+        not just literal words — so "what food should I avoid" and "I'm
+        allergic to peanuts" land near each other in vector space even
+        though they don't share a single word. The lab above uses literal
+        keyword overlap specifically so you can watch that exact failure
+        happen; production systems use embeddings to avoid it.
+      </li>
+      <li>
+        <strong>Working vs. long-term isn't just a size difference.</strong>
+        Working memory (the current context window) is complete but
+        temporary. Long-term memory is compressed but persistent — it has
+        to survive being written once and read back much later, possibly
+        by a completely different conversation.
+      </li>
+      <li>
+        <strong>Writing memory needs governance too.</strong> What
+        <em>shouldn't</em> be saved matters as much as what should —
+        stale facts need to expire, contradictions need resolving (which
+        birthday is right if two were mentioned?), and sensitive details
+        need a policy, not just a salience score.
+      </li>
+    </ul>
+  </DeepDive>
+
+  <WhatILearned>
+    Memory isn't "remember more" — it's "score what matters, store it
+    compressed, and search it back out on purpose." A system that can't do
+    the second half isn't remembering, it's just archiving.
+  </WhatILearned>
+
+  <Sources
+    sources={[
+      {
+        title: 'Retrieval-augmented generation — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Retrieval-augmented_generation',
+        note: 'The retrieval half of this page, in more depth — including the embedding-based search this toy deliberately skips.',
+      },
+      {
+        title: 'Long-term memory — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Long-term_memory',
+        note: "The human cognitive-science version of the same split this page's ELI5 is drawing on.",
+      },
+      {
+        title: 'Model Context Protocol',
+        url: 'https://modelcontextprotocol.io',
+        note: 'One real way persistent memory gets exposed to a model as a standard, structured resource.',
+      },
+    ]}
+  />
+</BaseLayout>
+
+<script>
+  interface MemoryEntry { text: string; score: number; }
+
+  const SALIENT_KEYWORDS = ['prefer', 'always', 'never', 'remember', 'favorite', 'hate', 'love', "i'm", 'i am', 'my name', 'birthday', 'deadline', 'allerg'];
+  const STOPWORDS = new Set(['i', 'a', 'an', 'the', 'is', 'my', 'to', 'of', 'and', 'in', 'on', 'for', 'it', 'this', 'that', "i'm", 'should']);
+  const SALIENCE_THRESHOLD = 3;
+  const WORKING_MEMORY_SIZE = 5;
+
+  function salience(text: string): number {
+    const lower = text.toLowerCase();
+    let score = 0;
+    for (const kw of SALIENT_KEYWORDS) if (lower.includes(kw)) score += 2;
+    if (/\d/.test(text)) score += 1;
+    const properNouns = (text.match(/\b[A-Z][a-z]+\b/g) ?? []).filter((w) => text.indexOf(w) !== 0).length;
+    score += Math.min(properNouns, 2);
+    return score;
+  }
+
+  function keywords(text: string): string[] {
+    return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter((w) => w && !STOPWORDS.has(w));
+  }
+
+  function retrieve(query: string, entries: MemoryEntry[]): MemoryEntry | null {
+    const qWords = new Set(keywords(query));
+    let best: { entry: MemoryEntry; overlap: number } | null = null;
+    for (const entry of entries) {
+      const overlap = keywords(entry.text).filter((w) => qWords.has(w)).length;
+      if (overlap > 0 && (!best || overlap > best.overlap)) best = { entry, overlap };
+    }
+    return best?.entry ?? null;
+  }
+
+  const working: string[] = [];
+  const longTerm: MemoryEntry[] = [];
+
+  const turnInput = document.getElementById('turn-input') as HTMLInputElement;
+  const workingList = document.getElementById('working-list')!;
+  const longtermList = document.getElementById('longterm-list')!;
+  const recallInput = document.getElementById('recall-input') as HTMLInputElement;
+  const recallResult = document.getElementById('recall-result')!;
+
+  function renderLists() {
+    workingList.innerHTML = working.length
+      ? working.slice(-WORKING_MEMORY_SIZE).map((t) => `<li>${escapeHtml(t)}</li>`).join('')
+      : '<li class="item-empty">Nothing yet — add a turn above.</li>';
+    longtermList.innerHTML = longTerm.length
+      ? longTerm.map((e) => `<li><span class="score-badge">${e.score}</span> ${escapeHtml(e.text)}</li>`).join('')
+      : '<li class="item-empty">Nothing saved yet.</li>';
+  }
+
+  function escapeHtml(s: string): string {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function addTurn(text: string) {
+    if (!text.trim()) return;
+    working.push(text);
+    const score = salience(text);
+    if (score >= SALIENCE_THRESHOLD) longTerm.push({ text, score });
+    renderLists();
+    updateRecall();
+  }
+
+  function updateRecall() {
+    const query = recallInput.value.trim();
+    if (!query) { recallResult.textContent = '—'; return; }
+    const match = retrieve(query, longTerm);
+    recallResult.textContent = match ? `"${match.text}"` : 'No match in long-term store.';
+  }
+
+  document.getElementById('turn-input')!.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') {
+      addTurn(turnInput.value);
+      turnInput.value = '';
+    }
+  });
+  document.querySelectorAll<HTMLButtonElement>('.ex-btn').forEach((btn) => {
+    btn.addEventListener('click', () => addTurn(btn.dataset.turn ?? ''));
+  });
+  recallInput.addEventListener('input', updateRecall);
+
+  renderLists();
+</script>
+
+<style>
+  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
+  .pw-label { display: block; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--text-1); margin-bottom: var(--sp-2); }
+  .recall-label { margin-top: var(--sp-5); }
+
+  #turn-input, #recall-input {
+    width: 100%; font-family: var(--font-mono); font-size: var(--step-0); padding: var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0);
+  }
+  #turn-input:focus, #recall-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .examples { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-3) 0; }
+  .ex-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  }
+  .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
+
+  .memory-grid { margin-top: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+  @media (max-width: 40rem) { .memory-grid { grid-template-columns: 1fr; } }
+  .memory-col { background: var(--bg-0); border: 1px solid var(--line-bright); padding: var(--sp-3); }
+  .memory-title { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em; margin: 0 0 var(--sp-2); color: var(--text-0); }
+  .memory-sub { color: var(--text-2); font-weight: 400; text-transform: none; letter-spacing: normal; }
+  .item-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-1); }
+  .item-empty { color: var(--text-2); font-style: italic; }
+  .score-badge {
+    display: inline-block; min-width: 1.4em; text-align: center; margin-right: var(--sp-2);
+    background: var(--accent); color: var(--bg-0); font-weight: 700; padding: 0 0.3em;
+  }
+
+  .recall-result {
+    margin-top: var(--sp-2); padding: var(--sp-3); background: var(--bg-0); border: 1px solid var(--line-bright);
+    font-family: var(--font-mono); font-size: var(--step--1); color: var(--accent); min-height: 1.6em;
+  }
+</style>

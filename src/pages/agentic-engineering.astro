@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
+---
+<BaseLayout
+  title="Agentic Engineering"
+  description="A single prompt gets one shot at an answer. An agent loops — think, act, observe, repeat — until the task is actually done. Watch a real toy agent do exactly that."
+>
+  <p class="eyebrow"><a href="/ai/">← AI</a></p>
+  <h1>Agentic Engineering</h1>
+
+  <Tldr>
+    A plain prompt gets <strong>one shot</strong>: ask, get an answer, done
+    — right or wrong. An agent instead runs a <strong>loop</strong>: think
+    about what to do next, take an action (usually calling a tool), observe
+    what came back, and repeat until the task is actually finished. Most
+    real tasks can't be answered in one shot — they need information the
+    model doesn't have yet, which means it has to go get it, one step at a
+    time, adjusting its plan as it learns more.
+  </Tldr>
+
+  <Eli5>
+    A single prompt is like asking someone to guess your weight through a
+    closed door — one shot, no follow-up, no way to check. An agent is like
+    letting them actually open the door, look at the scale, and tell you.
+    If the answer depends on more than one thing — say, whoever's
+    <em>heaviest</em> out of five people — they need to check each person,
+    remember what they've found so far, and keep going until everyone's
+    checked. That checking-one-thing-at-a-time-and-remembering loop is the
+    entire idea behind an agent. Nothing mystical — just a plan, one real
+    action, one real result, repeated until done.
+  </Eli5>
+
+  <WhyItMatters>
+    <ul>
+      <li>Most useful tasks need information gathered <strong>during</strong> the task, not known up front — a single prompt can't do that.</li>
+      <li>This is the actual mechanical difference between "an AI that answers questions" and "an AI that gets things done."</li>
+      <li>Every real agent framework — regardless of vendor — is built on this same think/act/observe shape underneath.</li>
+    </ul>
+  </WhyItMatters>
+
+  <HowItWorks>
+    <p>Every iteration of the loop has the same three parts:</p>
+    <ol>
+      <li><strong>Thought</strong> — what should happen next, given everything learned so far.</li>
+      <li><strong>Action</strong> — a real tool call: a function with real inputs and a real return value, not a guess.</li>
+      <li><strong>Observation</strong> — the actual result, which becomes part of what the next Thought reasons about.</li>
+    </ol>
+    <p>The loop ends when the task is done, or when a step budget runs out — see the lab and Failure Modes below for why that budget matters.</p>
+  </HowItWorks>
+
+  <section class="lab" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself: watch the loop run</h2>
+    <p class="lab-note">
+      A real toy agent, not a canned animation: it's given five packages
+      and a <code>checkWeight(id)</code> tool that returns exactly one
+      package's weight per call — it genuinely doesn't know the heaviest
+      one until it's checked all five.
+    </p>
+    <div class="generate-row">
+      <button type="button" id="run-btn" class="ex-btn">Run agent →</button>
+    </div>
+    <div class="trace-log" id="trace-log" aria-live="polite"></div>
+  </section>
+
+  <FailureModes>
+    <ul>
+      <li><strong>"More loop iterations always means a better answer."</strong> An agent without a step budget can loop forever on a task that isn't actually solvable the way it's framed — a runaway loop is a real, common failure mode, not a hypothetical one.</li>
+      <li><strong>"The agent understands the task."</strong> It's still predicting the next best step from patterns, one step at a time — see How LLMs Predict Text. It can plan badly, misjudge when it's done, or loop on a mistaken assumption with total confidence.</li>
+      <li><strong>"Agents replace normal software."</strong> The tools an agent calls are usually just ordinary, deterministic code — the loop is what's new, not the actions inside it.</li>
+    </ul>
+  </FailureModes>
+
+  <DeepDive>
+    <ul>
+      <li>
+        <strong>This pattern has a name: ReAct</strong> (Reason + Act) —
+        interleaving reasoning steps with real tool calls, rather than
+        planning everything up front or acting with no reasoning at all.
+        It's the shape almost every modern agent framework builds on.
+      </li>
+      <li>
+        <strong>Termination conditions matter as much as the loop itself.</strong>
+        A real agent needs an explicit way to decide "done": a success
+        signal, a maximum step count, or a budget on tool calls or tokens
+        — without one, a confused agent just keeps looping.
+      </li>
+      <li>
+        <strong>Tool schemas are the actual interface.</strong> The model
+        doesn't call your code directly — it's given a description of what
+        tools exist and what arguments they take (this is exactly what
+        the Model Context Protocol standardizes), and it emits a
+        structured request that your system executes and feeds back in.
+      </li>
+    </ul>
+  </DeepDive>
+
+  <WhatILearned>
+    An agent isn't a smarter model — it's the same prediction mechanism
+    wrapped in a loop with real tools and a stopping condition. The
+    intelligence people notice is mostly the loop doing its job: gather
+    information, reassess, and try again, exactly the way a person would.
+  </WhatILearned>
+
+  <Sources
+    sources={[
+      {
+        title: 'ReAct: Synergizing Reasoning and Acting in Language Models',
+        url: 'https://arxiv.org/abs/2210.03629',
+        note: 'The paper that named and formalized the think/act/observe loop this whole page is about.',
+      },
+      {
+        title: 'Model Context Protocol',
+        url: 'https://modelcontextprotocol.io',
+        note: 'The open standard for how tool schemas actually get described to a model.',
+      },
+      {
+        title: 'Intelligent agent — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Intelligent_agent',
+        note: 'The broader concept this idea predates LLMs by decades — this is not a new idea in AI, just a newly practical one.',
+      },
+    ]}
+  />
+</BaseLayout>
+
+<script>
+  interface Package { id: string; weightKg: number; }
+  interface Step { type: 'thought' | 'action' | 'observation' | 'final'; text: string; }
+
+  const PACKAGES: Package[] = [
+    { id: 'A', weightKg: 12 },
+    { id: 'B', weightKg: 47 },
+    { id: 'C', weightKg: 8 },
+    { id: 'D', weightKg: 33 },
+    { id: 'E', weightKg: 41 },
+  ];
+
+  // The "tool": returns exactly one package's weight per call, same as a
+  // real API the agent can't see all the results of at once.
+  function checkWeight(id: string): number | null {
+    return PACKAGES.find((p) => p.id === id)?.weightKg ?? null;
+  }
+
+  function* runAgent(): Generator<Step> {
+    yield { type: 'thought', text: `Task: find the heaviest of ${PACKAGES.length} packages. I can only check one at a time.` };
+    let best: { id: string; weightKg: number } | null = null;
+    for (const pkg of PACKAGES) {
+      yield { type: 'action', text: `checkWeight("${pkg.id}")` };
+      const weight = checkWeight(pkg.id)!;
+      yield { type: 'observation', text: `${weight} kg` };
+      if (!best || weight > best.weightKg) {
+        best = { id: pkg.id, weightKg: weight };
+        yield { type: 'thought', text: `New heaviest so far: ${pkg.id} at ${weight} kg.` };
+      } else {
+        yield { type: 'thought', text: `${pkg.id} (${weight} kg) is lighter than current best (${best.id}, ${best.weightKg} kg). Continuing.` };
+      }
+    }
+    yield { type: 'final', text: `Checked all ${PACKAGES.length} packages. Heaviest: ${best!.id} at ${best!.weightKg} kg.` };
+  }
+
+  const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+=<>/\\';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const log = document.getElementById('trace-log')!;
+  const runBtn = document.getElementById('run-btn') as HTMLButtonElement;
+  let runTimer: number | undefined;
+
+  const LABELS: Record<Step['type'], string> = {
+    thought: 'THOUGHT', action: 'ACTION', observation: 'OBSERVATION', final: 'FINAL',
+  };
+
+  function scrambleInto(el: HTMLElement, finalText: string, frames = 6, frameMs = 30, onDone?: () => void) {
+    if (prefersReducedMotion) {
+      el.textContent = finalText;
+      onDone?.();
+      return;
+    }
+    let frame = 0;
+    const timer = window.setInterval(() => {
+      frame++;
+      if (frame > frames) {
+        clearInterval(timer);
+        el.textContent = finalText;
+        onDone?.();
+        return;
+      }
+      el.textContent = Array.from({ length: finalText.length }, () => SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]).join('');
+    }, frameMs);
+  }
+
+  function run() {
+    if (runTimer) { clearTimeout(runTimer); runTimer = undefined; }
+    log.innerHTML = '';
+    runBtn.disabled = true;
+    const steps = runAgent();
+
+    const next = () => {
+      const { value: step, done } = steps.next();
+      if (done) { runBtn.disabled = false; return; }
+      const row = document.createElement('div');
+      row.className = `trace-row trace-${step.type}`;
+      const label = document.createElement('span');
+      label.className = 'trace-label';
+      label.textContent = LABELS[step.type];
+      const text = document.createElement('span');
+      text.className = 'trace-text';
+      row.append(label, text);
+      log.append(row);
+      log.scrollTop = log.scrollHeight;
+
+      if (step.type === 'observation') {
+        scrambleInto(text, step.text, 6, 30, () => { runTimer = window.setTimeout(next, 220); });
+      } else {
+        text.textContent = step.text;
+        runTimer = window.setTimeout(next, step.type === 'final' ? 0 : 350);
+      }
+    };
+    next();
+  }
+
+  runBtn.addEventListener('click', run);
+</script>
+
+<style>
+  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
+  .generate-row { margin-bottom: var(--sp-4); }
+  .ex-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  }
+  .ex-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text-0); }
+  .ex-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .trace-log {
+    min-height: 8rem; max-height: 22rem; overflow-y: auto; padding: var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright);
+    font-family: var(--font-mono); font-size: var(--step--1); display: grid; gap: var(--sp-2);
+  }
+  .trace-row { display: flex; gap: var(--sp-3); }
+  .trace-label { flex-shrink: 0; width: 6.5rem; letter-spacing: 0.06em; font-weight: 700; }
+  .trace-thought .trace-label { color: var(--text-2); }
+  .trace-thought .trace-text { color: var(--text-1); }
+  .trace-action .trace-label { color: var(--accent); }
+  .trace-action .trace-text { color: var(--text-0); }
+  .trace-observation .trace-label { color: var(--accent); }
+  .trace-observation .trace-text { color: var(--accent); font-weight: 700; text-shadow: 0 0 6px var(--accent), 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent); }
+  .trace-final .trace-label { color: var(--status-working); }
+  .trace-final .trace-text { color: var(--status-working); font-weight: 700; }
+</style>

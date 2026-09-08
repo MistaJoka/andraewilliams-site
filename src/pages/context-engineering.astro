@@ -1,0 +1,229 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
+---
+<BaseLayout
+  title="Context Engineering"
+  description="Prompt engineering was about wording. Context engineering is about what the model even gets to see — and it decides whether a system works long before wording does."
+>
+  <p class="eyebrow"><a href="/ai/">← AI</a></p>
+  <h1>Context Engineering</h1>
+
+  <Tldr>
+    A model can only reason about what's actually in its context window —
+    everything else might as well not exist. Prompt engineering asked
+    "how do I word this?" Context engineering asks a bigger question:
+    <strong>what actually goes in the window, and what gets left out?</strong>
+    Every context window has a token budget, and every piece of context —
+    system prompt, tools, memory, retrieved docs, conversation history —
+    competes for a slot in it. Choosing badly wastes the budget on low-value
+    filler and starves the model of what it actually needed to see.
+  </Tldr>
+
+  <Eli5>
+    Imagine packing one carry-on bag for a trip, and everything you own is
+    begging to come with you. You can't fit it all, so you have two options:
+    <ul>
+      <li>pack in whatever order things are lying around, and stop packing the second something doesn't fit</li>
+      <li>decide what actually matters for this trip, and pack the most useful things first</li>
+    </ul>
+    The first approach means a lucky-placed bulky item can block everything
+    packed after it — you end up with half a bag of stuff you barely
+    needed. The second gets you a full bag of things you'll actually use.
+    Context engineering is packing the bag on purpose instead of by luck.
+  </Eli5>
+
+  <WhyItMatters>
+    <ul>
+      <li>Every context window has a hard token limit — there's no such thing as "just include everything."</li>
+      <li>An agent that naively appends its entire conversation history can burn its whole budget on stale small-talk before it ever gets to the document it actually needs to read.</li>
+      <li>This is why two systems using the <strong>same model</strong> can perform completely differently — the model didn't get worse, its context got worse.</li>
+    </ul>
+  </WhyItMatters>
+
+  <HowItWorks>
+    <p>Two decisions define a context-engineering strategy:</p>
+    <ol>
+      <li><strong>What competes for the budget</strong> — system prompt, tool schemas, memory, retrieved documents, conversation history.</li>
+      <li><strong>How ties get broken when it doesn't all fit</strong> — by relevance, recency, an explicit priority order, or (the naive default) just by whatever order things happened to be assembled in.</li>
+    </ol>
+    <p>The lab below runs both strategies against the same eight candidate context pieces and the same budget, side by side.</p>
+  </HowItWorks>
+
+  <section class="lab" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself: the same budget, two strategies</h2>
+    <p class="lab-note">Runs entirely in your browser on a fixed, honest example — nothing here calls a real model.</p>
+
+    <label for="budget-slider" class="pw-label">Token budget: <span id="budget-value">4000</span></label>
+    <input id="budget-slider" type="range" min="1500" max="12000" step="250" value="4000" />
+
+    <div class="strategy-grid">
+      <div class="strategy-col">
+        <h3 class="strategy-title risk-crit">Naive (assembly order)</h3>
+        <p class="strategy-used" id="naive-used">— tokens used</p>
+        <ul class="item-list" id="naive-list"></ul>
+      </div>
+      <div class="strategy-col">
+        <h3 class="strategy-title risk-ok">Engineered (by relevance)</h3>
+        <p class="strategy-used" id="eng-used">— tokens used</p>
+        <ul class="item-list" id="eng-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <FailureModes>
+    <ul>
+      <li><strong>"Just raise the context window size."</strong> A bigger window doesn't fix a bad packing strategy — it just delays when the problem shows up. The lab above uses the same broken naive strategy at every budget size.</li>
+      <li><strong>"More context is always better."</strong> Irrelevant context doesn't just waste budget — it can actively distract the model from what matters, the same way a cluttered desk makes the one important paper harder to find.</li>
+      <li><strong>"Retrieval solves this automatically."</strong> Retrieval decides <em>what's available</em> to include. Context engineering still has to decide what actually earns a spot once everything's competing for the same budget.</li>
+    </ul>
+  </FailureModes>
+
+  <DeepDive>
+    <ul>
+      <li>
+        <strong>Prompt caching rewards a stable prefix.</strong> Several
+        model APIs charge less (and respond faster) for context that stays
+        identical between calls. That means a good context-engineering
+        strategy also orders context by stability — put things that never
+        change (system prompt, tool schemas) first, and things that change
+        every turn (the latest message) last.
+      </li>
+      <li>
+        <strong>Structured context beats one long blob.</strong> Real
+        systems don't just concatenate strings — they separate context by
+        role and type (system instructions, tool definitions, retrieved
+        documents, conversation turns) so the model can weight each kind
+        appropriately instead of treating everything as equally-important prose.
+      </li>
+      <li>
+        <strong>The strategy only matters when context is scarce.</strong>
+        Slide the budget above all the way up — naive and engineered
+        converge, because when everything fits, order stops mattering. For
+        a real agent working a long task, it's almost never that generous.
+      </li>
+    </ul>
+  </DeepDive>
+
+  <WhatILearned>
+    A context window isn't a bottomless bag — it's a budget, and something
+    always loses when it's spent badly. Before asking "how do I word this
+    prompt," ask "what's actually earning a place in the context, and what
+    got in by accident."
+  </WhatILearned>
+
+  <Sources
+    sources={[
+      {
+        title: 'Model Context Protocol',
+        url: 'https://modelcontextprotocol.io',
+        note: 'The open standard for how tools, data, and context get handed to a model — the plumbing underneath this whole topic.',
+      },
+      {
+        title: 'Retrieval-augmented generation — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Retrieval-augmented_generation',
+        note: 'How systems decide what to fetch into context in the first place, before packing decisions even start.',
+      },
+      {
+        title: 'Prompt engineering — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Prompt_engineering',
+        note: 'The older, narrower discipline this one grew out of.',
+      },
+    ]}
+  />
+</BaseLayout>
+
+<script>
+  interface ContextItem { id: string; label: string; tokens: number; relevance: number; }
+
+  // Order here is the order a naive "just append everything" assembly would
+  // use in practice: system prompt first, then "the conversation so far"
+  // (often huge), then whatever else was lying around.
+  const CONTEXT_ITEMS: ContextItem[] = [
+    { id: 'system', label: 'System prompt (identity + rules)', tokens: 400, relevance: 10 },
+    { id: 'old-history', label: 'Full conversation history (50 turns)', tokens: 8000, relevance: 3 },
+    { id: 'boilerplate', label: 'Repeated boilerplate instructions', tokens: 300, relevance: 2 },
+    { id: 'tools', label: 'Tool schemas (available actions)', tokens: 600, relevance: 9 },
+    { id: 'retrieved', label: 'Retrieved docs (relevant to this query)', tokens: 1200, relevance: 9 },
+    { id: 'memory', label: 'Long-term memory (user preferences)', tokens: 250, relevance: 8 },
+    { id: 'recent', label: 'Last 3 conversation turns', tokens: 500, relevance: 7 },
+    { id: 'unrelated', label: "A retrieved doc that turned out irrelevant", tokens: 900, relevance: 2 },
+  ];
+
+  function naiveFill(budget: number) {
+    let used = 0;
+    const included: ContextItem[] = [];
+    for (const item of CONTEXT_ITEMS) {
+      if (used + item.tokens > budget) break; // truncate: stop entirely at the first thing that doesn't fit
+      included.push(item);
+      used += item.tokens;
+    }
+    return { included, used };
+  }
+
+  function engineeredFill(budget: number) {
+    const sorted = [...CONTEXT_ITEMS].sort((a, b) => b.relevance - a.relevance);
+    let used = 0;
+    const included: ContextItem[] = [];
+    for (const item of sorted) {
+      if (used + item.tokens > budget) continue; // skip what doesn't fit, keep looking for smaller valuable items
+      included.push(item);
+      used += item.tokens;
+    }
+    return { included, used };
+  }
+
+  const slider = document.getElementById('budget-slider') as HTMLInputElement;
+  const budgetValue = document.getElementById('budget-value')!;
+  const naiveUsed = document.getElementById('naive-used')!;
+  const engUsed = document.getElementById('eng-used')!;
+  const naiveList = document.getElementById('naive-list')!;
+  const engList = document.getElementById('eng-list')!;
+
+  function renderList(el: HTMLElement, included: ContextItem[]) {
+    el.innerHTML = '';
+    const includedIds = new Set(included.map((i) => i.id));
+    for (const item of CONTEXT_ITEMS) {
+      const li = document.createElement('li');
+      li.className = includedIds.has(item.id) ? 'item-in' : 'item-out';
+      li.textContent = `${includedIds.has(item.id) ? '✓' : '✕'} ${item.label} (${item.tokens.toLocaleString()} tok)`;
+      el.append(li);
+    }
+  }
+
+  function update() {
+    const budget = Number(slider.value);
+    budgetValue.textContent = budget.toLocaleString();
+    const naive = naiveFill(budget);
+    const eng = engineeredFill(budget);
+    naiveUsed.textContent = `${naive.used.toLocaleString()} / ${budget.toLocaleString()} tokens used`;
+    engUsed.textContent = `${eng.used.toLocaleString()} / ${budget.toLocaleString()} tokens used`;
+    renderList(naiveList, naive.included);
+    renderList(engList, eng.included);
+  }
+
+  slider.addEventListener('input', update);
+  update();
+</script>
+
+<style>
+  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
+
+  .pw-label { display: block; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--text-1); margin-bottom: var(--sp-2); }
+  #budget-slider { width: 100%; accent-color: var(--accent); }
+
+  .strategy-grid { margin-top: var(--sp-5); display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+  @media (max-width: 40rem) { .strategy-grid { grid-template-columns: 1fr; } }
+  .strategy-col { background: var(--bg-0); border: 1px solid var(--line-bright); padding: var(--sp-3); }
+  .strategy-title { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 var(--sp-2); }
+  .strategy-title.risk-crit { color: var(--status-broken); }
+  .strategy-title.risk-ok { color: var(--status-working); }
+  .strategy-used { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); margin: 0 0 var(--sp-3); }
+  .item-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-1); font-family: var(--font-mono); font-size: var(--step--1); }
+  .item-list li { padding: var(--sp-1) 0; }
+  .item-in { color: var(--text-0); }
+  .item-out { color: var(--text-2); text-decoration: line-through; opacity: 0.6; }
+</style>
