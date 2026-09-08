@@ -277,10 +277,33 @@ import Sources from '../components/Sources.astro';
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let generateTimer: number | undefined;
 
+  // Decode effect: a freshly-sampled word cycles through noise glyphs
+  // before locking to its real value, like a terminal resolving a signal.
+  const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+=<>/\\';
+  const SCRAMBLE_FRAMES = 8;
+  const SCRAMBLE_FRAME_MS = 40;
+  const WORD_PAUSE_MS = 100;
+
+  function scrambleWord(span: HTMLElement, finalWord: string, onDone: () => void) {
+    let frame = 0;
+    const timer = window.setInterval(() => {
+      frame++;
+      if (frame > SCRAMBLE_FRAMES) {
+        clearInterval(timer);
+        span.textContent = finalWord;
+        span.classList.remove('scramble');
+        onDone();
+        return;
+      }
+      span.textContent = Array.from({ length: finalWord.length }, () => SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]).join('');
+    }, SCRAMBLE_FRAME_MS);
+  }
+
   document.getElementById('generate-btn')!.addEventListener('click', () => {
-    if (generateTimer) { clearInterval(generateTimer); generateTimer = undefined; }
+    if (generateTimer) { clearTimeout(generateTimer); generateTimer = undefined; }
     const seed = input.value.trim() || 'the cat';
     const outEl = document.getElementById('generated-output')!;
+    outEl.textContent = '';
     const steps = generateSteps(seed, 15);
 
     if (prefersReducedMotion) {
@@ -291,16 +314,22 @@ import Sources from '../components/Sources.astro';
     }
 
     const first = steps.next();
-    if (!first.done) outEl.textContent = first.value;
-    generateTimer = window.setInterval(() => {
+    if (first.done) return;
+    outEl.textContent = first.value; // the seed itself, shown plainly
+
+    const revealNext = () => {
       const { value, done } = steps.next();
-      if (done) {
-        clearInterval(generateTimer);
-        generateTimer = undefined;
-        return;
-      }
-      outEl.textContent = value;
-    }, 180);
+      if (done) return;
+      const newWord = value.split(' ').pop()!;
+      outEl.append(' ');
+      const span = document.createElement('span');
+      span.className = 'scramble';
+      outEl.append(span);
+      scrambleWord(span, newWord, () => {
+        generateTimer = window.setTimeout(revealNext, WORD_PAUSE_MS);
+      });
+    };
+    generateTimer = window.setTimeout(revealNext, WORD_PAUSE_MS);
   });
 
   // Depth toggle: same shared key as every other topic page, so a
@@ -364,11 +393,24 @@ import Sources from '../components/Sources.astro';
   .predict-table tr:last-child td { border-bottom: none; }
 
   .predict-bar-cell { display: flex; align-items: center; gap: var(--sp-3); min-width: 9rem; }
-  .bar-track { flex: 1; height: 0.8em; background: var(--bg-0); border: 1px solid var(--line); overflow: hidden; }
-  .bar-fill { height: 100%; background: var(--accent); transition: width 400ms ease-out; }
-  .predict-pct { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  .bar-track { flex: 1; height: 0.8em; background: var(--bg-0); border: 1px solid var(--line-bright); overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%; background: var(--accent);
+    box-shadow: 0 0 6px var(--accent), 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent);
+    transition: width 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative; overflow: hidden;
+  }
+  /* A scan band sweeping across every filled bar — reads as live telemetry, not a static gauge. */
+  .bar-fill::after {
+    content: ''; position: absolute; inset: 0; width: 200%;
+    background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--bg-0) 60%, transparent) 50%, transparent 100%);
+    animation: scan 1.6s linear infinite;
+  }
+  @keyframes scan { from { transform: translateX(-50%); } to { transform: translateX(0%); } }
+  .predict-pct { color: var(--accent); font-weight: 700; white-space: nowrap; text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 60%, transparent); }
   @media (prefers-reduced-motion: reduce) {
     .bar-fill { transition: none; }
+    .bar-fill::after { animation: none; }
   }
 
   .generate-row { margin-top: var(--sp-4); }
@@ -377,5 +419,6 @@ import Sources from '../components/Sources.astro';
     background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
   }
   .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
-  .generated-output { margin-top: var(--sp-3); font-family: var(--font-mono); color: var(--text-0); min-height: 1.6em; }
+  .generated-output { margin-top: var(--sp-3); font-family: var(--font-mono); color: var(--text-0); min-height: 1.6em; letter-spacing: 0.02em; }
+  .generated-output :global(.scramble) { color: var(--accent); text-shadow: 0 0 6px var(--accent), 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent); }
 </style>
