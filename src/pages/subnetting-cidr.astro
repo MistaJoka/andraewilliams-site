@@ -10,50 +10,51 @@ import Sources from '../components/Sources.astro';
   <p class="eyebrow"><a href="/networking/">← Networking</a></p>
   <h1>Subnetting &amp; CIDR</h1>
 
-  <div class="depth-toggle" role="group" aria-label="Reading depth">
-    <button type="button" class="depth-btn" data-level="0" aria-pressed="true">ELI5</button>
-    <button type="button" class="depth-btn" data-level="1">Beginner</button>
-    <button type="button" class="depth-btn" data-level="2">Intermediate</button>
-    <button type="button" class="depth-btn" data-level="3">Deep Dive</button>
-  </div>
-
   <Tldr>
-    An IP address like <code>192.168.1.10/24</code> is really two things
-    glued together: a <strong>network</strong> part and a <strong>host</strong>
-    part. The <code>/24</code> just says where the split happens. Every
-    other number — how many devices fit, what the valid range is — falls
-    out of that one split.
+    An IP address like <code>192.168.1.10/24</code> is really two numbers
+    glued into one: a <strong>network</strong> part and a <strong>host</strong>
+    part. The <code>/24</code> says exactly where that split happens — the
+    first 24 bits are "network," the remaining 8 are "host." Once you know
+    that single split point, everything else — how many devices fit,
+    what the valid address range is, where one network ends and the next
+    begins — is just arithmetic on those two numbers, not something to
+    memorize per prefix length.
   </Tldr>
 
   <Eli5>
-    Think of a street address: "123 Main Street, Apartment 4B." The street
-    finds the building. The apartment number finds you inside it. An IP
-    address works the same way — the network part finds the building, the
-    host part finds the device inside it. The <code>/24</code> just tells
-    you where "street" ends and "apartment" begins.
+    A street address is really two pieces of information stacked
+    together: "123 Main Street" finds the building, "Apartment 4B" finds
+    you inside it. You need both, but they answer completely different
+    questions — which building, and which unit. An IP address works the
+    same way:
+    <ul>
+      <li>the <strong>network</strong> part is the building — shared by every device on the same network</li>
+      <li>the <strong>host</strong> part is the apartment number — it picks out one specific device inside that network</li>
+      <li>the <code>/24</code> is just the line that says "the street name ends here, the apartment number starts here"</li>
+    </ul>
+    Move that line — change the <code>/</code>number — and you change how
+    many "apartments" fit in the "building." A shorter street name (like
+    <code>/8</code>) leaves more digits for apartment numbers, meaning way
+    more devices fit.
   </Eli5>
 
-  <div data-min-level="1" hidden>
-    <WhyItMatters>
-      <ul>
-        <li>Every cloud console (AWS, GCP, Azure) asks you to pick a CIDR block before it'll create a network for you.</li>
-        <li>"Why can't these two devices talk to each other" is very often a subnet mismatch, not a cable or a firewall.</li>
-        <li>Firewall rules, VPNs, and VLANs are all written in terms of CIDR ranges — this is the alphabet the rest of networking is written in.</li>
-      </ul>
-    </WhyItMatters>
-  </div>
+  <WhyItMatters>
+    <ul>
+      <li>Every cloud console (AWS, GCP, Azure) asks you to pick a CIDR block before it'll create a network for you.</li>
+      <li>"Why can't these two devices talk to each other" is very often a subnet mismatch, not a cable or a firewall.</li>
+      <li>Firewall rules, VPNs, and VLANs are all written in terms of CIDR ranges — this is the alphabet the rest of networking is written in.</li>
+    </ul>
+  </WhyItMatters>
 
-  <div data-min-level="2" hidden>
-    <HowItWorks>
-      <p>Everything below comes from three steps, done in binary:</p>
-      <ol>
-        <li>Turn the IP into 32 bits.</li>
-        <li>The <code>/n</code> says the first <code>n</code> bits are the network — apply that as a mask (AND) to get the <strong>network address</strong>.</li>
-        <li>Flip the mask and OR it with the network address to get the <strong>broadcast address</strong> — the top of the range.</li>
-      </ol>
-      <p>Everything else — usable range, total addresses, host count — is arithmetic on those two numbers.</p>
-    </HowItWorks>
-  </div>
+  <HowItWorks>
+    <p>Everything below comes from three steps, done in binary:</p>
+    <ol>
+      <li>Turn the IP into 32 bits.</li>
+      <li>The <code>/n</code> says the first <code>n</code> bits are the network — apply that as a mask (AND) to get the <strong>network address</strong>.</li>
+      <li>Flip the mask and OR it with the network address to get the <strong>broadcast address</strong> — the top of the range.</li>
+    </ol>
+    <p>Everything else — usable range, total addresses, host count — is arithmetic on those two numbers.</p>
+  </HowItWorks>
 
   <section class="lab" aria-labelledby="lab-heading">
     <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself</h2>
@@ -78,44 +79,40 @@ import Sources from '../components/Sources.astro';
     </div>
   </section>
 
-  <div data-min-level="1" hidden>
-    <FailureModes>
-      <ul>
-        <li><strong>"/24 means 24 hosts."</strong> It means 24 network bits — that leaves 8 host bits, which is 254 usable addresses, not 24.</li>
-        <li><strong>"A smaller number means a smaller network."</strong> Backwards. <code>/8</code> is enormous (16 million+ addresses); <code>/30</code> is tiny (4 addresses).</li>
-        <li><strong>"Every subnet loses 2 addresses to network/broadcast."</strong> Only when the prefix is 30 or smaller. <code>/31</code> and <code>/32</code> reserve nothing — see the point-to-point example above.</li>
-      </ul>
-    </FailureModes>
-  </div>
+  <FailureModes>
+    <ul>
+      <li><strong>"/24 means 24 hosts."</strong> It means 24 network bits — that leaves 8 host bits, which is 254 usable addresses, not 24.</li>
+      <li><strong>"A smaller number means a smaller network."</strong> Backwards. <code>/8</code> is enormous (16 million+ addresses); <code>/30</code> is tiny (4 addresses).</li>
+      <li><strong>"Every subnet loses 2 addresses to network/broadcast."</strong> Only when the prefix is 30 or smaller. <code>/31</code> and <code>/32</code> reserve nothing — see the point-to-point example above.</li>
+    </ul>
+  </FailureModes>
 
-  <div data-min-level="3" hidden>
-    <DeepDive>
-      <ul>
-        <li>
-          <strong>VLSM (Variable Length Subnet Masking).</strong> Real
-          networks aren't cut into equal-size blocks. A site might carve
-          one <code>/24</code> into a <code>/26</code> for one department
-          and two <code>/27</code>s for two others — sized to actual need,
-          not a fixed grid.
-        </li>
-        <li>
-          <strong>Route summarization.</strong> ISPs don't advertise every
-          individual customer's tiny subnet to the rest of the internet —
-          they combine adjacent CIDR blocks that share a common prefix
-          into one larger announcement, which is the entire reason CIDR
-          replaced the older class-based addressing system in the first
-          place.
-        </li>
-        <li>
-          <strong>This calculator is address-space-agnostic.</strong> It
-          does the same bit math whether the input is a private range
-          (<code>10.0.0.0/8</code>, <code>192.168.0.0/16</code>) or a
-          public one — privacy of the range is a routing-policy decision,
-          not a property of the arithmetic.
-        </li>
-      </ul>
-    </DeepDive>
-  </div>
+  <DeepDive>
+    <ul>
+      <li>
+        <strong>VLSM (Variable Length Subnet Masking).</strong> Real
+        networks aren't cut into equal-size blocks. A site might carve
+        one <code>/24</code> into a <code>/26</code> for one department
+        and two <code>/27</code>s for two others — sized to actual need,
+        not a fixed grid.
+      </li>
+      <li>
+        <strong>Route summarization.</strong> ISPs don't advertise every
+        individual customer's tiny subnet to the rest of the internet —
+        they combine adjacent CIDR blocks that share a common prefix
+        into one larger announcement, which is the entire reason CIDR
+        replaced the older class-based addressing system in the first
+        place.
+      </li>
+      <li>
+        <strong>This calculator is address-space-agnostic.</strong> It
+        does the same bit math whether the input is a private range
+        (<code>10.0.0.0/8</code>, <code>192.168.0.0/16</code>) or a
+        public one — privacy of the range is a routing-policy decision,
+        not a property of the arithmetic.
+      </li>
+    </ul>
+  </DeepDive>
 
   <WhatILearned>
     CIDR notation always answers one question: how many bits are "the
@@ -278,38 +275,9 @@ import Sources from '../components/Sources.astro';
       update();
     });
   });
-
-  // Depth toggle: same shared key as every other topic page.
-  const DEPTH_KEY = 'siteDepth';
-  const depthButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.depth-btn'));
-  const gated = Array.from(document.querySelectorAll<HTMLElement>('[data-min-level]'));
-
-  function applyDepth(level: number) {
-    depthButtons.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.level) === level)));
-    gated.forEach((el) => { el.hidden = Number(el.dataset.minLevel) > level; });
-    try { localStorage.setItem(DEPTH_KEY, String(level)); } catch {}
-  }
-
-  let initialDepth = 0;
-  try {
-    const stored = localStorage.getItem(DEPTH_KEY);
-    if (stored !== null) initialDepth = Math.min(3, Math.max(0, parseInt(stored, 10) || 0));
-  } catch {}
-  applyDepth(initialDepth);
-
-  depthButtons.forEach((b) => b.addEventListener('click', () => applyDepth(Number(b.dataset.level))));
 </script>
 
 <style>
-  .depth-toggle { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-4) 0 var(--sp-6); }
-  .depth-btn {
-    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em;
-    padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border: 1px solid var(--line-bright);
-    color: var(--text-1); cursor: pointer;
-  }
-  .depth-btn:hover { border-color: var(--accent); color: var(--text-0); }
-  .depth-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg-0); font-weight: 700; }
-
   .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
   .section-heading { margin-bottom: var(--sp-2); }
   .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }

@@ -10,52 +10,54 @@ import Sources from '../components/Sources.astro';
   <p class="eyebrow"><a href="/ai/">← AI</a></p>
   <h1>How LLMs Predict Text</h1>
 
-  <div class="depth-toggle" role="group" aria-label="Reading depth">
-    <button type="button" class="depth-btn" data-level="0" aria-pressed="true">ELI5</button>
-    <button type="button" class="depth-btn" data-level="1">Beginner</button>
-    <button type="button" class="depth-btn" data-level="2">Intermediate</button>
-    <button type="button" class="depth-btn" data-level="3">Deep Dive</button>
-  </div>
-
   <Tldr>
-    An LLM doesn't know facts the way a database does. It predicts the
-    <strong>most statistically likely next word</strong>, one word at a
-    time, based on patterns learned from a huge amount of text. Scale that
-    simple trick up enough, and it produces essays, code, and conversation.
+    An LLM doesn't know facts the way a database does — it has no lookup
+    table of "true things." What it actually does, at every single step,
+    is predict the <strong>most statistically likely next word</strong>
+    given everything written so far, based on patterns learned from a huge
+    amount of text. There's no separate "understanding" module —
+    prediction is the whole mechanism. Scale that simple trick up with
+    enough data and compute, and it starts producing essays, code, and
+    conversation that read as if something understood the question.
   </Tldr>
 
   <Eli5>
-    Imagine finishing a friend's sentences because you've heard them talk
-    a thousand times before. You're not reading their mind — you're
-    guessing the next word from patterns. That's the whole trick, just
-    done at a scale no human could match.
+    You've finished a friend's sentence before — not by reading their
+    mind, but because you've heard them talk a thousand times and picked
+    up the pattern. Now imagine doing that, but:
+    <ul>
+      <li>you'd "listened" to a meaningful slice of everything ever written, not just one friend</li>
+      <li>you could recall patterns from millions of conversations at once</li>
+      <li>you did the guessing in a fraction of a second, one word at a time, for as long as needed</li>
+    </ul>
+    That's an LLM — the exact same trick, guess the next word from
+    patterns, done at a scale no single human could match. It's also why
+    it can sound completely confident while being completely wrong:
+    confidence and correctness were never the same thing when the entire
+    mechanism is a guess.
   </Eli5>
 
-  <div data-min-level="1" hidden>
-    <WhyItMatters>
-      <ul>
-        <li>This is why LLMs sound confident even when they're <strong>wrong</strong> — fluent-sounding text and true text are produced by the same mechanism.</li>
-        <li>It's why more context in your prompt changes the output — you're changing what the model conditions its guess on.</li>
-        <li>It's why the same question worded differently can get a different answer — different words, different prediction.</li>
-      </ul>
-    </WhyItMatters>
-  </div>
+  <WhyItMatters>
+    <ul>
+      <li>This is why LLMs sound confident even when they're <strong>wrong</strong> — fluent-sounding text and true text are produced by the same mechanism.</li>
+      <li>It's why more context in your prompt changes the output — you're changing what the model conditions its guess on.</li>
+      <li>It's why the same question worded differently can get a different answer — different words, different prediction.</li>
+    </ul>
+  </WhyItMatters>
 
-  <div data-min-level="2" hidden>
-    <HowItWorks>
-      <p>Two things decide how good the prediction is:</p>
-      <ol>
-        <li><strong>Context window</strong> — how much prior text the model looks back at.</li>
-        <li><strong>Training data + model size</strong> — how nuanced the learned patterns are.</li>
-      </ol>
-      <p>
-        The lab below uses a context window of exactly <strong>one word</strong>
-        and a training set of a few hundred words. Real models use context
-        windows of thousands to hundreds of thousands of tokens, trained on
-        a meaningful fraction of all text on the internet. Same idea, wildly different scale.
-      </p>
-    </HowItWorks>
-  </div>
+  <HowItWorks>
+    <p>Two things decide how good the prediction is:</p>
+    <ol>
+      <li><strong>Context window</strong> — how much prior text the model looks back at.</li>
+      <li><strong>Training data + model size</strong> — how nuanced the learned patterns are.</li>
+    </ol>
+    <p>
+      The lab below uses a context window of exactly <strong>one word</strong>
+      and a training set of a few hundred words. Real models use context
+      windows of thousands to hundreds of thousands of tokens, trained on
+      a meaningful fraction of all text on the internet. Same idea, wildly different scale.
+    </p>
+  </HowItWorks>
 
   <section class="lab" aria-labelledby="lab-heading">
     <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself: a real (tiny) predictor</h2>
@@ -91,46 +93,42 @@ import Sources from '../components/Sources.astro';
     <p class="generated-output" id="generated-output" aria-live="polite"></p>
   </section>
 
-  <div data-min-level="1" hidden>
-    <FailureModes>
-      <ul>
-        <li><strong>"It looked that up."</strong> It didn't. It predicted plausible-sounding text. Sometimes plausible and true line up; sometimes they don't.</li>
-        <li><strong>"It's just autocomplete, so it's not impressive."</strong> The mechanism is genuinely that simple. What's impressive is what that mechanism can do at a large enough scale — the toy above literally cannot hold a coherent thought past a few words; a real model can, from the same core idea plus orders of magnitude more scale.</li>
-        <li><strong>"It sounded confident, so it's probably right."</strong> Confidence and correctness come from unrelated places in this architecture. Fluency is cheap; verify anything that matters.</li>
-      </ul>
-    </FailureModes>
-  </div>
+  <FailureModes>
+    <ul>
+      <li><strong>"It looked that up."</strong> It didn't. It predicted plausible-sounding text. Sometimes plausible and true line up; sometimes they don't.</li>
+      <li><strong>"It's just autocomplete, so it's not impressive."</strong> The mechanism is genuinely that simple. What's impressive is what that mechanism can do at a large enough scale — the toy above literally cannot hold a coherent thought past a few words; a real model can, from the same core idea plus orders of magnitude more scale.</li>
+      <li><strong>"It sounded confident, so it's probably right."</strong> Confidence and correctness come from unrelated places in this architecture. Fluency is cheap; verify anything that matters.</li>
+    </ul>
+  </FailureModes>
 
-  <div data-min-level="3" hidden>
-    <DeepDive>
-      <p>
-        Real models differ from this toy in three specific ways — same core
-        idea, different execution:
-      </p>
-      <ul>
-        <li>
-          <strong>Subword tokens, not whole words.</strong> Real models
-          split text into subword pieces ("tokens") so they can represent
-          any word — including ones never seen in training — as a sequence
-          of familiar fragments.
-        </li>
-        <li>
-          <strong>Attention, not a fixed window.</strong> Our toy only ever
-          looks at the single previous word. A transformer's attention
-          mechanism lets every token look back at every other token in the
-          context, weighting each one dynamically — not a hard cutoff.
-        </li>
-        <li>
-          <strong>Learned parameters, not a lookup table.</strong> Our
-          predictions come from literally counting word pairs. Real models
-          encode patterns across billions of parameters learned from
-          training — there's no table to point at, but the underlying
-          question being answered at every step is the same one this toy
-          answers: <em>given everything so far, what comes next?</em>
-        </li>
-      </ul>
-    </DeepDive>
-  </div>
+  <DeepDive>
+    <p>
+      Real models differ from this toy in three specific ways — same core
+      idea, different execution:
+    </p>
+    <ul>
+      <li>
+        <strong>Subword tokens, not whole words.</strong> Real models
+        split text into subword pieces ("tokens") so they can represent
+        any word — including ones never seen in training — as a sequence
+        of familiar fragments.
+      </li>
+      <li>
+        <strong>Attention, not a fixed window.</strong> Our toy only ever
+        looks at the single previous word. A transformer's attention
+        mechanism lets every token look back at every other token in the
+        context, weighting each one dynamically — not a hard cutoff.
+      </li>
+      <li>
+        <strong>Learned parameters, not a lookup table.</strong> Our
+        predictions come from literally counting word pairs. Real models
+        encode patterns across billions of parameters learned from
+        training — there's no table to point at, but the underlying
+        question being answered at every step is the same one this toy
+        answers: <em>given everything so far, what comes next?</em>
+      </li>
+    </ul>
+  </DeepDive>
 
   <WhatILearned>
     Fluent text is not the same thing as correct text — they come from the
@@ -331,39 +329,9 @@ import Sources from '../components/Sources.astro';
     };
     generateTimer = window.setTimeout(revealNext, WORD_PAUSE_MS);
   });
-
-  // Depth toggle: same shared key as every other topic page, so a
-  // reader's chosen floor carries over between topics.
-  const DEPTH_KEY = 'siteDepth';
-  const depthButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.depth-btn'));
-  const gated = Array.from(document.querySelectorAll<HTMLElement>('[data-min-level]'));
-
-  function applyDepth(level: number) {
-    depthButtons.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.level) === level)));
-    gated.forEach((el) => { el.hidden = Number(el.dataset.minLevel) > level; });
-    try { localStorage.setItem(DEPTH_KEY, String(level)); } catch {}
-  }
-
-  let initialDepth = 0;
-  try {
-    const stored = localStorage.getItem(DEPTH_KEY);
-    if (stored !== null) initialDepth = Math.min(3, Math.max(0, parseInt(stored, 10) || 0));
-  } catch {}
-  applyDepth(initialDepth);
-
-  depthButtons.forEach((b) => b.addEventListener('click', () => applyDepth(Number(b.dataset.level))));
 </script>
 
 <style>
-  .depth-toggle { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-4) 0 var(--sp-6); }
-  .depth-btn {
-    font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.04em;
-    padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border: 1px solid var(--line-bright);
-    color: var(--text-1); cursor: pointer;
-  }
-  .depth-btn:hover { border-color: var(--accent); color: var(--text-0); }
-  .depth-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg-0); font-weight: 700; }
-
   .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
   .section-heading { margin-bottom: var(--sp-2); }
   .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }

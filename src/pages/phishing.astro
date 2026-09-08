@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from '../components/blocks';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
 ---
 <BaseLayout
   title="Phishing"
@@ -10,14 +11,28 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
   <h1>Phishing</h1>
 
   <Tldr>
-    Phishing skips your firewall entirely. It impersonates someone you
-    already trust — your bank, your boss, a delivery service — to get you
-    to click, type a password, or send money.
+    Phishing skips your firewall, antivirus, and every technical defense
+    entirely — because it doesn't attack your computer, it attacks your
+    <strong>trust</strong>. An attacker impersonates someone you already
+    believe: your bank, your boss, a delivery service. They don't need to
+    break in if you'll open the door yourself. The whole attack usually
+    rides on one thing: a link or address that looks real enough not to
+    double-check.
   </Tldr>
 
   <Eli5>
-    A burglar doesn't pick your lock. They put on a uniform, knock, and
-    say "delivery." You open the door yourself.
+    A burglar could spend an hour picking your lock. Or they could just
+    put on a uniform, knock, and say "delivery for you" — and you open
+    the door yourself, no lock-picking required. Phishing is the second
+    option, done over email or text instead of your front door:
+    <ul>
+      <li>the uniform is a fake sender name ("PayPal Support")</li>
+      <li>the delivery box is a link that looks like your bank's website</li>
+      <li>opening the door is typing your password into a page that isn't actually your bank</li>
+    </ul>
+    Nothing gets "hacked" in the movie-hacker sense. You get asked nicely,
+    by someone pretending to be trustworthy — and most of the defense is
+    just learning to check who's actually knocking before you open the door.
   </Eli5>
 
   <WhyItMatters>
@@ -79,6 +94,36 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
     </ul>
   </FailureModes>
 
+  <DeepDive>
+    <ul>
+      <li>
+        <strong>SPF/DKIM/DMARC.</strong> Email authentication standards
+        that let a receiving mail server check whether a message claiming
+        to be from yourbank.com actually came from yourbank.com's own
+        servers. They genuinely help — a well-configured DMARC policy
+        blocks a lot of spoofed-sender phishing. What they <em>don't</em>
+        do is verify the domain isn't a lookalike: secure-yourbank-login.tk
+        passes SPF/DKIM/DMARC perfectly fine, because it really is sending
+        from secure-yourbank-login.tk — that domain just isn't your bank.
+      </li>
+      <li>
+        <strong>IDN homograph attacks.</strong> Internationalized domain
+        names allow non-Latin characters that render identically to Latin
+        ones (a Cyrillic "а" next to a Latin "a," for example). A URL can
+        look pixel-perfect while being encoded as something completely
+        different underneath — exactly what the punycode check in the lab
+        above is watching for.
+      </li>
+      <li>
+        <strong>Why "look for the padlock" stopped working.</strong> Free,
+        automated certificate authorities made HTTPS free and instant for
+        anyone, attackers included. The padlock used to correlate with "a
+        real company paid for verification"; today it only means "this
+        connection is encrypted" — which costs an attacker nothing either.
+      </li>
+    </ul>
+  </DeepDive>
+
   <WhatILearned>
     <ul>
       <li>Before clicking, find the real domain: the part just before the first single <code>/</code>, reading from the end.</li>
@@ -86,6 +131,26 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
       <li>When unsure, don't click the link at all. Open the site yourself, from a bookmark or a search.</li>
     </ul>
   </WhatILearned>
+
+  <Sources
+    sources={[
+      {
+        title: 'Anti-Phishing Working Group (APWG)',
+        url: 'https://apwg.org/',
+        note: 'The industry group that tracks and publishes real phishing trend data.',
+      },
+      {
+        title: 'dmarc.org',
+        url: 'https://dmarc.org/',
+        note: 'How SPF, DKIM, and DMARC actually work — the email-authentication standards mentioned above.',
+      },
+      {
+        title: 'Google Safe Browsing — check a URL',
+        url: 'https://transparencyreport.google.com/safe-browsing/search',
+        note: "Check whether a specific link is already flagged as phishing or malware, before you click it.",
+      },
+    ]}
+  />
 </BaseLayout>
 
 <script>
