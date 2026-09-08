@@ -16,9 +16,10 @@
 
   /* --- primary accent --- */
   --accent: #56a8ff;
-  --accent-dim: #2f79cc;
-  /* Deep-dive tone: --accent-dim only clears ~4.53:1 as text (AA is 4.5),
-     too thin a margin for a label. This clears ~11:1. */
+  /* Deep-dive tone. Clears ~11:1 as text on every surface (see the full
+     contrast audit at the bottom of this file) -- a prior --accent-dim
+     here only cleared ~4.53:1 on --bg-0 and failed outright (~4.3-3.9:1)
+     on --bg-1/--bg-2, so it was removed rather than kept as a trap. */
   --accent-deep: #22d3ee;
 
   /* --- status: reserved for real state --- */
@@ -49,3 +50,22 @@
   /* Hard edges. Radius exists only for status dots. */
   --radius: 0;
 }
+
+/* --- contrast audit (2026-09-08) ---
+   Every text color against every surface, computed via WCAG relative
+   luminance (this file only uses tokens, never raw hex, so this is an
+   exhaustive audit of every combination the site can ever render, not
+   a sample). All clear 4.5:1 (AA, normal text) on all three surfaces:
+   --text-0, --text-1, --text-2, --accent, --accent-deep, --status-testing,
+   --status-working, --status-broken. None currently fail.
+
+   Known, accepted gap: --line and --line-bright (borders, dividers,
+   input outlines) sit at ~1.2-2.2:1 against every surface -- well under
+   the 3:1 non-text/UI-component threshold (WCAG 1.4.11). This is the
+   deliberate low-contrast "hairline" aesthetic this file's own header
+   comment describes, not an oversight, so it wasn't repainted
+   unilaterally as part of the audit. If this ever needs fixing, it's a
+   real visual-identity decision for the user to make, not a
+   drop-in token tweak -- raising --line-bright enough to pass 3:1
+   changes how every card, input, and table border reads across the
+   entire site. */
