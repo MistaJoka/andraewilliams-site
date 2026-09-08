@@ -4,10 +4,16 @@ import '../styles/base.css';
 interface Props {
   title: string;
   description: string;
+  /** Root-relative path to this page's generated OG card. Defaults to
+   *  /og/<slug>.png derived from the URL, or /og/default.png at "/". */
+  ogImage?: string;
 }
 const { title, description } = Astro.props;
 const fullTitle = title === 'Home' ? 'Andrae Williams — Explained Plainly' : `${title} — Andrae Williams`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const slug = Astro.url.pathname.replace(/^\/|\/$/g, '');
+const ogImage = Astro.props.ogImage ?? (slug ? `/og/${slug}.png` : '/og/default.png');
+const ogImageUrl = new URL(ogImage, Astro.site).href;
 ---
 <!doctype html>
 <html lang="en">
@@ -27,9 +33,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Andrae Williams" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
