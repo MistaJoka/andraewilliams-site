@@ -2,18 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { DOMAINS } from '../lib/domains';
 ---
-<BaseLayout
-  title="Home"
-  description="Complex technical topics, explained plainly. ELI5 and TL;DR first, hands-on labs where it helps."
->
+<BaseLayout title="Not Found" description="That page doesn't exist. Here's what does.">
   <header class="hero">
-    <p class="eyebrow">Explained plainly</p>
-    <h1>Complex topics, explained plainly.</h1>
-    <p class="hero-lede">
-      TL;DR and ELI5 come first on every topic — go deeper only if you want
-      to. Every domain below follows the same idea: understand it by
-      trying it, not just reading about it.
-    </p>
+    <p class="eyebrow">404</p>
+    <h1>That page doesn't exist.</h1>
+    <p class="hero-lede">No guess, no redirect — here's what's actually on the site.</p>
   </header>
 
   <section aria-labelledby="domains-heading">
@@ -22,10 +15,7 @@ import { DOMAINS } from '../lib/domains';
       {DOMAINS.map((d) => (
         <li>
           <a href={`/${d.slug}/`}>
-            <span class="domain-top">
-              <span class="domain-title"><span class="domain-icon" aria-hidden="true">{d.icon}</span> {d.name}</span>
-              <span class="domain-count">{d.topics.length} topic{d.topics.length === 1 ? '' : 's'}</span>
-            </span>
+            <span class="domain-title"><span class="domain-icon" aria-hidden="true">{d.icon}</span> {d.name}</span>
             <span class="domain-blurb">{d.blurb}</span>
           </a>
         </li>
@@ -42,14 +32,12 @@ import { DOMAINS } from '../lib/domains';
 
   .domain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
   .domain-list a {
-    display: grid; gap: var(--sp-2); padding: var(--sp-4);
+    display: grid; gap: var(--sp-1); padding: var(--sp-4);
     border: 1px solid var(--line); background: var(--bg-1); text-decoration: none;
     transition: border-color 150ms ease-out, background 150ms ease-out;
   }
   .domain-list a:hover { border-color: var(--accent); background: var(--bg-2); }
-  .domain-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); }
-  .domain-title { color: var(--text-0); font-weight: 700; font-size: var(--step-1); }
+  .domain-title { color: var(--text-0); font-weight: 700; }
   .domain-icon { color: var(--accent); font-family: var(--font-mono); }
-  .domain-count { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-2); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
   .domain-blurb { color: var(--text-1); }
 </style>

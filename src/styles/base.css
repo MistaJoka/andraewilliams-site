@@ -1,10 +1,18 @@
-/* Self-hosted, no CDN request. Three families, three roles. */
-@import '@fontsource/space-grotesk/400.css';
-@import '@fontsource/space-grotesk/500.css';
-@import '@fontsource/space-grotesk/700.css';
-@import '@fontsource/jetbrains-mono/400.css';
-@import '@fontsource/jetbrains-mono/700.css';
-@import '@fontsource/silkscreen/400.css';
+/* Self-hosted, no CDN request. Two families, two roles. Latin/latin-ext
+   subsets only (all page content is English) -- the full 400.css/700.css
+   files bundle cyrillic/greek/vietnamese @font-face blocks too, which
+   Lighthouse correctly flags as render-blocking dead weight since they
+   can't match anything on this site. */
+@import '@fontsource/space-grotesk/latin-400.css';
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+@import '@fontsource/space-grotesk/latin-ext-400.css';
+@import '@fontsource/space-grotesk/latin-ext-500.css';
+@import '@fontsource/space-grotesk/latin-ext-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/latin-700.css';
+@import '@fontsource/jetbrains-mono/latin-ext-400.css';
+@import '@fontsource/jetbrains-mono/latin-ext-700.css';
 @import './tokens.css';
 
 *, *::before, *::after { box-sizing: border-box; }

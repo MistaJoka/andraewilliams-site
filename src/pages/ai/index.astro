@@ -77,7 +77,7 @@ const gears = domain.topics.map((topic, i) => {
             <path class="gear-tooth" d={g.path} />
             <circle class="gear-hub" r={g.hubR} />
           </svg>
-          <span class="gear-label">{g.topic.title}</span>
+          <span class="gear-label">{g.topic.title}{g.topic.isNew && <span class="new-badge">NEW</span>}</span>
         </a>
       ))}
     </div>
@@ -122,6 +122,11 @@ const gears = domain.topics.map((topic, i) => {
     color: var(--text-1); max-width: 9rem;
   }
   .gear-link:hover .gear-label, .gear-link:focus-visible .gear-label { color: var(--text-0); }
+  .new-badge {
+    display: block; margin-top: 0.3em; padding: 0.1em 0.5em;
+    background: var(--status-working); color: var(--bg-0); font-family: var(--font-mono);
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em;
+  }
 
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) {

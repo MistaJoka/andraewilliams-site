@@ -1,8 +1,5 @@
 /* The single source of truth for colour, type and space.
-   Art direction: deep blue-black base, electric blue primary, per-topic
-   accents that carry meaning rather than decoration. Topic accents are
-   referenced by name from src/data/topics.yaml, so a topic can never
-   introduce an off-palette colour. */
+   Art direction: deep blue-black base, electric blue primary. */
 
 :root {
   /* --- surfaces: flat, layered near-blacks, never shadows-on-white --- */
@@ -24,25 +21,12 @@
      too thin a margin for a label. This clears ~11:1. */
   --accent-deep: #22d3ee;
 
-  /* --- topic accents: signal, not rainbow --- */
-  --topic-ai: #56a8ff;
-  --topic-cyber: #22d3ee;
-  --topic-homelab: #4ade80;
-  --topic-risk: #ff6b7a;
-  --topic-mma: #ff9a3c;
-  --topic-anime: #c58bff;
-  --topic-resources: #2dd4bf;
-
   /* --- status: reserved for real state --- */
-  --status-idea: #7a8ca9;
   --status-testing: #fbbf24;
   --status-working: #4ade80;
   --status-broken: #ff6b7a;
-  --status-production: #56a8ff;
-  --status-archived: #5f6d84;
 
-  /* --- type: three roles, three families, no more --- */
-  --font-display: 'Silkscreen', 'Courier New', monospace;
+  /* --- type: two roles, two families --- */
   --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
 

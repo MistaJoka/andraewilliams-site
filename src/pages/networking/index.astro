@@ -13,7 +13,7 @@ const domain = DOMAINS.find((d) => d.slug === 'networking')!;
     {domain.topics.map((t) => (
       <li>
         <a href={t.href}>
-          <span class="topic-title">{t.title}</span>
+          <span class="topic-title">{t.title}{t.isNew && <span class="new-badge">NEW</span>}</span>
           <span class="topic-blurb">{t.blurb}</span>
         </a>
       </li>
@@ -33,4 +33,9 @@ const domain = DOMAINS.find((d) => d.slug === 'networking')!;
   .topic-list a:hover { border-color: var(--accent); background: var(--bg-2); }
   .topic-title { color: var(--text-0); font-weight: 700; }
   .topic-blurb { color: var(--text-1); }
+  .new-badge {
+    display: inline-block; margin-left: var(--sp-2); padding: 0.1em 0.5em; vertical-align: middle;
+    background: var(--status-working); color: var(--bg-0); font-family: var(--font-mono);
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+  }
 </style>
