@@ -185,6 +185,30 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
     return checks;
   }
 
+  // Decode effect: results resolve through noise glyphs before settling,
+  // same visual language as the AI lab and password-cracking page.
+  const SCRAMBLE_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+=<>/\\';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function scrambleText(el: HTMLElement, finalText: string, frames = 6, frameMs = 30) {
+    if (prefersReducedMotion || el.textContent === finalText) {
+      el.textContent = finalText;
+      return;
+    }
+    let frame = 0;
+    el.classList.add('decoding');
+    const timer = window.setInterval(() => {
+      frame++;
+      if (frame > frames) {
+        clearInterval(timer);
+        el.textContent = finalText;
+        el.classList.remove('decoding');
+        return;
+      }
+      el.textContent = Array.from({ length: finalText.length }, () => SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]).join('');
+    }, frameMs);
+  }
+
   function update() {
     const raw = input.value.trim();
     if (!raw) {
@@ -200,21 +224,22 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
     }
     let url: URL;
     try { url = new URL(raw); } catch { return; }
-    domainEl.textContent = registrableDomain(url.hostname);
+    scrambleText(domainEl, registrableDomain(url.hostname));
 
     body.innerHTML = '';
     for (const c of checks) {
       const tr = document.createElement('tr');
+      tr.className = c.flag ? 'row-alert' : '';
       const labelTd = document.createElement('td');
       labelTd.textContent = c.label;
       const resultTd = document.createElement('td');
-      resultTd.textContent = c.flag ? 'FLAG' : 'ok';
       resultTd.className = c.flag ? 'ct-flag' : 'ct-ok';
       const detailTd = document.createElement('td');
       detailTd.textContent = c.detail;
       detailTd.className = 'ct-detail';
       tr.append(labelTd, resultTd, detailTd);
       body.append(tr);
+      scrambleText(resultTd, c.flag ? 'FLAG' : 'ok');
     }
   }
 
@@ -252,7 +277,8 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
     font-family: var(--font-mono); font-size: var(--step--1);
   }
   .dc-key { color: var(--text-1); }
-  .dc-val { color: var(--accent); font-weight: 700; word-break: break-all; }
+  .dc-val { color: var(--accent); font-weight: 700; word-break: break-all; transition: text-shadow 150ms; }
+  .dc-val.decoding { text-shadow: 0 0 6px var(--accent), 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent); }
 
   .table-scroll { margin-top: var(--sp-5); overflow-x: auto; }
   .check-table { width: 100%; min-width: 34rem; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--step--1); }
@@ -262,4 +288,7 @@ import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned } from
   .ct-flag { color: var(--status-broken); font-weight: 700; }
   .ct-ok { color: var(--status-working); font-weight: 700; }
   .ct-detail { color: var(--text-2); }
+  .ct-flag.decoding, .ct-ok.decoding { text-shadow: 0 0 6px currentColor, 0 0 14px currentColor; }
+  .row-alert { background: color-mix(in srgb, var(--status-broken) 8%, transparent); }
+  .row-alert td { border-bottom-color: color-mix(in srgb, var(--status-broken) 30%, transparent); }
 </style>
