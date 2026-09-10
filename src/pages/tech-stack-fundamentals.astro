@@ -6,141 +6,179 @@ import VerifiedDate from '../components/VerifiedDate.astro';
 ---
 <BaseLayout
   title="Tech Stack Fundamentals"
-  description="A tech stack is three jobs — ask, decide, store — done by whichever tools you picked. Drive a real browser, terminal, and database client, side by side, and watch one request move through all three."
+  description="The tech stack knowledge every full-stack and AI-app developer needs: three jobs — ask, decide, store — done by whichever tools you picked. Drive a real browser, terminal, and database client, side by side, and watch one request move through all three."
 >
   <p class="eyebrow"><a href="/systems/">← Systems</a></p>
   <h1>Tech Stack Fundamentals</h1>
   <VerifiedDate />
 
   <div class="workspace-page">
-    <aside class="docs-panel">
-      <section class="docs-block">
-        <p class="docs-label">TL;DR</p>
-        <ul>
-          <li>Three unchanging jobs: <strong>ask</strong> (frontend), <strong>decide</strong> (backend), <strong>store</strong> (database).</li>
-          <li>MERN, LAMP, whatever's next — just names for which tool got picked per job.</li>
-          <li>Name which layer a bug lives in, and any new framework gets faster to pick up.</li>
-        </ul>
-      </section>
-      <section class="docs-block">
-        <p class="docs-label">ELI5</p>
-        <ul>
-          <li>You tell the waiter what you want → <strong>frontend</strong>.</li>
-          <li>The waiter decides what to do and passes it along → <strong>backend</strong>.</li>
-          <li>The kitchen does the real work → <strong>database</strong>.</li>
-          <li><strong>Swap any of the three — the jobs never change.</strong></li>
-        </ul>
-      </section>
-      <section class="docs-block">
-        <p class="docs-label">Why it matters</p>
-        <ul>
-          <li>Most bugs live at the <strong>seams</strong> between layers, not inside one.</li>
-          <li>Security boundaries live at the server, never the browser — try <code>/login</code> in the workspace.</li>
-          <li>Separation lets you swap one layer without rewriting the rest.</li>
-        </ul>
-      </section>
-      <section class="docs-block">
-        <p class="docs-label">Failure modes</p>
-        <ul>
-          <li><strong>"Frontend hits the DB directly."</strong> Real stacks don't — the backend guards it.</li>
-          <li><strong>"Error = frontend broken."</strong> Try user 99: the 404 starts at the database.</li>
-          <li><strong>"More layers = worse."</strong> It's what lets a stack change one piece at a time.</li>
-        </ul>
-      </section>
-    </aside>
+    <div class="workspace-shell">
+      <aside class="docs-panel">
+        <section class="docs-block">
+          <p class="docs-label">TL;DR</p>
+          <ul>
+            <li>Three unchanging jobs: <strong>ask</strong> (frontend), <strong>decide</strong> (backend), <strong>store</strong> (database).</li>
+            <li>MERN, LAMP, whatever's next — just names for which tool got picked per job.</li>
+            <li>Name which layer a bug lives in, and any new framework gets faster to pick up.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">ELI5</p>
+          <ul>
+            <li>You tell the waiter what you want → <strong>frontend</strong>.</li>
+            <li>The waiter decides what to do and passes it along → <strong>backend</strong>.</li>
+            <li>The kitchen does the real work → <strong>database</strong>.</li>
+            <li><strong>Swap any of the three — the jobs never change.</strong></li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">Technical definition</p>
+          <ul>
+            <li>Formally a <strong>three-tier architecture</strong>: presentation, application logic, and data persistence, each independently replaceable.</li>
+            <li>Layers talk only over defined protocols — HTTP browser↔server, a query language server↔database — never by reaching into each other's internals.</li>
+            <li>This lab models exactly that: three tiers, two protocols, one request.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">Real-world tools</p>
+          <ul>
+            <li><strong>Frontend:</strong> React, Vue, Svelte — runs in the visitor's browser.</li>
+            <li><strong>Backend:</strong> Node/Express, Django, Rails, Spring — runs on a server you control.</li>
+            <li><strong>Database:</strong> PostgreSQL, MySQL, MongoDB — where the real data actually lives.</li>
+            <li>Same 3 jobs no matter which row you pick from each column.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">Why it matters</p>
+          <ul>
+            <li>Most bugs live at the <strong>seams</strong> between layers, not inside one.</li>
+            <li>Security boundaries live at the server, never the browser — try <code>/login</code> in the workspace.</li>
+            <li>Separation lets you swap one layer without rewriting the rest.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">Under the hood</p>
+          <ul>
+            <li>Stateless backend → can run 10 identical copies behind a load balancer.</li>
+            <li>A database holds the one real copy, so it scales differently (replication, sharding) — not just "add more copies."</li>
+            <li>Real stacks usually insert a <strong>cache</strong> (Redis, etc.) between server and database — skipped here on purpose to keep the 3 jobs clear.</li>
+            <li>Routing is matching, not magic: this lab's "route table" is one regex; real frameworks do the same thing with more patterns.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">Failure modes</p>
+          <ul>
+            <li><strong>"Frontend hits the DB directly."</strong> Real stacks don't — the backend guards it.</li>
+            <li><strong>"Error = frontend broken."</strong> Try user 99: the 404 starts at the database.</li>
+            <li><strong>"More layers = worse."</strong> It's what lets a stack change one piece at a time.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
+          <p class="docs-label">Where AI fits in</p>
+          <ul>
+            <li>An LLM call from your backend is just another outbound request — same job (decide), one more thing the server waits on before answering the browser.</li>
+            <li>A <strong>vector database</strong> is still "store" — a specialized database tier for embeddings instead of rows, same job as the DB panel here.</li>
+            <li>An agent loop or RAG pipeline adds steps, not new jobs — see <a href="/agentic-engineering/">Agentic Engineering</a> and <a href="/context-engineering/">Context Engineering</a> for what fills those extra steps.</li>
+          </ul>
+        </section>
+      </aside>
 
-    <div class="workspace-main">
-      <div class="workspace-toolbar">
-        <span class="workspace-title">request-lifecycle.sim</span>
-        <span class="workspace-hint">genuinely tiny router + in-memory DB — type any id, or a made-up path</span>
-      </div>
-
-      <div class="pipeline" role="img" aria-label="Browser connects to Server over HTTP; Server connects to Database over SQL">
-        <div class="pipe-node" data-node="browser">
-          <span class="pipe-icon" aria-hidden="true">▣</span>
-          <span class="pipe-name">Browser</span>
-          <span class="pipe-note">Sends the request, renders the result</span>
+      <div class="workspace-main">
+        <div class="workspace-toolbar">
+          <span class="workspace-title">request-lifecycle.sim</span>
+          <span class="workspace-hint">genuinely tiny router + in-memory DB — type any id, or a made-up path</span>
         </div>
-        <div class="pipe-edge" data-edge="browser-server"><span class="pipe-edge-note">HTTP</span></div>
-        <div class="pipe-node" data-node="server">
-          <span class="pipe-icon" aria-hidden="true">▤</span>
-          <span class="pipe-name">Server</span>
-          <span class="pipe-note">Stateless — could run 10 identical copies</span>
-        </div>
-        <div class="pipe-edge" data-edge="server-database"><span class="pipe-edge-note">SQL</span></div>
-        <div class="pipe-node" data-node="database">
-          <span class="pipe-icon" aria-hidden="true">▦</span>
-          <span class="pipe-name">Database</span>
-          <span class="pipe-note">Holds the one real copy — scales differently</span>
-        </div>
-      </div>
 
-      <div class="addr-input-row">
-        <span class="addr-proto">GET https://example.app</span>
-        <input id="path-input" class="addr-input" type="text" value="/api/users/2" spellcheck="false" autocomplete="off" aria-label="Request path" />
-        <button type="button" id="go-btn" class="go-btn">Go ▶</button>
-      </div>
-      <div class="preset-chips">
-        <button type="button" class="chip" data-path="/api/users/1">user 1</button>
-        <button type="button" class="chip" data-path="/api/users/2">user 2</button>
-        <button type="button" class="chip" data-path="/api/users/99">user 99 (missing)</button>
-        <button type="button" class="chip" data-path="/login">/login (bad route)</button>
-      </div>
-
-      <div class="tool-grid">
-        <div class="tool-window">
-          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">User Profile — browser</span></div>
-          <div class="tool-body">
-            <p class="net-log-label">Rendered page</p>
-            <div class="rendered-page" id="rendered-page"><p class="rp-placeholder">Click Go or pick an example above.</p></div>
-            <p class="net-log-label">Network</p>
-            <div class="net-log" id="net-log" aria-live="polite"></div>
+        <div class="pipeline" role="img" aria-label="Browser connects to Server over HTTP; Server connects to Database over SQL">
+          <div class="pipe-node" data-node="browser">
+            <span class="pipe-icon" aria-hidden="true">▣</span>
+            <span class="pipe-name">Browser</span>
+            <span class="pipe-note">Sends the request, renders the result</span>
+          </div>
+          <div class="pipe-edge" data-edge="browser-server"><span class="pipe-edge-note">HTTP</span></div>
+          <div class="pipe-node" data-node="server">
+            <span class="pipe-icon" aria-hidden="true">▤</span>
+            <span class="pipe-name">Server</span>
+            <span class="pipe-note">Stateless — could run 10 identical copies</span>
+          </div>
+          <div class="pipe-edge" data-edge="server-database"><span class="pipe-edge-note">SQL</span></div>
+          <div class="pipe-node" data-node="database">
+            <span class="pipe-icon" aria-hidden="true">▦</span>
+            <span class="pipe-name">Database</span>
+            <span class="pipe-note">Holds the one real copy — scales differently</span>
           </div>
         </div>
 
-        <div class="tool-window">
-          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">server.log — bash</span></div>
-          <div class="tool-body terminal-body" id="log-server" aria-hidden="true"></div>
+        <div class="addr-input-row">
+          <span class="addr-proto">GET https://example.app</span>
+          <input id="path-input" class="addr-input" type="text" value="/api/users/2" spellcheck="false" autocomplete="off" aria-label="Request path" />
+          <button type="button" id="go-btn" class="go-btn">Go ▶</button>
+        </div>
+        <div class="preset-chips">
+          <button type="button" class="chip" data-path="/api/users/1">user 1</button>
+          <button type="button" class="chip" data-path="/api/users/2">user 2</button>
+          <button type="button" class="chip" data-path="/api/users/99">user 99 (missing)</button>
+          <button type="button" class="chip" data-path="/login">/login (bad route)</button>
         </div>
 
-        <div class="tool-window">
-          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">query — users</span></div>
-          <div class="tool-body" aria-hidden="true">
-            <p class="net-log-label">Query</p>
-            <div class="query-line" id="db-query">— no query yet —</div>
-            <p class="net-log-label">Results</p>
-            <table class="db-table" id="db-table" hidden>
-              <thead><tr><th>id</th><th>name</th><th>role</th></tr></thead>
-              <tbody id="db-tbody"></tbody>
-            </table>
-            <p class="db-empty" id="db-empty" hidden>0 rows returned</p>
+        <div class="tool-grid">
+          <div class="tool-window">
+            <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">User Profile — browser</span></div>
+            <div class="tool-body">
+              <p class="net-log-label">Rendered page</p>
+              <div class="rendered-page" id="rendered-page"><p class="rp-placeholder">Click Go or pick an example above.</p></div>
+              <p class="net-log-label">Network</p>
+              <div class="net-log" id="net-log" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div class="tool-window">
+            <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">server.log — bash</span></div>
+            <div class="tool-body terminal-body" id="log-server" aria-hidden="true"></div>
+          </div>
+
+          <div class="tool-window">
+            <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">query — users</span></div>
+            <div class="tool-body" aria-hidden="true">
+              <p class="net-log-label">Query</p>
+              <div class="query-line" id="db-query">— no query yet —</div>
+              <p class="net-log-label">Results</p>
+              <table class="db-table" id="db-table" hidden>
+                <thead><tr><th>id</th><th>name</th><th>role</th></tr></thead>
+                <tbody id="db-tbody"></tbody>
+              </table>
+              <p class="db-empty" id="db-empty" hidden>0 rows returned</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <RelatedTopics />
+  <div class="footer-page">
+    <RelatedTopics />
 
-  <Sources
-    sources={[
-      {
-        title: 'Client–server model — Wikipedia',
-        url: 'https://en.wikipedia.org/wiki/Client%E2%80%93server_model',
-        note: 'The foundational pattern every stack in this lab is built on.',
-      },
-      {
-        title: 'Multitier architecture — Wikipedia',
-        url: 'https://en.wikipedia.org/wiki/Multitier_architecture',
-        note: 'The formal name for splitting frontend, backend, and database into separate tiers.',
-      },
-      {
-        title: 'HTTP overview — MDN Web Docs',
-        url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview',
-        note: 'The actual protocol the browser-to-server leg of this lab is modeling.',
-      },
-    ]}
-  />
+    <Sources
+      sources={[
+        {
+          title: 'Client–server model — Wikipedia',
+          url: 'https://en.wikipedia.org/wiki/Client%E2%80%93server_model',
+          note: 'The foundational pattern every stack in this lab is built on.',
+        },
+        {
+          title: 'Multitier architecture — Wikipedia',
+          url: 'https://en.wikipedia.org/wiki/Multitier_architecture',
+          note: 'The formal name for splitting frontend, backend, and database into separate tiers.',
+        },
+        {
+          title: 'HTTP overview — MDN Web Docs',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview',
+          note: 'The actual protocol the browser-to-server leg of this lab is modeling.',
+        },
+      ]}
+    />
+  </div>
 </BaseLayout>
 
 <script>
@@ -318,32 +356,73 @@ import VerifiedDate from '../components/VerifiedDate.astro';
   /* The whole page below the title breaks out of the article's 68ch
      reading column (see BaseLayout's .wrap) -- a Systems topic is meant
      to feel like the actual tool/environment it's teaching, not an
-     article with a widget stapled in. Docs stay docked in a narrow
-     sidebar (a real tool's info panel width), not a centered column. */
+     article with a widget stapled in. Docs and the simulator share ONE
+     bordered shell (not two separately-boxed sections) specifically so
+     a taller docs column never reads as a layout bug next to a shorter
+     main column -- there's no second box edge to look misaligned. */
   .workspace-page {
     position: relative; left: 50%; transform: translateX(-50%);
-    width: 100vw; max-width: 76rem; box-sizing: border-box;
+    width: 100vw; max-width: 92rem; box-sizing: border-box;
     padding: 0 var(--sp-5);
     margin: var(--sp-5) 0 var(--sp-6);
-    display: grid; grid-template-columns: 16rem 1fr; gap: var(--sp-4);
-    align-items: start;
+  }
+  .workspace-shell {
+    border: 1px solid var(--line); background: var(--bg-1);
+    display: grid; grid-template-columns: 34rem 1fr;
   }
   @media (max-width: 60rem) {
-    .workspace-page { grid-template-columns: 1fr; }
-    .docs-panel { order: 2; position: static; }
+    .workspace-shell { grid-template-columns: 1fr; }
+    .docs-panel { order: 2; position: static; border-right: none; border-top: 1px solid var(--line); }
     .workspace-main { order: 1; }
   }
 
-  .docs-panel { display: grid; gap: var(--sp-3); position: sticky; top: var(--sp-4); }
-  .docs-block { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-3); }
+  /* Docs blocks auto-flow into 2 columns once the sidebar is wide
+     enough (desktop) -- with 8 blocks now, a single narrow column made
+     this panel far taller than the simulator next to it, leaving a
+     wide dead strip of empty shell background beside it. Two columns
+     brings both sides' heights back in line with each other. */
+  .docs-panel {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--sp-3); align-content: start; position: sticky; top: var(--sp-4);
+    padding: var(--sp-4); border-right: 1px solid var(--line);
+  }
+  .docs-block { border: 1px solid var(--line); background: var(--bg-0); padding: var(--sp-3); }
   .docs-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin: 0 0 var(--sp-2); }
   .docs-block ul { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--sp-2); font-size: 0.76rem; line-height: 1.4; color: var(--text-1); }
   .docs-block code { font-size: 0.9em; }
+  .docs-block a { color: var(--accent); }
 
-  .workspace-main { min-width: 0; display: grid; gap: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); }
+  /* container-type, not another viewport media query: the pipeline and
+     tool-grid below need to react to *this column's actual rendered
+     width*, which shrinks once the 34rem docs sidebar exists -- a
+     viewport-width breakpoint doesn't know the sidebar ate that space,
+     which is exactly what broke the pipeline diagram (Database wrapped
+     alone onto its own row with a dangling arrow) at viewport widths
+     just above the sidebar-stacking breakpoint. */
+  .workspace-main { min-width: 0; container-type: inline-size; display: grid; gap: var(--sp-4); align-content: start; padding: var(--sp-4); }
   .workspace-toolbar { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: var(--sp-3); }
   .workspace-title { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
   .workspace-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+
+  /* Aligns "Go deeper"/Related Topics to the same left/right edges as
+     the workspace shell above -- otherwise the page narrows back to
+     the article's 68ch width right under a much wider section, which
+     reads as a layout mistake even though each piece is correct on
+     its own. */
+  .footer-page {
+    position: relative; left: 50%; transform: translateX(-50%);
+    width: 100vw; max-width: 92rem; box-sizing: border-box;
+    padding: 0 var(--sp-5);
+  }
+  /* Sources/RelatedTopics render one full-width row per item by default
+     (tuned for the article's 68ch column) -- at this page's much wider
+     footer that reads as stretched, so let them wrap into cards instead.
+     Scoped by the .footer-page ancestor (only present on this page), so
+     every other topic page keeps the unmodified single-column list. */
+  .footer-page :global(.sources-list),
+  .footer-page :global(.related-list) {
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
 
   /* pipeline diagram */
   .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
@@ -362,7 +441,7 @@ import VerifiedDate from '../components/VerifiedDate.astro';
   .pipe-edge.active { background: var(--accent); }
   .pipe-edge.active::after { color: var(--accent); }
   .pipe-edge-note { position: absolute; top: -1.1rem; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
-  @media (max-width: 40rem) {
+  @container (max-width: 40rem) {
     .pipeline { flex-direction: column; }
     .pipe-edge { width: 2px; height: 2rem; }
     .pipe-edge::after { content: '▼'; right: 50%; top: auto; bottom: -0.7rem; transform: translateX(50%); }
@@ -382,7 +461,7 @@ import VerifiedDate from '../components/VerifiedDate.astro';
 
   /* tool windows */
   .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
-  @media (max-width: 50rem) { .tool-grid { grid-template-columns: 1fr; } }
+  @container (max-width: 50rem) { .tool-grid { grid-template-columns: 1fr; } }
   .tool-window { border: 1px solid var(--line-bright); background: var(--bg-0); display: flex; flex-direction: column; min-height: 17rem; }
   .tool-titlebar { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border-bottom: 1px solid var(--line); }
   .tw-dots { display: flex; gap: 0.3rem; }

@@ -62,14 +62,14 @@ export const DOMAINS: Domain[] = [
         href: '/context-engineering/', title: 'Context Engineering',
         blurb: 'Prompt engineering was about wording. This is about what the model even gets to see — try the budget simulator.',
         isNew: true,
-        related: ['/how-llms-predict-text/', '/agentic-engineering/', '/ai-memory/'],
+        related: ['/how-llms-predict-text/', '/agentic-engineering/', '/ai-memory/', '/tech-stack-fundamentals/'],
         lastVerified: '2026-09-07',
       },
       {
         href: '/agentic-engineering/', title: 'Agentic Engineering',
         blurb: 'Why a single prompt became a loop. Watch a toy agent think, act, and observe in real time.',
         isNew: true,
-        related: ['/context-engineering/', '/ai-memory/'],
+        related: ['/context-engineering/', '/ai-memory/', '/tech-stack-fundamentals/'],
         lastVerified: '2026-09-07',
       },
       {
@@ -104,8 +104,16 @@ export const DOMAINS: Domain[] = [
     topics: [
       {
         href: '/tech-stack-fundamentals/', title: 'Tech Stack Fundamentals',
-        blurb: 'A real browser, server, and database, simulated side by side — watch one request travel through all three.',
+        blurb: 'The stack knowledge every full-stack and AI-app dev needs — a real browser, server, and database, simulated side by side.',
         isNew: true,
+        related: ['/agentic-engineering/', '/context-engineering/', '/architecture/'],
+        lastVerified: '2026-09-10',
+      },
+      {
+        href: '/architecture/', title: 'Architecture',
+        blurb: 'Why the same task can touch one file or ten, how an AI pipeline is actually wired, and how to weigh real tradeoffs — try all three yourself.',
+        isNew: true,
+        related: ['/tech-stack-fundamentals/', '/agentic-engineering/'],
         lastVerified: '2026-09-10',
       },
     ],
