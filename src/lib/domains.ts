@@ -96,6 +96,20 @@ export const DOMAINS: Domain[] = [
       },
     ],
   },
+  {
+    slug: 'systems',
+    name: 'Systems',
+    icon: '▦',
+    blurb: 'How a tech stack actually fits together, one real layer at a time.',
+    topics: [
+      {
+        href: '/tech-stack-fundamentals/', title: 'Tech Stack Fundamentals',
+        blurb: 'A real browser, server, and database, simulated side by side — watch one request travel through all three.',
+        isNew: true,
+        lastVerified: '2026-09-10',
+      },
+    ],
+  },
 ];
 
 export function findTopic(href: string): Topic | undefined {

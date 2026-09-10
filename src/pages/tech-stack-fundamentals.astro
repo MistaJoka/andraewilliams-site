@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
+import VerifiedDate from '../components/VerifiedDate.astro';
+---
+<BaseLayout
+  title="Tech Stack Fundamentals"
+  description="A tech stack is just three jobs — frontend, backend, database — done by whichever tools you picked. Watch one real request travel through all three, simulated side by side."
+>
+  <p class="eyebrow"><a href="/systems/">← Systems</a></p>
+  <h1>Tech Stack Fundamentals</h1>
+  <VerifiedDate />
+
+  <Tldr>
+    A "tech stack" is just the layered set of tools that work together to
+    answer one request: something in your browser (<strong>frontend</strong>)
+    asks for something, a server decides what to do with that ask
+    (<strong>backend</strong>), and the server often asks a database to
+    fetch or store the real data (<strong>database</strong>). Every layer
+    has one job. Learning "the stack" for a framework is really just
+    learning which specific tool was assigned to each of these three
+    unchanging jobs — the architecture underneath barely changes between
+    stacks.
+  </Tldr>
+
+  <Eli5>
+    Think of ordering food at a restaurant:
+    <ul>
+      <li>You tell the waiter what you want — that's the <strong>frontend</strong>.</li>
+      <li>The waiter doesn't cook. They decide what to do with your order and pass it along — that's the <strong>backend</strong>.</li>
+      <li>The kitchen has the actual ingredients and does the real work — that's the <strong>database</strong>.</li>
+    </ul>
+    Three completely different jobs, one meal. Swap the restaurant, swap
+    the waiter, swap the kitchen — the three jobs never change.
+  </Eli5>
+
+  <WhyItMatters>
+    <ul>
+      <li>Most real bugs live at the <strong>seams</strong> between layers — a browser sending the wrong shape of data, a server querying the wrong table — not inside one layer alone.</li>
+      <li>Knowing which layer is responsible for what tells you where to actually look when something breaks, instead of guessing.</li>
+      <li>Every stack name (MERN, LAMP, whatever's next) is just naming which tool got picked for each of these same three jobs.</li>
+    </ul>
+  </WhyItMatters>
+
+  <HowItWorks>
+    <p>Every request in the lab below follows the same real sequence:</p>
+    <ol>
+      <li>The <strong>browser</strong> sends a request for something specific — a path, like an order ticket.</li>
+      <li>The <strong>server</strong> matches that path to a handler <em>before anything else happens</em> — an unmatched path never gets any further.</li>
+      <li>If the handler needs real data, it asks the <strong>database</strong>, which answers with rows — or none at all.</li>
+      <li>The server turns whatever it got back into a response; the browser receives it and renders something.</li>
+    </ol>
+  </HowItWorks>
+
+  <section class="lab" aria-labelledby="lab-heading">
+    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself: watch a request travel through all three</h2>
+    <p class="lab-note">
+      A real (tiny) router and in-memory database, not a canned animation
+      — an unmatched path genuinely never reaches the database below, and
+      a missing id genuinely does.
+    </p>
+
+    <div class="sim-controls">
+      <button type="button" class="ex-btn" data-path="/api/users/2">View profile #2</button>
+      <button type="button" class="ex-btn" data-path="/api/users/1">View profile #1</button>
+      <button type="button" class="ex-btn" data-path="/api/users/99">View profile #99 (missing)</button>
+      <button type="button" class="ex-btn" data-path="/api/nonsense">Bad URL entirely</button>
+    </div>
+
+    <div class="sim-grid">
+      <div class="sim-panel" id="panel-browser">
+        <p class="sim-panel-title">Browser <span class="sim-panel-sub">(address bar + network log)</span></p>
+        <div class="sim-addressbar" id="sim-address">https://example.app</div>
+        <div class="sim-log" id="log-browser"></div>
+      </div>
+      <div class="sim-panel sim-terminal" id="panel-server">
+        <p class="sim-panel-title">Server <span class="sim-panel-sub">(terminal, tailing the log)</span></p>
+        <div class="sim-log sim-log-terminal" id="log-server"></div>
+      </div>
+      <div class="sim-panel" id="panel-database">
+        <p class="sim-panel-title">Database <span class="sim-panel-sub">(query tool)</span></p>
+        <div class="sim-log" id="log-database"></div>
+      </div>
+    </div>
+  </section>
+
+  <FailureModes>
+    <ul>
+      <li><strong>"The frontend talks to the database directly."</strong> Real architectures almost never do this — the backend exists specifically to control what the database is allowed to be asked. It's also why nearly every real security boundary lives at the server layer, not the browser.</li>
+      <li><strong>"More layers means more complex, which means worse."</strong> Not necessarily — the separation is exactly what lets you swap one layer (a new database engine, a new frontend framework) without rewriting the others.</li>
+      <li><strong>"If the page shows an error, the bug is in the frontend."</strong> Try "View profile #99" above — the 404 originates at the database layer (zero rows), and only reaches the browser last, after passing back through the server.</li>
+    </ul>
+  </FailureModes>
+
+  <DeepDive>
+    <ul>
+      <li>
+        <strong>Servers scale differently than databases.</strong> A
+        stateless backend can usually be duplicated — run ten identical
+        copies behind a load balancer — because any copy can answer any
+        request. A database holds the one real copy of your data, so it
+        scales through different techniques entirely (replication,
+        sharding), not just "add more copies."
+      </li>
+      <li>
+        <strong>A real stack usually has a fourth layer: cache.</strong>
+        Production systems commonly insert a cache (like Redis) between
+        server and database specifically so the same expensive query
+        doesn't run twice. This lab skips it on purpose to keep the three
+        core jobs clear — but it's the first thing most real stacks add.
+      </li>
+      <li>
+        <strong>Routing is matching, not magic.</strong> The server's
+        "route table" in this lab is one regular expression. Real
+        frameworks do the same fundamental thing — match a path pattern
+        to a handler — with far more patterns and far more machinery
+        around it.
+      </li>
+    </ul>
+  </DeepDive>
+
+  <WhatILearned>
+    A tech stack isn't a list of framework names to memorize — it's three
+    jobs (ask, decide, store) that never change, done by whichever specific
+    tools you chose. Once you can name which layer a bug actually lives in,
+    picking up a new framework for that same job gets a lot faster.
+  </WhatILearned>
+
+  <RelatedTopics />
+
+  <Sources
+    sources={[
+      {
+        title: 'Client–server model — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Client%E2%80%93server_model',
+        note: 'The foundational pattern every stack in this lab is built on.',
+      },
+      {
+        title: 'Multitier architecture — Wikipedia',
+        url: 'https://en.wikipedia.org/wiki/Multitier_architecture',
+        note: 'The formal name for splitting frontend, backend, and database into separate tiers.',
+      },
+      {
+        title: 'HTTP overview — MDN Web Docs',
+        url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview',
+        note: 'The actual protocol the browser-to-server leg of this lab is modeling.',
+      },
+    ]}
+  />
+</BaseLayout>
+
+<script>
+  import { scrambleText as decode } from '../lib/decode';
+  import { handleRequest, type RequestLogEntry } from '../lib/stack-sim';
+
+  const address = document.getElementById('sim-address')!;
+  const logs: Record<RequestLogEntry['layer'], HTMLElement> = {
+    browser: document.getElementById('log-browser')!,
+    server: document.getElementById('log-server')!,
+    database: document.getElementById('log-database')!,
+  };
+  const panels: Record<RequestLogEntry['layer'], HTMLElement> = {
+    browser: document.getElementById('panel-browser')!,
+    server: document.getElementById('panel-server')!,
+    database: document.getElementById('panel-database')!,
+  };
+
+  let runTimer: number | undefined;
+
+  function clearLogs() {
+    for (const el of Object.values(logs)) el.innerHTML = '';
+    for (const el of Object.values(panels)) el.classList.remove('sim-active');
+  }
+
+  function run(path: string) {
+    if (runTimer) { clearTimeout(runTimer); runTimer = undefined; }
+    clearLogs();
+    address.textContent = `https://example.app${path}`;
+    const { log } = handleRequest('GET', path);
+
+    let i = 0;
+    const next = () => {
+      for (const el of Object.values(panels)) el.classList.remove('sim-active');
+      if (i >= log.length) return;
+      const entry = log[i];
+      panels[entry.layer].classList.add('sim-active');
+      const line = document.createElement('p');
+      line.className = 'sim-line';
+      logs[entry.layer].append(line);
+      i++;
+      decode(line, entry.text, { frames: 6, frameMs: 25, onDone: () => { runTimer = window.setTimeout(next, 380); } });
+    };
+    next();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.ex-btn').forEach((btn) => {
+    btn.addEventListener('click', () => run(btn.dataset.path ?? ''));
+  });
+</script>
+
+<style>
+  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  .section-heading { margin-bottom: var(--sp-2); }
+  .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
+
+  .sim-controls { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+  .ex-btn {
+    font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
+    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  }
+  .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+  @media (max-width: 50rem) { .sim-grid { grid-template-columns: 1fr; } }
+
+  .sim-panel {
+    background: var(--bg-0); border: 1px solid var(--line-bright); padding: var(--sp-3);
+    min-height: 14rem; transition: box-shadow 200ms, border-color 200ms;
+  }
+  .sim-panel.sim-active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 16px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .sim-terminal { background: #05070d; }
+
+  .sim-panel-title { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-0); font-weight: 700; margin: 0 0 var(--sp-1); }
+  .sim-panel-sub { color: var(--text-2); font-weight: 400; }
+
+  .sim-addressbar {
+    font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-2);
+    background: var(--bg-1); border: 1px solid var(--line); padding: var(--sp-1) var(--sp-2);
+    margin-bottom: var(--sp-2); word-break: break-all;
+  }
+
+  .sim-log { display: grid; gap: var(--sp-1); font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; }
+  .sim-log-terminal { color: var(--status-working); }
+  .sim-line { margin: 0; color: var(--text-1); word-break: break-word; }
+  .sim-log-terminal .sim-line { color: var(--status-working); }
+  .sim-log-terminal .sim-line::before { content: '$ '; opacity: 0.6; }
+</style>
