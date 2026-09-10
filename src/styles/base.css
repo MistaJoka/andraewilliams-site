@@ -17,7 +17,17 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { color-scheme: dark; }
+html {
+  color-scheme: dark;
+  /* Full-bleed sections (100vw breakouts, e.g. the Systems workspace
+     layout) overflow by the scrollbar's width since vw doesn't account
+     for it -- `clip`, not `hidden`, because `hidden` still permits
+     programmatic scrollLeft/scrollTo per spec, just not a visible
+     scrollbar or user-driven wheel/touch scroll; `clip` removes the
+     scroll container entirely. Vertical scrolling is untouched since
+     overflow-y is left at its default here. */
+  overflow-x: clip;
+}
 
 body {
   margin: 0;
