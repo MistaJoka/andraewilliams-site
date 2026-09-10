@@ -50,6 +50,17 @@ import VerifiedDate from '../components/VerifiedDate.astro';
           </ul>
         </section>
         <section class="docs-block">
+          <p class="docs-label">When to use what</p>
+          <ul>
+            <li>Validating input? Do it in <strong>both</strong> places — frontend for instant feedback, backend because the frontend can always be bypassed.</li>
+            <li>Need to remember something between requests? That's the <strong>database's</strong> job — keep the server itself stateless.</li>
+            <li>Same expensive query running over and over? Add a <strong>cache</strong> in front of the database, don't just spin up more database copies.</li>
+            <li>Records relate to each other (orders → customers)? <strong>SQL.</strong> Each record stands alone and needs to scale wide? <strong>NoSQL.</strong></li>
+            <li>Task doesn't need to finish before the user gets a response? Hand it to a <strong>background job/queue</strong>, don't make the request wait.</li>
+            <li>Need the server to push updates without being asked? Different protocol (WebSockets) — still the same 3 jobs underneath.</li>
+          </ul>
+        </section>
+        <section class="docs-block">
           <p class="docs-label">Why it matters</p>
           <ul>
             <li>Most bugs live at the <strong>seams</strong> between layers, not inside one.</li>
