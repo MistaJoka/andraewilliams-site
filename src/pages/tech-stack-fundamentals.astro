@@ -7,237 +7,266 @@ import { STACK_COMBOS } from '../lib/stack-combos';
 ---
 <BaseLayout
   title="Tech Stack Fundamentals"
-  description="The tech stack knowledge every full-stack and AI-app developer needs: three jobs — ask, decide, store — done by whichever tools you picked. Drive a real browser, terminal, and database client, side by side, and watch one request move through all three."
+  description="The tech stack knowledge every full-stack and AI-app developer needs. Walk the pipeline top to bottom — browser, server, database — then watch a real request move through all three, live."
 >
   <p class="eyebrow"><a href="/systems/">← Systems</a></p>
   <h1>Tech Stack Fundamentals</h1>
   <VerifiedDate />
 
-  <div class="workspace-page">
-    <div class="workspace-shell">
-      <aside class="docs-panel">
-        <section class="docs-block">
-          <p class="docs-label">TL;DR</p>
-          <ul>
-            <li>Three unchanging jobs: <strong>ask</strong> (frontend), <strong>decide</strong> (backend), <strong>store</strong> (database).</li>
-            <li>MERN, LAMP, whatever's next — just names for which tool got picked per job.</li>
-            <li>Name which layer a bug lives in, and any new framework gets faster to pick up.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">ELI5</p>
-          <ul>
-            <li>You tell the waiter what you want → <strong>frontend</strong>.</li>
-            <li>The waiter decides what to do and passes it along → <strong>backend</strong>.</li>
-            <li>The kitchen does the real work → <strong>database</strong>.</li>
-            <li><strong>Swap any of the three — the jobs never change.</strong></li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Technical definition</p>
-          <ul>
-            <li>Formally a <strong>three-tier architecture</strong>: presentation, application logic, and data persistence, each independently replaceable.</li>
-            <li>Layers talk only over defined protocols — HTTP browser↔server, a query language server↔database — never by reaching into each other's internals.</li>
-            <li>This lab models exactly that: three tiers, two protocols, one request.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Real-world tools</p>
-          <ul>
-            <li><strong>Frontend:</strong> React, Vue, Svelte — runs in the visitor's browser.</li>
-            <li><strong>Backend:</strong> Node/Express, Django, Rails, Spring — runs on a server you control.</li>
-            <li><strong>Database:</strong> PostgreSQL, MySQL, MongoDB — where the real data actually lives.</li>
-            <li>Same 3 jobs no matter which row you pick from each column.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">When to use what</p>
-          <ul>
-            <li>Validating input? Do it in <strong>both</strong> places — frontend for instant feedback, backend because the frontend can always be bypassed.</li>
-            <li>Need to remember something between requests? That's the <strong>database's</strong> job — keep the server itself stateless.</li>
-            <li>Same expensive query running over and over? Add a <strong>cache</strong> in front of the database, don't just spin up more database copies.</li>
-            <li>Records relate to each other (orders → customers)? <strong>SQL.</strong> Each record stands alone and needs to scale wide? <strong>NoSQL.</strong></li>
-            <li>Task doesn't need to finish before the user gets a response? Hand it to a <strong>background job/queue</strong>, don't make the request wait.</li>
-            <li>Need the server to push updates without being asked? Different protocol (WebSockets) — still the same 3 jobs underneath.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Why it matters</p>
-          <ul>
-            <li>Most bugs live at the <strong>seams</strong> between layers, not inside one.</li>
-            <li>Security boundaries live at the server, never the browser — try <code>/login</code> in the workspace.</li>
-            <li>Separation lets you swap one layer without rewriting the rest.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Under the hood</p>
-          <ul>
-            <li>Stateless backend → can run 10 identical copies behind a load balancer.</li>
-            <li>A database holds the one real copy, so it scales differently (replication, sharding) — not just "add more copies."</li>
-            <li>Real stacks usually insert a <strong>cache</strong> (Redis, etc.) between server and database — skipped here on purpose to keep the 3 jobs clear.</li>
-            <li>Routing is matching, not magic: this lab's "route table" is one regex; real frameworks do the same thing with more patterns.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Failure modes</p>
-          <ul>
-            <li><strong>"Frontend hits the DB directly."</strong> Real stacks don't — the backend guards it.</li>
-            <li><strong>"Error = frontend broken."</strong> Try user 99: the 404 starts at the database.</li>
-            <li><strong>"More layers = worse."</strong> It's what lets a stack change one piece at a time.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Where AI fits in</p>
-          <ul>
-            <li>An LLM call from your backend is just another outbound request — same job (decide), one more thing the server waits on before answering the browser.</li>
-            <li>A <strong>vector database</strong> is still "store" — a specialized database tier for embeddings instead of rows, same job as the DB panel here.</li>
-            <li>An agent loop or RAG pipeline adds steps, not new jobs — see <a href="/agentic-engineering/">Agentic Engineering</a> and <a href="/context-engineering/">Context Engineering</a> for what fills those extra steps.</li>
-          </ul>
-        </section>
-      </aside>
+  <div class="infographic">
 
-      <div class="workspace-main">
-        <div class="workspace-toolbar">
-          <span class="workspace-title">request-lifecycle.sim</span>
-          <span class="workspace-hint">genuinely tiny router + in-memory DB — type any id, or a made-up path</span>
-        </div>
+    <section class="ig-hero">
+      <p class="ig-kicker">The big picture — click a layer to jump to it</p>
+      <nav class="pipeline pipeline-nav" aria-label="Jump to a layer">
+        <a class="pipe-node" href="#browser">
+          <span class="pipe-icon" aria-hidden="true">▣</span>
+          <span class="pipe-name">Browser</span>
+          <span class="pipe-note">Ask</span>
+        </a>
+        <div class="pipe-edge"><span class="pipe-edge-note">HTTP</span></div>
+        <a class="pipe-node" href="#server">
+          <span class="pipe-icon" aria-hidden="true">▤</span>
+          <span class="pipe-name">Server</span>
+          <span class="pipe-note">Decide</span>
+        </a>
+        <div class="pipe-edge"><span class="pipe-edge-note">SQL</span></div>
+        <a class="pipe-node" href="#database">
+          <span class="pipe-icon" aria-hidden="true">▦</span>
+          <span class="pipe-name">Database</span>
+          <span class="pipe-note">Store</span>
+        </a>
+      </nav>
+      <ul class="ig-tldr">
+        <li>Three unchanging jobs, one per layer above — <strong>ask</strong>, <strong>decide</strong>, <strong>store</strong>.</li>
+        <li>Formally a <strong>three-tier architecture</strong>: each tier independently replaceable, talking only over defined protocols.</li>
+        <li>Most real bugs live at the <strong>seams</strong> between tiers, not inside one — the live run further down makes that visible.</li>
+      </ul>
+    </section>
 
-        <div class="pipeline" role="img" aria-label="Browser connects to Server over HTTP; Server connects to Database over SQL">
-          <div class="pipe-node" data-node="browser">
-            <span class="pipe-icon" aria-hidden="true">▣</span>
-            <span class="pipe-name">Browser</span>
-            <span class="pipe-note">Sends the request, renders the result</span>
-          </div>
-          <div class="pipe-edge" data-edge="browser-server"><span class="pipe-edge-note">HTTP</span></div>
-          <div class="pipe-node" data-node="server">
-            <span class="pipe-icon" aria-hidden="true">▤</span>
-            <span class="pipe-name">Server</span>
-            <span class="pipe-note">Stateless — could run 10 identical copies</span>
-          </div>
-          <div class="pipe-edge" data-edge="server-database"><span class="pipe-edge-note">SQL</span></div>
-          <div class="pipe-node" data-node="database">
-            <span class="pipe-icon" aria-hidden="true">▦</span>
-            <span class="pipe-name">Database</span>
-            <span class="pipe-note">Holds the one real copy — scales differently</span>
-          </div>
-        </div>
-
-        <div class="addr-input-row">
-          <span class="addr-proto">GET https://example.app</span>
-          <input id="path-input" class="addr-input" type="text" value="/api/users/2" spellcheck="false" autocomplete="off" aria-label="Request path" />
-          <button type="button" id="go-btn" class="go-btn">Go ▶</button>
-        </div>
-        <div class="preset-chips">
-          <button type="button" class="chip" data-path="/api/users/1">user 1</button>
-          <button type="button" class="chip" data-path="/api/users/2">user 2</button>
-          <button type="button" class="chip" data-path="/api/users/99">user 99 (missing)</button>
-          <button type="button" class="chip" data-path="/login">/login (bad route)</button>
-        </div>
-
-        <div class="tool-grid">
-          <div class="tool-window">
-            <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">User Profile — browser</span></div>
-            <div class="tool-body">
-              <p class="net-log-label">Rendered page</p>
-              <div class="rendered-page" id="rendered-page"><p class="rp-placeholder">Click Go or pick an example above.</p></div>
-              <p class="net-log-label">Network</p>
-              <div class="net-log" id="net-log" aria-live="polite"></div>
-            </div>
-          </div>
-
-          <div class="tool-window">
-            <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">server.log — bash</span></div>
-            <div class="tool-body terminal-body" id="log-server" aria-hidden="true"></div>
-          </div>
-
-          <div class="tool-window">
-            <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">query — users</span></div>
-            <div class="tool-body" aria-hidden="true">
-              <p class="net-log-label">Query</p>
-              <div class="query-line" id="db-query">— no query yet —</div>
-              <p class="net-log-label">Results</p>
-              <table class="db-table" id="db-table" hidden>
-                <thead><tr><th>id</th><th>name</th><th>role</th></tr></thead>
-                <tbody id="db-tbody"></tbody>
-              </table>
-              <p class="db-empty" id="db-empty" hidden>0 rows returned</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="digest-row">
-          <div class="digest-card">
-            <p class="net-log-label">Popular stack combos</p>
-            <div class="table-scroll">
-              <table class="combo-table">
-                <thead>
-                  <tr><th>Stack</th><th>▣ Frontend</th><th>▤ Backend</th><th>▦ Database</th></tr>
-                </thead>
-                <tbody>
-                  {STACK_COMBOS.map((s) => (
-                    <tr>
-                      <td>{s.name}</td>
-                      <td>{s.frontend.tool}</td>
-                      <td>{s.backend.tool}</td>
-                      <td>{s.database.tool}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="digest-card">
-            <p class="net-log-label">SQL vs. NoSQL, at a glance</p>
-            <div class="vs-grid">
-              <div class="vs-col">
-                <p class="vs-title">SQL</p>
-                <ul>
-                  <li>Fixed schema, rows &amp; columns</li>
-                  <li>Records relate to each other</li>
-                  <li>Postgres, MySQL, SQLite</li>
-                </ul>
-              </div>
-              <div class="vs-col">
-                <p class="vs-title">NoSQL</p>
-                <ul>
-                  <li>Flexible schema, documents</li>
-                  <li>Records stand alone, scale wide</li>
-                  <li>MongoDB, DynamoDB, Redis</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="compare-card">
-          <p class="net-log-label">Compare stacks: what each part offers, and why you'd swap it</p>
-          <div class="compare-chips">
-            {STACK_COMBOS.map((s, i) => (
-              <button type="button" class="chip compare-chip" data-stack-id={s.id} aria-pressed={i === 0 ? 'true' : 'false'}>{s.name}</button>
-            ))}
-          </div>
-          <div class="compare-layers">
-            <div class="compare-layer">
-              <p class="compare-layer-label">▣ Frontend</p>
-              <p class="compare-tool" id="compare-frontend-tool"></p>
-              <p class="compare-offers" id="compare-frontend-offers"></p>
-            </div>
-            <div class="compare-layer">
-              <p class="compare-layer-label">▤ Backend</p>
-              <p class="compare-tool" id="compare-backend-tool"></p>
-              <p class="compare-offers" id="compare-backend-offers"></p>
-            </div>
-            <div class="compare-layer">
-              <p class="compare-layer-label">▦ Database</p>
-              <p class="compare-tool" id="compare-database-tool"></p>
-              <p class="compare-offers" id="compare-database-offers"></p>
-            </div>
-          </div>
-          <p class="compare-swap"><span class="compare-swap-label">Swap out when:</span> <span id="compare-swap-text"></span></p>
+    <section class="ig-step" id="browser" style={{ '--step-accent': 'var(--accent)' }}>
+      <div class="ig-step-head">
+        <span class="ig-step-icon" aria-hidden="true">▣</span>
+        <div>
+          <p class="ig-step-kicker">01 · ASK</p>
+          <h2>Browser</h2>
         </div>
       </div>
-    </div>
+      <p class="ig-eli5">Like telling a waiter what you want: sends the request, then renders whatever comes back.</p>
+      <div class="ig-step-grid">
+        <div class="ig-step-block">
+          <p class="ig-step-label">Real-world tools</p>
+          <p>React, Vue, Svelte — runs entirely in the visitor's browser.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">When to use what</p>
+          <p>Validate input here for instant feedback — but never <em>only</em> here. A browser can always be bypassed; nothing it says is trustworthy on its own.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-step" id="server" style={{ '--step-accent': 'var(--status-working)' }}>
+      <div class="ig-step-head">
+        <span class="ig-step-icon" aria-hidden="true">▤</span>
+        <div>
+          <p class="ig-step-kicker">02 · DECIDE</p>
+          <h2>Server</h2>
+        </div>
+      </div>
+      <p class="ig-eli5">Like the waiter deciding what to do with your order and passing it to the kitchen.</p>
+      <div class="ig-step-grid">
+        <div class="ig-step-block">
+          <p class="ig-step-label">Real-world tools</p>
+          <p>Node/Express, Django, Rails, Spring — runs on a server you control.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">When to use what</p>
+          <p>Same query running over and over? Add a <strong>cache</strong> here, in front of the database. Task doesn't need to finish before responding? Hand it to a <strong>background job/queue</strong> instead of making the request wait.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Under the hood</p>
+          <p><strong>Stateless</strong> → can run 10 identical copies behind a load balancer. "Routing" is matching a path to a handler, not magic — watch it happen in the live run below.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Where AI fits in</p>
+          <p>An LLM call is just another outbound request — same job (decide), one more thing the server waits on. An agent loop adds steps here, not new jobs — see <a href="/agentic-engineering/">Agentic Engineering</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-step" id="database" style={{ '--step-accent': 'var(--accent-deep)' }}>
+      <div class="ig-step-head">
+        <span class="ig-step-icon" aria-hidden="true">▦</span>
+        <div>
+          <p class="ig-step-kicker">03 · STORE</p>
+          <h2>Database</h2>
+        </div>
+      </div>
+      <p class="ig-eli5">Like the kitchen — has the real ingredients, does the real work.</p>
+      <div class="ig-step-grid">
+        <div class="ig-step-block">
+          <p class="ig-step-label">Real-world tools</p>
+          <p>PostgreSQL, MySQL, MongoDB — where the real data actually lives.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Under the hood</p>
+          <p>Holds the <strong>one real copy</strong>, so it scales differently than the server (replication, sharding) — not just "add more copies."</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Where AI fits in</p>
+          <p>A <strong>vector database</strong> is still "store" — a specialized tier for embeddings instead of rows, same job as here.</p>
+        </div>
+      </div>
+      <div class="vs-grid">
+        <div class="vs-col">
+          <p class="vs-title">SQL — when records relate</p>
+          <ul>
+            <li>Fixed schema, rows &amp; columns</li>
+            <li>Records relate to each other (orders → customers)</li>
+            <li>Postgres, MySQL, SQLite</li>
+          </ul>
+        </div>
+        <div class="vs-col">
+          <p class="vs-title">NoSQL — when records stand alone</p>
+          <ul>
+            <li>Flexible schema, documents</li>
+            <li>Each record stands alone, scales wide</li>
+            <li>MongoDB, DynamoDB, Redis</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-live">
+      <p class="ig-kicker">See it happen — live</p>
+      <div class="workspace-toolbar">
+        <span class="workspace-title">request-lifecycle.sim</span>
+        <span class="workspace-hint">genuinely tiny router + in-memory DB — type any id, or a made-up path</span>
+      </div>
+
+      <div class="pipeline" role="img" aria-label="Browser connects to Server over HTTP; Server connects to Database over SQL">
+        <div class="pipe-node" data-node="browser">
+          <span class="pipe-icon" aria-hidden="true">▣</span>
+          <span class="pipe-name">Browser</span>
+          <span class="pipe-note">Sends the request, renders the result</span>
+        </div>
+        <div class="pipe-edge" data-edge="browser-server"><span class="pipe-edge-note">HTTP</span></div>
+        <div class="pipe-node" data-node="server">
+          <span class="pipe-icon" aria-hidden="true">▤</span>
+          <span class="pipe-name">Server</span>
+          <span class="pipe-note">Stateless — could run 10 identical copies</span>
+        </div>
+        <div class="pipe-edge" data-edge="server-database"><span class="pipe-edge-note">SQL</span></div>
+        <div class="pipe-node" data-node="database">
+          <span class="pipe-icon" aria-hidden="true">▦</span>
+          <span class="pipe-name">Database</span>
+          <span class="pipe-note">Holds the one real copy — scales differently</span>
+        </div>
+      </div>
+
+      <div class="addr-input-row">
+        <span class="addr-proto">GET https://example.app</span>
+        <input id="path-input" class="addr-input" type="text" value="/api/users/2" spellcheck="false" autocomplete="off" aria-label="Request path" />
+        <button type="button" id="go-btn" class="go-btn">Go ▶</button>
+      </div>
+      <div class="preset-chips">
+        <button type="button" class="chip" data-path="/api/users/1">user 1</button>
+        <button type="button" class="chip" data-path="/api/users/2">user 2</button>
+        <button type="button" class="chip" data-path="/api/users/99">user 99 (missing)</button>
+        <button type="button" class="chip" data-path="/login">/login (bad route)</button>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool-window">
+          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">User Profile — browser</span></div>
+          <div class="tool-body">
+            <p class="net-log-label">Rendered page</p>
+            <div class="rendered-page" id="rendered-page"><p class="rp-placeholder">Click Go or pick an example above.</p></div>
+            <p class="net-log-label">Network</p>
+            <div class="net-log" id="net-log" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="tool-window">
+          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">server.log — bash</span></div>
+          <div class="tool-body terminal-body" id="log-server" aria-hidden="true"></div>
+        </div>
+
+        <div class="tool-window">
+          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">query — users</span></div>
+          <div class="tool-body" aria-hidden="true">
+            <p class="net-log-label">Query</p>
+            <div class="query-line" id="db-query">— no query yet —</div>
+            <p class="net-log-label">Results</p>
+            <table class="db-table" id="db-table" hidden>
+              <thead><tr><th>id</th><th>name</th><th>role</th></tr></thead>
+              <tbody id="db-tbody"></tbody>
+            </table>
+            <p class="db-empty" id="db-empty" hidden>0 rows returned</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-recap">
+      <p class="ig-kicker">Common misconceptions</p>
+      <ul class="ig-recap-list">
+        <li><strong>"The frontend talks to the database directly."</strong> Real stacks don't — the backend guards it.</li>
+        <li><strong>"An error means the frontend is broken."</strong> Try user 99 above: the 404 starts at the database.</li>
+        <li><strong>"More layers means worse."</strong> It's what lets a stack change one piece at a time.</li>
+      </ul>
+    </section>
+
+    <section class="ig-compare">
+      <p class="ig-kicker">Compare real stacks</p>
+      <div class="digest-card">
+        <p class="net-log-label">Popular stack combos</p>
+        <div class="table-scroll">
+          <table class="combo-table">
+            <thead>
+              <tr><th>Stack</th><th>▣ Frontend</th><th>▤ Backend</th><th>▦ Database</th></tr>
+            </thead>
+            <tbody>
+              {STACK_COMBOS.map((s) => (
+                <tr>
+                  <td>{s.name}</td>
+                  <td>{s.frontend.tool}</td>
+                  <td>{s.backend.tool}</td>
+                  <td>{s.database.tool}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="compare-card">
+        <p class="net-log-label">What each part offers, and why you'd swap it</p>
+        <div class="compare-chips">
+          {STACK_COMBOS.map((s, i) => (
+            <button type="button" class="chip compare-chip" data-stack-id={s.id} aria-pressed={i === 0 ? 'true' : 'false'}>{s.name}</button>
+          ))}
+        </div>
+        <div class="compare-layers">
+          <div class="compare-layer">
+            <p class="compare-layer-label">▣ Frontend</p>
+            <p class="compare-tool" id="compare-frontend-tool"></p>
+            <p class="compare-offers" id="compare-frontend-offers"></p>
+          </div>
+          <div class="compare-layer">
+            <p class="compare-layer-label">▤ Backend</p>
+            <p class="compare-tool" id="compare-backend-tool"></p>
+            <p class="compare-offers" id="compare-backend-offers"></p>
+          </div>
+          <div class="compare-layer">
+            <p class="compare-layer-label">▦ Database</p>
+            <p class="compare-tool" id="compare-database-tool"></p>
+            <p class="compare-offers" id="compare-database-offers"></p>
+          </div>
+        </div>
+        <p class="compare-swap"><span class="compare-swap-label">Swap out when:</span> <span id="compare-swap-text"></span></p>
+      </div>
+    </section>
+
   </div>
 
   <div class="footer-page">
@@ -465,85 +494,78 @@ import { STACK_COMBOS } from '../lib/stack-combos';
 </script>
 
 <style>
-  /* The whole page below the title breaks out of the article's 68ch
-     reading column (see BaseLayout's .wrap) -- a Systems topic is meant
-     to feel like the actual tool/environment it's teaching, not an
-     article with a widget stapled in. Docs and the simulator share ONE
-     bordered shell (not two separately-boxed sections) specifically so
-     a taller docs column never reads as a layout bug next to a shorter
-     main column -- there's no second box edge to look misaligned. */
-  .workspace-page {
+  /* One continuous top-to-bottom flow -- big picture, then each layer
+     in order, then watching them work together live -- instead of a
+     sidebar-plus-main split. Breaks out of the article's 68ch reading
+     column (see BaseLayout's .wrap) the same way the workspace did.
+     grid-template-columns: minmax(0, 1fr) -- not omitted -- because a
+     grid's implicit single column otherwise sizes itself to whichever
+     child has the widest intrinsic min-content (e.g. the nowrap combo-
+     table), stretching every section to match instead of shrinking to
+     fit the actual viewport; minmax(0, ...) caps that track's minimum
+     basis so children shrink correctly and handle their own overflow
+     (e.g. .table-scroll) instead. */
+  .infographic {
     position: relative; left: 50%; transform: translateX(-50%);
-    width: 100vw; max-width: 92rem; box-sizing: border-box;
+    width: 100vw; max-width: 76rem; box-sizing: border-box;
     padding: 0 var(--sp-5);
     margin: var(--sp-5) 0 var(--sp-6);
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-4);
   }
-  .workspace-shell {
-    border: 1px solid var(--line); background: var(--bg-1);
-    display: grid; grid-template-columns: 34rem 1fr;
-  }
-  @media (max-width: 60rem) {
-    .workspace-shell { grid-template-columns: 1fr; }
-    .docs-panel { order: 2; position: static; border-right: none; border-top: 1px solid var(--line); }
-    .workspace-main { order: 1; }
-  }
-
-  /* Docs blocks auto-flow into 2 columns once the sidebar is wide
-     enough (desktop) -- with 8 blocks now, a single narrow column made
-     this panel far taller than the simulator next to it, leaving a
-     wide dead strip of empty shell background beside it. Two columns
-     brings both sides' heights back in line with each other. */
-  .docs-panel {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: var(--sp-3); align-content: start; position: sticky; top: var(--sp-4);
-    padding: var(--sp-4); border-right: 1px solid var(--line);
-  }
-  .docs-block { border: 1px solid var(--line); background: var(--bg-0); padding: var(--sp-3); }
-  .docs-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin: 0 0 var(--sp-2); }
-  .docs-block ul { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--sp-2); font-size: 0.76rem; line-height: 1.4; color: var(--text-1); }
-  .docs-block code { font-size: 0.9em; }
-  .docs-block a { color: var(--accent); }
-
-  /* container-type, not another viewport media query: the pipeline and
-     tool-grid below need to react to *this column's actual rendered
-     width*, which shrinks once the 34rem docs sidebar exists -- a
-     viewport-width breakpoint doesn't know the sidebar ate that space,
-     which is exactly what broke the pipeline diagram (Database wrapped
-     alone onto its own row with a dangling arrow) at viewport widths
-     just above the sidebar-stacking breakpoint. */
-  .workspace-main { min-width: 0; container-type: inline-size; display: grid; gap: var(--sp-4); align-content: start; padding: var(--sp-4); }
-  .workspace-toolbar { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: var(--sp-3); }
-  .workspace-title { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
-  .workspace-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
-
-  /* Aligns "Go deeper"/Related Topics to the same left/right edges as
-     the workspace shell above -- otherwise the page narrows back to
-     the article's 68ch width right under a much wider section, which
-     reads as a layout mistake even though each piece is correct on
-     its own. */
   .footer-page {
     position: relative; left: 50%; transform: translateX(-50%);
-    width: 100vw; max-width: 92rem; box-sizing: border-box;
+    width: 100vw; max-width: 76rem; box-sizing: border-box;
     padding: 0 var(--sp-5);
   }
-  /* Sources/RelatedTopics render one full-width row per item by default
-     (tuned for the article's 68ch column) -- at this page's much wider
-     footer that reads as stretched, so let them wrap into cards instead.
-     Scoped by the .footer-page ancestor (only present on this page), so
-     every other topic page keeps the unmodified single-column list. */
   .footer-page :global(.sources-list),
   .footer-page :global(.related-list) {
     grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
   }
 
-  /* pipeline diagram */
+  .ig-kicker { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-3); }
+
+  .ig-hero { border: 1px solid var(--line-bright); background: var(--bg-1); padding: var(--sp-4); }
+  .ig-tldr { margin: var(--sp-4) 0 0; padding-left: 1.2rem; display: grid; gap: var(--sp-2); font-size: 0.85rem; line-height: 1.5; color: var(--text-1); }
+
+  /* Each layer is its own panel, colored by --step-accent so the color
+     language matches the live run's network-log tags below (same
+     accent/status-working/accent-deep per layer) -- one visual system,
+     not a new one invented per section. */
+  .ig-step { border: 1px solid var(--line); border-left: 3px solid var(--step-accent); background: var(--bg-1); padding: var(--sp-4); scroll-margin-top: var(--sp-4); }
+  .ig-step-head { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+  .ig-step-icon { font-size: var(--step-3); color: var(--step-accent); line-height: 1; }
+  .ig-step-kicker { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--step-accent); margin: 0; }
+  .ig-step h2 { margin: 0; }
+  .ig-eli5 { color: var(--text-1); font-style: italic; margin: 0 0 var(--sp-3); max-width: 60ch; }
+  .ig-step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--sp-3); }
+  .ig-step-block { border: 1px solid var(--line); background: var(--bg-0); padding: var(--sp-3); }
+  .ig-step-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-1); }
+  .ig-step-block p:last-child { margin: 0; font-size: 0.82rem; line-height: 1.5; color: var(--text-1); }
+  .ig-step-block a { color: var(--accent); }
+
+  .ig-live { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); container-type: inline-size; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+  .ig-recap { border: 1px solid var(--line); border-left: 3px solid var(--status-testing); background: var(--bg-1); padding: var(--sp-4); }
+  .ig-recap-list { margin: 0; padding-left: 1.2rem; display: grid; gap: var(--sp-2); font-size: 0.85rem; line-height: 1.5; color: var(--text-1); }
+  .ig-compare { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+
+  .workspace-toolbar { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: var(--sp-3); }
+  .workspace-title { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+  .workspace-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+
+  /* pipeline diagram -- shared by the hero's clickable nav version and
+     the live run's animated version below (different wrapper class
+     distinguishes them; the live one keeps its data-node/data-edge
+     attributes untouched so the script above still finds it). */
   .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
   .pipe-node {
     display: flex; flex-direction: column; align-items: center; gap: var(--sp-1);
     padding: var(--sp-3); border: 1px solid var(--line-bright); background: var(--bg-0);
-    min-width: 9rem; text-align: center;
+    min-width: 9rem; text-align: center; text-decoration: none; color: inherit;
   }
   .pipe-node.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 18px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .pipeline-nav .pipe-node { cursor: pointer; }
+  .pipeline-nav .pipe-node:hover { border-color: var(--accent); }
+  .pipeline-nav .pipe-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .pipe-icon { font-size: var(--step-2); color: var(--text-1); }
   .pipe-node.active .pipe-icon { color: var(--accent); }
   .pipe-name { font-family: var(--font-mono); font-weight: 700; color: var(--text-0); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; }
@@ -558,6 +580,12 @@ import { STACK_COMBOS } from '../lib/stack-combos';
     .pipe-edge { width: 2px; height: 2rem; }
     .pipe-edge::after { content: '▼'; right: 50%; top: auto; bottom: -0.7rem; transform: translateX(50%); }
     .pipe-edge-note { top: 50%; left: -2rem; transform: translateY(-50%); }
+  }
+  @media (max-width: 40rem) {
+    .ig-hero .pipeline { flex-direction: column; }
+    .ig-hero .pipe-edge { width: 2px; height: 2rem; }
+    .ig-hero .pipe-edge::after { content: '▼'; right: 50%; top: auto; bottom: -0.7rem; transform: translateX(50%); }
+    .ig-hero .pipe-edge-note { top: 50%; left: -2rem; transform: translateY(-50%); }
   }
 
   /* controls */
@@ -610,30 +638,18 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   .db-table th { color: var(--text-2); font-weight: 700; }
   .db-empty { color: var(--status-broken); font-family: var(--font-mono); font-size: 0.72rem; margin: 0; }
 
-  /* Visual digests: the same information as the sidebar's text, in
-     table/grid form instead -- a reference at a glance, not more
-     reading. */
-  .digest-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: var(--sp-4); }
   .digest-card { border: 1px solid var(--line-bright); background: var(--bg-0); padding: var(--sp-3); }
-
-  /* Wide content scrolls inside its own strip instead of overflowing
-     the page -- this table's 4 columns of real words (Node/Express,
-     PostgreSQL, Java enterprise) don't fit a narrow phone width, and
-     without this it clipped past the viewport edge there. */
   .table-scroll { overflow-x: auto; margin-top: var(--sp-2); }
   .combo-table { width: 100%; min-width: 30rem; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.7rem; }
   .combo-table th, .combo-table td { border: 1px solid var(--line); padding: 0.4rem 0.6rem; text-align: left; color: var(--text-1); white-space: nowrap; }
   .combo-table th { color: var(--accent); font-weight: 700; }
   .combo-table td:first-child { color: var(--text-0); font-weight: 700; }
 
-  .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-top: var(--sp-2); }
-  .vs-col { border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+  .vs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--sp-3); margin-top: var(--sp-3); }
+  .vs-col { border: 1px solid var(--line); background: var(--bg-0); padding: var(--sp-2) var(--sp-3); }
   .vs-title { font-family: var(--font-mono); font-weight: 700; color: var(--accent-deep); margin: 0 0 var(--sp-1); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; }
   .vs-col ul { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--sp-1); font-size: 0.72rem; line-height: 1.4; color: var(--text-1); }
 
-  /* Interactive drill-down: click a stack, its 3 layers + swap-reason
-     decode in -- the table above is the bird's-eye view, this is the
-     click-to-inspect one, same data (stack-combos.ts) either way. */
   .compare-card { border: 1px solid var(--line-bright); background: var(--bg-0); padding: var(--sp-3); }
   .compare-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-2) 0 var(--sp-3); }
   .compare-chip[aria-pressed="true"] { border-color: var(--accent); color: var(--text-0); background: var(--bg-1); box-shadow: 0 0 0 1px var(--accent); }
@@ -644,4 +660,8 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   .compare-offers { font-size: 0.74rem; color: var(--text-1); margin: 0; line-height: 1.4; }
   .compare-swap { font-size: 0.78rem; color: var(--text-1); margin: 0; padding-top: var(--sp-2); border-top: 1px solid var(--line); }
   .compare-swap-label { font-family: var(--font-mono); font-weight: 700; color: var(--status-testing); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .infographic { scroll-behavior: smooth; }
+  }
 </style>
