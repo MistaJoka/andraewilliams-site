@@ -1,132 +1,121 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Tldr, Eli5, WhyItMatters, HowItWorks, FailureModes, WhatILearned, DeepDive } from '../components/blocks';
+import { Tldr, Eli5, WhyItMatters, FailureModes } from '../components/blocks';
 import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
 import VerifiedDate from '../components/VerifiedDate.astro';
 ---
 <BaseLayout
   title="Tech Stack Fundamentals"
-  description="A tech stack is just three jobs — frontend, backend, database — done by whichever tools you picked. Watch one real request travel through all three, simulated side by side."
+  description="A tech stack is three jobs — ask, decide, store — done by whichever tools you picked. Drive a real browser, terminal, and database client, side by side, and watch one request move through all three."
 >
   <p class="eyebrow"><a href="/systems/">← Systems</a></p>
   <h1>Tech Stack Fundamentals</h1>
   <VerifiedDate />
 
   <Tldr>
-    A "tech stack" is just the layered set of tools that work together to
-    answer one request: something in your browser (<strong>frontend</strong>)
-    asks for something, a server decides what to do with that ask
-    (<strong>backend</strong>), and the server often asks a database to
-    fetch or store the real data (<strong>database</strong>). Every layer
-    has one job. Learning "the stack" for a framework is really just
-    learning which specific tool was assigned to each of these three
-    unchanging jobs — the architecture underneath barely changes between
-    stacks.
+    <ul>
+      <li>A tech stack is three unchanging jobs: <strong>ask</strong> (frontend), <strong>decide</strong> (backend), <strong>store</strong> (database).</li>
+      <li>Framework names like MERN or LAMP just say which tool got picked for each job — the shape underneath never changes.</li>
+      <li>Once you can name which layer a bug lives in, picking up a new framework for the same job gets a lot faster.</li>
+    </ul>
   </Tldr>
 
   <Eli5>
-    Think of ordering food at a restaurant:
     <ul>
-      <li>You tell the waiter what you want — that's the <strong>frontend</strong>.</li>
-      <li>The waiter doesn't cook. They decide what to do with your order and pass it along — that's the <strong>backend</strong>.</li>
-      <li>The kitchen has the actual ingredients and does the real work — that's the <strong>database</strong>.</li>
+      <li>You tell the waiter what you want → <strong>frontend</strong>.</li>
+      <li>The waiter decides what to do with your order and passes it along → <strong>backend</strong>.</li>
+      <li>The kitchen has the real ingredients and does the real work → <strong>database</strong>.</li>
+      <li><strong>Swap the restaurant, the waiter, or the kitchen — the three jobs never change.</strong></li>
     </ul>
-    Three completely different jobs, one meal. Swap the restaurant, swap
-    the waiter, swap the kitchen — the three jobs never change.
   </Eli5>
 
-  <WhyItMatters>
-    <ul>
-      <li>Most real bugs live at the <strong>seams</strong> between layers — a browser sending the wrong shape of data, a server querying the wrong table — not inside one layer alone.</li>
-      <li>Knowing which layer is responsible for what tells you where to actually look when something breaks, instead of guessing.</li>
-      <li>Every stack name (MERN, LAMP, whatever's next) is just naming which tool got picked for each of these same three jobs.</li>
-    </ul>
-  </WhyItMatters>
-
-  <HowItWorks>
-    <p>Every request in the lab below follows the same real sequence:</p>
-    <ol>
-      <li>The <strong>browser</strong> sends a request for something specific — a path, like an order ticket.</li>
-      <li>The <strong>server</strong> matches that path to a handler <em>before anything else happens</em> — an unmatched path never gets any further.</li>
-      <li>If the handler needs real data, it asks the <strong>database</strong>, which answers with rows — or none at all.</li>
-      <li>The server turns whatever it got back into a response; the browser receives it and renders something.</li>
-    </ol>
-  </HowItWorks>
-
   <section class="lab" aria-labelledby="lab-heading">
-    <h2 id="lab-heading" class="eyebrow section-heading">Try it yourself: watch a request travel through all three</h2>
+    <h2 id="lab-heading" class="eyebrow section-heading">Live: drive a real browser, server, and database</h2>
     <p class="lab-note">
-      A real (tiny) router and in-memory database, not a canned animation
-      — an unmatched path genuinely never reaches the database below, and
-      a missing id genuinely does.
+      A genuinely tiny router and in-memory database, not a canned animation
+      — type any user id, or a made-up path, and watch it actually happen.
     </p>
 
-    <div class="sim-controls">
-      <button type="button" class="ex-btn" data-path="/api/users/2">View profile #2</button>
-      <button type="button" class="ex-btn" data-path="/api/users/1">View profile #1</button>
-      <button type="button" class="ex-btn" data-path="/api/users/99">View profile #99 (missing)</button>
-      <button type="button" class="ex-btn" data-path="/api/nonsense">Bad URL entirely</button>
+    <div class="pipeline" role="img" aria-label="Browser connects to Server over HTTP; Server connects to Database over SQL">
+      <div class="pipe-node" data-node="browser">
+        <span class="pipe-icon" aria-hidden="true">▣</span>
+        <span class="pipe-name">Browser</span>
+        <span class="pipe-note">Sends the request, renders the result</span>
+      </div>
+      <div class="pipe-edge" data-edge="browser-server"><span class="pipe-edge-note">HTTP</span></div>
+      <div class="pipe-node" data-node="server">
+        <span class="pipe-icon" aria-hidden="true">▤</span>
+        <span class="pipe-name">Server</span>
+        <span class="pipe-note">Stateless — could run 10 identical copies</span>
+      </div>
+      <div class="pipe-edge" data-edge="server-database"><span class="pipe-edge-note">SQL</span></div>
+      <div class="pipe-node" data-node="database">
+        <span class="pipe-icon" aria-hidden="true">▦</span>
+        <span class="pipe-name">Database</span>
+        <span class="pipe-note">Holds the one real copy — scales differently</span>
+      </div>
     </div>
 
-    <div class="sim-grid">
-      <div class="sim-panel" id="panel-browser">
-        <p class="sim-panel-title">Browser <span class="sim-panel-sub">(address bar + network log)</span></p>
-        <div class="sim-addressbar" id="sim-address">https://example.app</div>
-        <div class="sim-log" id="log-browser"></div>
+    <div class="addr-input-row">
+      <span class="addr-proto">GET https://example.app</span>
+      <input id="path-input" class="addr-input" type="text" value="/api/users/2" spellcheck="false" autocomplete="off" aria-label="Request path" />
+      <button type="button" id="go-btn" class="go-btn">Go ▶</button>
+    </div>
+    <div class="preset-chips">
+      <button type="button" class="chip" data-path="/api/users/1">user 1</button>
+      <button type="button" class="chip" data-path="/api/users/2">user 2</button>
+      <button type="button" class="chip" data-path="/api/users/99">user 99 (missing)</button>
+      <button type="button" class="chip" data-path="/login">/login (bad route)</button>
+    </div>
+
+    <div class="tool-grid">
+      <div class="tool-window">
+        <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">User Profile — browser</span></div>
+        <div class="tool-body">
+          <p class="net-log-label">Rendered page</p>
+          <div class="rendered-page" id="rendered-page"><p class="rp-placeholder">Click Go or pick an example above.</p></div>
+          <p class="net-log-label">Network</p>
+          <div class="net-log" id="net-log" aria-live="polite"></div>
+        </div>
       </div>
-      <div class="sim-panel sim-terminal" id="panel-server">
-        <p class="sim-panel-title">Server <span class="sim-panel-sub">(terminal, tailing the log)</span></p>
-        <div class="sim-log sim-log-terminal" id="log-server"></div>
+
+      <div class="tool-window">
+        <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">server.log — bash</span></div>
+        <div class="tool-body terminal-body" id="log-server" aria-hidden="true"></div>
       </div>
-      <div class="sim-panel" id="panel-database">
-        <p class="sim-panel-title">Database <span class="sim-panel-sub">(query tool)</span></p>
-        <div class="sim-log" id="log-database"></div>
+
+      <div class="tool-window">
+        <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">query — users</span></div>
+        <div class="tool-body" aria-hidden="true">
+          <p class="net-log-label">Query</p>
+          <div class="query-line" id="db-query">— no query yet —</div>
+          <p class="net-log-label">Results</p>
+          <table class="db-table" id="db-table" hidden>
+            <thead><tr><th>id</th><th>name</th><th>role</th></tr></thead>
+            <tbody id="db-tbody"></tbody>
+          </table>
+          <p class="db-empty" id="db-empty" hidden>0 rows returned</p>
+        </div>
       </div>
     </div>
   </section>
 
+  <WhyItMatters>
+    <ul>
+      <li>Most real bugs live at the <strong>seams</strong> between layers — not inside one layer alone.</li>
+      <li>Every real security boundary lives at the server layer, never the browser — try <code>/login</code> above: a browser can send anything, but only the server decides what happens next.</li>
+      <li>The separation is what lets you swap one layer (a new database engine, a new frontend framework) without rewriting the others.</li>
+    </ul>
+  </WhyItMatters>
+
   <FailureModes>
     <ul>
-      <li><strong>"The frontend talks to the database directly."</strong> Real architectures almost never do this — the backend exists specifically to control what the database is allowed to be asked. It's also why nearly every real security boundary lives at the server layer, not the browser.</li>
-      <li><strong>"More layers means more complex, which means worse."</strong> Not necessarily — the separation is exactly what lets you swap one layer (a new database engine, a new frontend framework) without rewriting the others.</li>
-      <li><strong>"If the page shows an error, the bug is in the frontend."</strong> Try "View profile #99" above — the 404 originates at the database layer (zero rows), and only reaches the browser last, after passing back through the server.</li>
+      <li><strong>"The frontend talks to the database directly."</strong> Real stacks almost never do this — the backend exists to control what's allowed to be asked.</li>
+      <li><strong>"An error means the frontend is broken."</strong> Try user 99 above: the 404 starts at the database, not the browser.</li>
+      <li><strong>"More layers means worse."</strong> The separation is exactly what lets a stack change one piece at a time.</li>
     </ul>
   </FailureModes>
-
-  <DeepDive>
-    <ul>
-      <li>
-        <strong>Servers scale differently than databases.</strong> A
-        stateless backend can usually be duplicated — run ten identical
-        copies behind a load balancer — because any copy can answer any
-        request. A database holds the one real copy of your data, so it
-        scales through different techniques entirely (replication,
-        sharding), not just "add more copies."
-      </li>
-      <li>
-        <strong>A real stack usually has a fourth layer: cache.</strong>
-        Production systems commonly insert a cache (like Redis) between
-        server and database specifically so the same expensive query
-        doesn't run twice. This lab skips it on purpose to keep the three
-        core jobs clear — but it's the first thing most real stacks add.
-      </li>
-      <li>
-        <strong>Routing is matching, not magic.</strong> The server's
-        "route table" in this lab is one regular expression. Real
-        frameworks do the same fundamental thing — match a path pattern
-        to a handler — with far more patterns and far more machinery
-        around it.
-      </li>
-    </ul>
-  </DeepDive>
-
-  <WhatILearned>
-    A tech stack isn't a list of framework names to memorize — it's three
-    jobs (ask, decide, store) that never change, done by whichever specific
-    tools you chose. Once you can name which layer a bug actually lives in,
-    picking up a new framework for that same job gets a lot faster.
-  </WhatILearned>
 
   <RelatedTopics />
 
@@ -153,87 +142,259 @@ import VerifiedDate from '../components/VerifiedDate.astro';
 
 <script>
   import { scrambleText as decode } from '../lib/decode';
-  import { handleRequest, type RequestLogEntry } from '../lib/stack-sim';
+  import { handleRequest, type Layer } from '../lib/stack-sim';
 
-  const address = document.getElementById('sim-address')!;
-  const logs: Record<RequestLogEntry['layer'], HTMLElement> = {
-    browser: document.getElementById('log-browser')!,
-    server: document.getElementById('log-server')!,
-    database: document.getElementById('log-database')!,
+  const input = document.getElementById('path-input') as HTMLInputElement;
+  const goBtn = document.getElementById('go-btn') as HTMLButtonElement;
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+
+  const nodes: Record<Layer, HTMLElement> = {
+    browser: document.querySelector<HTMLElement>('[data-node="browser"]')!,
+    server: document.querySelector<HTMLElement>('[data-node="server"]')!,
+    database: document.querySelector<HTMLElement>('[data-node="database"]')!,
   };
-  const panels: Record<RequestLogEntry['layer'], HTMLElement> = {
-    browser: document.getElementById('panel-browser')!,
-    server: document.getElementById('panel-server')!,
-    database: document.getElementById('panel-database')!,
+  const edges: Record<'browser-server' | 'server-database', HTMLElement> = {
+    'browser-server': document.querySelector<HTMLElement>('[data-edge="browser-server"]')!,
+    'server-database': document.querySelector<HTMLElement>('[data-edge="server-database"]')!,
   };
+
+  const netLog = document.getElementById('net-log')!;
+  const terminal = document.getElementById('log-server')!;
+  const queryLine = document.getElementById('db-query')!;
+  const dbTable = document.getElementById('db-table') as HTMLTableElement;
+  const dbBody = document.getElementById('db-tbody')!;
+  const dbEmpty = document.getElementById('db-empty')!;
+  const renderedPage = document.getElementById('rendered-page')!;
+
+  const LAYER_TAG: Record<Layer, string> = { browser: 'BR', server: 'SRV', database: 'DB' };
 
   let runTimer: number | undefined;
 
-  function clearLogs() {
-    for (const el of Object.values(logs)) el.innerHTML = '';
-    for (const el of Object.values(panels)) el.classList.remove('sim-active');
+  function edgeKey(a: Layer, b: Layer): 'browser-server' | 'server-database' | undefined {
+    const set = new Set([a, b]);
+    if (set.has('browser') && set.has('server')) return 'browser-server';
+    if (set.has('server') && set.has('database')) return 'server-database';
+    return undefined;
+  }
+
+  function clearAll() {
+    for (const el of Object.values(nodes)) el.classList.remove('active');
+    for (const el of Object.values(edges)) el.classList.remove('active');
+    netLog.innerHTML = '';
+    terminal.innerHTML = '';
+    queryLine.textContent = '— no query yet —';
+    dbBody.innerHTML = '';
+    dbEmpty.hidden = true;
+    dbTable.hidden = true;
+  }
+
+  function renderOutcome(status: number, body: unknown) {
+    renderedPage.innerHTML = '';
+    if (status === 200 && body && typeof body === 'object') {
+      const user = body as { id: number; name: string; role: string };
+      const card = document.createElement('div');
+      card.className = 'profile-card';
+      const avatar = document.createElement('span');
+      avatar.className = 'avatar';
+      avatar.textContent = user.name.split(' ').map((w) => w[0]).join('');
+      const name = document.createElement('span');
+      name.className = 'p-name';
+      name.textContent = user.name;
+      const role = document.createElement('span');
+      role.className = 'p-role';
+      role.textContent = user.role;
+      const id = document.createElement('span');
+      id.className = 'p-id';
+      id.textContent = `id: ${user.id}`;
+      card.append(avatar, name, role, id);
+      renderedPage.append(card);
+    } else if (body && typeof body === 'object' && (body as { error?: string }).error === 'User not found') {
+      const wrap = document.createElement('div');
+      wrap.className = 'app-404';
+      const glyph = document.createElement('span');
+      glyph.className = 'app-404-glyph';
+      glyph.textContent = '⌗';
+      const p = document.createElement('p');
+      p.textContent = 'User not found';
+      wrap.append(glyph, p);
+      renderedPage.append(wrap);
+    } else {
+      const wrap = document.createElement('div');
+      wrap.className = 'browser-404';
+      const glyph = document.createElement('span');
+      glyph.className = 'browser-404-glyph';
+      glyph.textContent = '✕';
+      const p = document.createElement('p');
+      p.textContent = "This page can't be found";
+      wrap.append(glyph, p);
+      renderedPage.append(wrap);
+    }
   }
 
   function run(path: string) {
     if (runTimer) { clearTimeout(runTimer); runTimer = undefined; }
-    clearLogs();
-    address.textContent = `https://example.app${path}`;
-    const { log } = handleRequest('GET', path);
-
+    clearAll();
+    input.value = path;
+    renderedPage.innerHTML = '<p class="rp-loading">loading…</p>';
+    const result = handleRequest('GET', path);
+    let seenDb = 0;
+    let prevLayer: Layer | undefined;
     let i = 0;
-    const next = () => {
-      for (const el of Object.values(panels)) el.classList.remove('sim-active');
-      if (i >= log.length) return;
-      const entry = log[i];
-      panels[entry.layer].classList.add('sim-active');
+
+    const step = () => {
+      if (i >= result.log.length) {
+        renderOutcome(result.status, result.body);
+        return;
+      }
+      const entry = result.log[i];
+
+      for (const el of Object.values(nodes)) el.classList.remove('active');
+      for (const el of Object.values(edges)) el.classList.remove('active');
+      nodes[entry.layer].classList.add('active');
+      if (prevLayer && prevLayer !== entry.layer) {
+        const key = edgeKey(prevLayer, entry.layer);
+        if (key) edges[key].classList.add('active');
+      }
+      prevLayer = entry.layer;
+
       const line = document.createElement('p');
       line.className = 'sim-line';
-      logs[entry.layer].append(line);
-      i++;
-      decode(line, entry.text, { frames: 6, frameMs: 25, onDone: () => { runTimer = window.setTimeout(next, 380); } });
+      const tag = document.createElement('span');
+      tag.className = `net-tag net-tag-${entry.layer}`;
+      tag.textContent = LAYER_TAG[entry.layer];
+      const textSpan = document.createElement('span');
+      line.append(tag, document.createTextNode(' '), textSpan);
+      netLog.append(line);
+      netLog.scrollTop = netLog.scrollHeight;
+
+      if (entry.layer === 'server') {
+        const t = document.createElement('p');
+        t.className = 'sim-line';
+        terminal.append(t);
+        decode(t, entry.text, { frames: 6, frameMs: 25 });
+      }
+      if (entry.layer === 'database') {
+        seenDb++;
+        if (seenDb === 1) {
+          decode(queryLine, entry.text, { frames: 6, frameMs: 25 });
+        } else if (seenDb === 2) {
+          if (result.status === 200) {
+            const user = result.body as { id: number; name: string; role: string };
+            dbTable.hidden = false;
+            dbEmpty.hidden = true;
+            const tr = document.createElement('tr');
+            for (const val of [user.id, user.name, user.role]) {
+              const td = document.createElement('td');
+              td.textContent = String(val);
+              tr.append(td);
+            }
+            dbBody.append(tr);
+          } else {
+            dbTable.hidden = true;
+            dbEmpty.hidden = false;
+          }
+        }
+      }
+
+      decode(textSpan, entry.text, { frames: 6, frameMs: 25, onDone: () => {
+        i++;
+        runTimer = window.setTimeout(step, 340);
+      }});
     };
-    next();
+    step();
   }
 
-  document.querySelectorAll<HTMLButtonElement>('.ex-btn').forEach((btn) => {
-    btn.addEventListener('click', () => run(btn.dataset.path ?? ''));
+  goBtn.addEventListener('click', () => run(input.value.trim() || '/api/users/1'));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); run(input.value.trim() || '/api/users/1'); }
   });
+  chips.forEach((chip) => chip.addEventListener('click', () => run(chip.dataset.path ?? '')));
 </script>
 
 <style>
-  .lab { margin: var(--sp-6) 0; padding: var(--sp-4); border: 1px solid var(--line); background: var(--bg-1); }
+  /* This lab intentionally breaks out of the article's 68ch reading
+     column (see BaseLayout's .wrap) to the site's wider container width
+     -- it's a simulated app, not prose, and shouldn't be squeezed into
+     an article's line-length. */
+  .lab {
+    position: relative; left: 50%; transform: translateX(-50%);
+    width: 100vw; max-width: 76rem; box-sizing: border-box;
+    margin: var(--sp-6) 0; padding: var(--sp-5); border: 1px solid var(--line); background: var(--bg-1);
+  }
   .section-heading { margin-bottom: var(--sp-2); }
   .lab-note { color: var(--text-2); font-size: var(--step--1); margin-bottom: var(--sp-4); }
 
-  .sim-controls { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-4); }
-  .ex-btn {
-    font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
-    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  /* pipeline diagram */
+  .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0 0 var(--sp-5); flex-wrap: wrap; }
+  .pipe-node {
+    display: flex; flex-direction: column; align-items: center; gap: var(--sp-1);
+    padding: var(--sp-3); border: 1px solid var(--line-bright); background: var(--bg-0);
+    min-width: 9rem; text-align: center;
   }
-  .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
-
-  .sim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
-  @media (max-width: 50rem) { .sim-grid { grid-template-columns: 1fr; } }
-
-  .sim-panel {
-    background: var(--bg-0); border: 1px solid var(--line-bright); padding: var(--sp-3);
-    min-height: 14rem; transition: box-shadow 200ms, border-color 200ms;
-  }
-  .sim-panel.sim-active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 16px color-mix(in srgb, var(--accent) 35%, transparent); }
-  .sim-terminal { background: #05070d; }
-
-  .sim-panel-title { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-0); font-weight: 700; margin: 0 0 var(--sp-1); }
-  .sim-panel-sub { color: var(--text-2); font-weight: 400; }
-
-  .sim-addressbar {
-    font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-2);
-    background: var(--bg-1); border: 1px solid var(--line); padding: var(--sp-1) var(--sp-2);
-    margin-bottom: var(--sp-2); word-break: break-all;
+  .pipe-node.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 18px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .pipe-icon { font-size: var(--step-2); color: var(--text-1); }
+  .pipe-node.active .pipe-icon { color: var(--accent); }
+  .pipe-name { font-family: var(--font-mono); font-weight: 700; color: var(--text-0); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; }
+  .pipe-note { font-size: 0.68rem; color: var(--text-2); max-width: 9rem; }
+  .pipe-edge { flex: 0 0 auto; width: 3rem; height: 2px; background: var(--line-bright); position: relative; }
+  .pipe-edge::after { content: '▶'; position: absolute; right: -0.6rem; top: 50%; transform: translateY(-50%); font-size: 0.6rem; color: var(--line-bright); }
+  .pipe-edge.active { background: var(--accent); }
+  .pipe-edge.active::after { color: var(--accent); }
+  .pipe-edge-note { position: absolute; top: -1.1rem; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
+  @media (max-width: 50rem) {
+    .pipeline { flex-direction: column; }
+    .pipe-edge { width: 2px; height: 2rem; }
+    .pipe-edge::after { content: '▼'; right: 50%; top: auto; bottom: -0.7rem; transform: translateX(50%); }
+    .pipe-edge-note { top: 50%; left: -2rem; transform: translateY(-50%); }
   }
 
-  .sim-log { display: grid; gap: var(--sp-1); font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; }
-  .sim-log-terminal { color: var(--status-working); }
-  .sim-line { margin: 0; color: var(--text-1); word-break: break-word; }
-  .sim-log-terminal .sim-line { color: var(--status-working); }
-  .sim-log-terminal .sim-line::before { content: '$ '; opacity: 0.6; }
+  /* controls */
+  .addr-input-row { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-3); flex-wrap: wrap; }
+  .addr-proto { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-2); }
+  .addr-input { flex: 1; min-width: 12rem; font-family: var(--font-mono); font-size: 0.8rem; padding: var(--sp-2); background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0); }
+  .addr-input:focus { outline: 1px solid var(--accent); }
+  .go-btn { font-family: var(--font-mono); font-size: 0.8rem; padding: var(--sp-2) var(--sp-3); background: var(--accent); color: var(--bg-0); border: none; font-weight: 700; cursor: pointer; }
+  .go-btn:hover { background: var(--accent-deep); }
+  .preset-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+  .chip { font-family: var(--font-mono); font-size: 0.7rem; padding: var(--sp-1) var(--sp-2); background: var(--bg-0); border: 1px solid var(--line); color: var(--text-1); cursor: pointer; }
+  .chip:hover { border-color: var(--accent); color: var(--text-0); }
+
+  /* tool windows */
+  .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+  @media (max-width: 50rem) { .tool-grid { grid-template-columns: 1fr; } }
+  .tool-window { border: 1px solid var(--line-bright); background: var(--bg-0); display: flex; flex-direction: column; min-height: 17rem; }
+  .tool-titlebar { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border-bottom: 1px solid var(--line); }
+  .tw-dots { display: flex; gap: 0.3rem; }
+  .tw-dots i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--line-bright); display: block; }
+  .tw-tab { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+  .tool-body { padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; gap: var(--sp-2); overflow: auto; }
+  .net-log-label { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin: 0; }
+
+  .rendered-page { min-height: 5rem; border: 1px dashed var(--line); display: flex; align-items: center; justify-content: center; padding: var(--sp-3); }
+  .rp-placeholder, .rp-loading { color: var(--text-2); font-family: var(--font-mono); font-size: 0.72rem; margin: 0; }
+  .profile-card { display: flex; flex-direction: column; align-items: center; gap: var(--sp-1); }
+  .avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--bg-2); border: 1px solid var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 700; }
+  .p-name { color: var(--text-0); font-weight: 700; }
+  .p-role, .p-id { color: var(--text-2); font-size: 0.72rem; }
+  .app-404, .browser-404 { display: flex; flex-direction: column; align-items: center; gap: var(--sp-1); color: var(--status-testing); }
+  .app-404 p, .browser-404 p { margin: 0; }
+  .browser-404 { color: var(--status-broken); }
+  .app-404-glyph, .browser-404-glyph { font-size: var(--step-2); }
+
+  .net-log { max-height: 7rem; overflow-y: auto; display: grid; gap: 0.2rem; font-family: var(--font-mono); font-size: 0.68rem; }
+  .net-log .sim-line { margin: 0; color: var(--text-1); word-break: break-word; }
+  .net-tag { display: inline-block; width: 2.4rem; font-weight: 700; }
+  .net-tag-browser { color: var(--accent); }
+  .net-tag-server { color: var(--status-working); }
+  .net-tag-database { color: var(--accent-deep); }
+
+  .terminal-body { background: #05070d; font-family: var(--font-mono); font-size: 0.72rem; color: var(--status-working); gap: var(--sp-1); }
+  .terminal-body .sim-line { margin: 0; }
+  .terminal-body .sim-line::before { content: '$ '; opacity: 0.6; }
+
+  .query-line { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-deep); padding: var(--sp-2); background: var(--bg-1); border: 1px solid var(--line); white-space: pre-wrap; word-break: break-word; }
+  .db-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.7rem; }
+  .db-table th, .db-table td { border: 1px solid var(--line); padding: 0.3rem 0.5rem; text-align: left; color: var(--text-1); }
+  .db-table th { color: var(--text-2); font-weight: 700; }
+  .db-empty { color: var(--status-broken); font-family: var(--font-mono); font-size: 0.72rem; margin: 0; }
 </style>
