@@ -4,88 +4,52 @@ import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
 import VerifiedDate from '../components/VerifiedDate.astro';
 import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
+
+const STEPS = [
+  { id: 'step-1', num: '1', label: 'Where it lives' },
+  { id: 'step-2', num: '2', label: 'Wiring in AI' },
+  { id: 'step-3', num: '3', label: 'Choosing options' },
+];
 ---
 <BaseLayout
   title="Architecture"
-  description="Why the same task can touch one file or ten, how an AI pipeline is actually wired, and how to weigh real architectural tradeoffs — three labs, one workspace."
+  description="Why the same task can touch one file or ten, how an AI pipeline is actually wired, and how to weigh real architectural tradeoffs — one continuous, interactive walkthrough."
 >
   <p class="eyebrow"><a href="/systems/">← Systems</a></p>
   <h1>Architecture</h1>
   <VerifiedDate />
 
-  <div class="workspace-page">
-    <div class="workspace-shell">
-      <aside class="docs-panel">
-        <section class="docs-block">
-          <p class="docs-label">TL;DR</p>
-          <ul>
-            <li>Architecture is <strong>where a decision lives</strong>, not just how many layers you drew.</li>
-            <li>Good boundaries keep a change contained; broken ones spread it everywhere, including into whatever's reading your code — human or agent.</li>
-            <li>An "AI pipeline" is a normal request path with an LLM in it — the same rules about valid paths and dead ends still apply.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">ELI5</p>
-          <ul>
-            <li>A tidy house: fix the sink, you go to the kitchen. Nothing else moves.</li>
-            <li>A messy house where the plumbing runs through every room: fix the sink, you're crawling through the whole house.</li>
-            <li>Same sink. Different house. <strong>That difference is architecture.</strong></li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Technical definition</p>
-          <ul>
-            <li>Architecture is the set of <strong>boundaries and dependency rules</strong> between a system's parts — who's allowed to call whom, and over what contract.</li>
-            <li>A change's "blast radius" is every file that has to change because of it — not a metaphor, a countable thing.</li>
-            <li>An AI pipeline is architecture like any other: fixed entry/exit (client, API) and a request path through whatever sits behind it.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Why it matters</p>
-          <ul>
-            <li>An AI coding agent works from whatever files it can see — the smaller a task's real blast radius, the smaller the context it needs and the safer its edit is.</li>
-            <li>A tangled boundary doesn't just slow humans down; it inflates exactly the context window an agent has to reason over.</li>
-            <li>Wiring an LLM into a system is still a systems-design problem first — where the call lives changes latency, cost, and who can reuse it.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">When to use what</p>
-          <ul>
-            <li>Knowing the pieces isn't the skill — knowing <strong>which one a given task actually needs</strong> is. That judgment call is what the three labs below are for.</li>
-            <li><strong>Plain endpoint, no LLM:</strong> the task is deterministic — the answer follows fixed rules. Don't reach for a model because you can.</li>
-            <li><strong>+ Orchestrator + LLM:</strong> the task needs judgment or language generation, and the model already knows enough on its own.</li>
-            <li><strong>+ Retrieval:</strong> the model needs facts it wasn't trained on — your docs, your database, anything that changes after training.</li>
-            <li><strong>+ Tools:</strong> the model needs to <em>do</em> something, not just say something — call an API, run code, change a record.</li>
-            <li><strong>Invest in clean layering</strong> exactly where more than one kind of change (or more than one kind of reader — human, or agent) will touch that code again.</li>
-          </ul>
-        </section>
-        <section class="docs-block">
-          <p class="docs-label">Failure modes</p>
-          <ul>
-            <li><strong>"More layers is always better."</strong> The Codebase lab's phone-number task shows a case where wide blast radius is correct, not a smell.</li>
-            <li><strong>"Adding an LLM call makes it an AI pipeline."</strong> Try the AI Pipeline lab with no orchestrator — it's a valid, ordinary endpoint that happens to exist.</li>
-            <li><strong>"There's one right architecture."</strong> The Compare lab's options are all viable — the right one depends on constraints the diagram alone won't show you.</li>
-          </ul>
-        </section>
-      </aside>
+  <p class="lede">
+    Architecture is <strong>where a decision lives</strong>, not how many
+    layers you drew. Good boundaries keep a change contained; broken ones
+    spread it everywhere — including into whatever's reading your code next,
+    human or AI agent. Three live checks, top to bottom.
+  </p>
 
-      <div class="workspace-main">
-        <div class="workspace-toolbar">
-          <span class="workspace-title">architecture.lab</span>
-          <span class="workspace-hint">three modes, one workspace — switch tabs below</span>
-        </div>
+  <nav class="process-map" aria-label="Page sections">
+    {STEPS.map((s, i) => (
+      <>
+        <a href={`#${s.id}`} class="map-step" data-step={s.num}>
+          <span class="map-num">{s.num}</span>
+          <span class="map-label">{s.label}</span>
+        </a>
+        {i < STEPS.length - 1 && <span class="map-connector" aria-hidden="true"></span>}
+      </>
+    ))}
+  </nav>
 
-        <div class="tabs" role="tablist" aria-label="Architecture labs">
-          <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-codebase" id="tab-codebase" data-tab="codebase">Codebase</button>
-          <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-pipeline" id="tab-pipeline" data-tab="pipeline">AI Pipeline</button>
-          <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-compare" id="tab-compare" data-tab="compare">Compare</button>
-        </div>
+  <div class="flow-page">
+    <div class="flow-steps">
 
-        <!-- ===== Codebase tab ===== -->
-        <div class="tab-panel active" id="panel-codebase" role="tabpanel" aria-labelledby="tab-codebase">
-          <p class="lab-note">
-            Pick a task, then flip the boundary quality. Same task, same
-            starting point — watch which layers light up.
+      <section class="flow-step" id="step-1" data-step-section="1">
+        <div class="step-marker"><span class="step-num">1</span></div>
+        <div class="step-body">
+          <h2>Where a decision lives</h2>
+          <p class="step-intro">
+            A change's "blast radius" is every file it forces you to
+            touch — not a metaphor, a countable thing. Clean boundaries keep
+            that count low and predictable; leaked logic doesn't. Pick a
+            task, flip the boundary quality, watch which layers light up.
           </p>
 
           <div class="control-row">
@@ -112,13 +76,24 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
           </div>
 
           <p class="blast-note" id="blast-note"></p>
-        </div>
 
-        <!-- ===== AI Pipeline tab ===== -->
-        <div class="tab-panel" id="panel-pipeline" role="tabpanel" aria-labelledby="tab-pipeline" hidden>
-          <p class="lab-note">
-            Client and API are fixed. Toggle what sits behind the gateway,
-            then run a request — an invalid combination fails with a real reason, not a canned error.
+          <p class="step-why">
+            An AI coding agent works from whatever files it can see — small
+            blast radius means small context, means a safer edit. A tangled
+            boundary inflates exactly the window an agent has to reason over.
+          </p>
+        </div>
+      </section>
+
+      <section class="flow-step" id="step-2" data-step-section="2">
+        <div class="step-marker"><span class="step-num">2</span></div>
+        <div class="step-body">
+          <h2>Wiring in AI</h2>
+          <p class="step-intro">
+            An "AI pipeline" is a normal request path with an LLM somewhere
+            in it. Client and API are fixed; everything behind the gateway
+            is a choice. Toggle what's wired in, run a request — an invalid
+            combination fails with a real reason, not a canned error.
           </p>
 
           <div class="toggle-row">
@@ -148,11 +123,24 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
             <button type="button" id="run-pipeline-btn" class="ex-btn">Run request →</button>
           </div>
           <div class="trace-log" id="pipeline-log" aria-live="polite"></div>
-        </div>
 
-        <!-- ===== Compare tab ===== -->
-        <div class="tab-panel" id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" hidden>
-          <p class="lab-note">Pick a real scenario, then weigh the options side by side.</p>
+          <p class="step-why">
+            Wiring in an LLM is still a systems-design problem first — where
+            the call lives changes latency, cost, and who can reuse it. Run
+            with no orchestrator above: still a valid, ordinary endpoint.
+          </p>
+        </div>
+      </section>
+
+      <section class="flow-step" id="step-3" data-step-section="3">
+        <div class="step-marker"><span class="step-num">3</span></div>
+        <div class="step-body">
+          <h2>Choosing between real options</h2>
+          <p class="step-intro">
+            There's rarely one right architecture — only real tradeoffs
+            given real constraints. Pick a scenario, then weigh the options
+            side by side.
+          </p>
 
           <div class="control-row">
             <label class="control-label" for="scenario-select">Scenario</label>
@@ -163,9 +151,39 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
           <p class="scenario-prompt" id="scenario-prompt"></p>
 
           <div class="options-grid" id="options-grid"></div>
+
+          <p class="step-why">
+            All three are viable. The right one depends on constraints a
+            diagram won't show you — traffic, team size, latency tolerance.
+          </p>
+        </div>
+      </section>
+
+    </div>
+
+    <section class="flow-recap">
+      <div class="recap-grid">
+        <div class="recap-card">
+          <p class="docs-label">When to use what</p>
+          <ul>
+            <li>Knowing the pieces isn't the skill — knowing <strong>which one a given task actually needs</strong> is. That judgment call is what the three steps above are for.</li>
+            <li><strong>Plain endpoint, no LLM:</strong> the task is deterministic. Don't reach for a model because you can.</li>
+            <li><strong>+ Orchestrator + LLM:</strong> the task needs judgment or language generation the model already knows how to do.</li>
+            <li><strong>+ Retrieval:</strong> the model needs facts it wasn't trained on — your docs, your data, anything that changes after training.</li>
+            <li><strong>+ Tools:</strong> the model needs to <em>do</em> something, not just say something.</li>
+            <li><strong>Invest in clean layering</strong> exactly where more than one kind of change — or reader, human or agent — will touch that code again.</li>
+          </ul>
+        </div>
+        <div class="recap-card">
+          <p class="docs-label">Failure modes</p>
+          <ul>
+            <li><strong>"More layers is always better."</strong> Step 1's phone-number task shows a case where wide blast radius is correct, not a smell.</li>
+            <li><strong>"Adding an LLM call makes it an AI pipeline."</strong> Step 2 with no orchestrator is a valid, ordinary endpoint that happens to exist.</li>
+            <li><strong>"There's one right architecture."</strong> Step 3's options are all viable — the right one depends on constraints the diagram alone won't show you.</li>
+          </ul>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <div class="footer-page">
@@ -176,7 +194,7 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
         {
           title: 'Multitier architecture — Wikipedia',
           url: 'https://en.wikipedia.org/wiki/Multitier_architecture',
-          note: 'The layered split this lab\'s Codebase tab is built on.',
+          note: 'The layered split Step 1 is built on.',
         },
         {
           title: 'Hexagonal architecture (ports and adapters) — Alistair Cockburn',
@@ -186,12 +204,12 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
         {
           title: 'Retrieval-augmented generation (RAG) — original paper',
           url: 'https://arxiv.org/abs/2005.11401',
-          note: 'What the AI Pipeline tab\'s "retrieval" block is actually modeling.',
+          note: 'What Step 2\'s "retrieval" block is actually modeling.',
         },
         {
           title: 'Model Context Protocol',
           url: 'https://modelcontextprotocol.io',
-          note: 'The real standard for how an orchestrator hands tool access to an LLM, modeled by this lab\'s "tools" block.',
+          note: 'The real standard for how an orchestrator hands tool access to an LLM, modeled by Step 2\'s "tools" block.',
         },
       ]}
     />
@@ -205,7 +223,7 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
     type LayerId, type BoundaryQuality, type ToggleBlockId, type PipelineBlock,
   } from '../lib/architecture';
 
-  // ---- Codebase tab ----
+  // ---- Step 1: blast radius ----
   const taskSelect = document.getElementById('task-select') as HTMLSelectElement;
   const qualityBtns = document.querySelectorAll<HTMLButtonElement>('.seg-btn');
   const layerNodes: Record<LayerId, HTMLElement> = {} as Record<LayerId, HTMLElement>;
@@ -228,7 +246,7 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
   }));
   renderBlastRadius();
 
-  // ---- AI Pipeline tab ----
+  // ---- Step 2: AI pipeline ----
   const toggleChips = document.querySelectorAll<HTMLButtonElement>('.toggle-chip');
   const enabled = new Set<ToggleBlockId>();
   const pipeNodes: Record<PipelineBlock, HTMLElement> = {
@@ -303,7 +321,7 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
   }
   runPipelineBtn.addEventListener('click', runPipelineLab);
 
-  // ---- Compare tab ----
+  // ---- Step 3: compare ----
   const scenarioSelect = document.getElementById('scenario-select') as HTMLSelectElement;
   const scenarioPrompt = document.getElementById('scenario-prompt')!;
   const optionsGrid = document.getElementById('options-grid')!;
@@ -334,72 +352,86 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
   scenarioSelect.addEventListener('change', renderScenario);
   renderScenario();
 
-  // ---- Tabs ----
-  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
-  const tabPanels = document.querySelectorAll<HTMLElement>('.tab-panel');
-  tabBtns.forEach((btn) => btn.addEventListener('click', () => {
-    tabBtns.forEach((b) => { b.classList.toggle('active', b === btn); b.setAttribute('aria-selected', String(b === btn)); });
-    tabPanels.forEach((p) => {
-      const show = p.id === `panel-${btn.dataset.tab}`;
-      p.classList.toggle('active', show);
-      p.hidden = !show;
-    });
-  }));
+  // ---- Process map: scroll-spy + click-to-jump ----
+  const mapSteps = document.querySelectorAll<HTMLAnchorElement>('.map-step');
+  const stepSections = document.querySelectorAll<HTMLElement>('.flow-step');
+
+  function setActiveMapStep(num: string) {
+    mapSteps.forEach((el) => el.classList.toggle('active', el.dataset.step === num));
+  }
+  setActiveMapStep('1');
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        const num = (entry.target as HTMLElement).dataset.stepSection!;
+        setActiveMapStep(num);
+      }
+    }
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+  stepSections.forEach((section) => observer.observe(section));
 </script>
 
 <style>
-  .workspace-page {
+  .lede { color: var(--text-1); font-size: var(--step-1); max-width: 62ch; margin: var(--sp-3) 0 var(--sp-5); }
+
+  /* The high-level map: a persistent, clickable overview of the three
+     steps below, always visible while scrolling -- the "understand it
+     at a high level, at any point" piece of this page. */
+  .process-map {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+    background: var(--bg-0); border-bottom: 1px solid var(--line);
+    padding: var(--sp-3) var(--sp-4); margin: 0 0 var(--sp-6);
+    flex-wrap: wrap;
+  }
+  .map-step {
+    display: flex; align-items: center; gap: var(--sp-2); text-decoration: none;
+    padding: var(--sp-1) var(--sp-2); color: var(--text-2); transition: color 150ms ease-out;
+  }
+  .map-step:hover { color: var(--text-0); }
+  .map-num {
+    width: 1.6rem; height: 1.6rem; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; transition: all 150ms ease-out;
+  }
+  .map-label { font-family: var(--font-mono); font-size: 0.72rem; white-space: nowrap; }
+  .map-step.active { color: var(--accent); }
+  .map-step.active .map-num { border-color: var(--accent); background: var(--accent); color: var(--bg-0); }
+  .map-connector { width: 2rem; height: 1px; background: var(--line-bright); flex-shrink: 0; }
+  @media (max-width: 34rem) { .map-label { display: none; } }
+
+  .flow-page {
     position: relative; left: 50%; transform: translateX(-50%);
-    width: 100vw; max-width: 92rem; box-sizing: border-box;
+    width: 100vw; max-width: 62rem; box-sizing: border-box;
     padding: 0 var(--sp-5);
-    margin: var(--sp-5) 0 var(--sp-6);
-  }
-  .workspace-shell {
-    border: 1px solid var(--line); background: var(--bg-1);
-    display: grid; grid-template-columns: 34rem 1fr;
-  }
-  @media (max-width: 60rem) {
-    .workspace-shell { grid-template-columns: 1fr; }
-    .docs-panel { order: 2; position: static; border-right: none; border-top: 1px solid var(--line); }
-    .workspace-main { order: 1; }
+    margin: 0 0 var(--sp-6);
   }
 
-  .docs-panel {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: var(--sp-3); align-content: start; position: sticky; top: var(--sp-4);
-    padding: var(--sp-4); border-right: 1px solid var(--line);
-  }
-  .docs-block { border: 1px solid var(--line); background: var(--bg-0); padding: var(--sp-3); }
-  .docs-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin: 0 0 var(--sp-2); }
-  .docs-block ul { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--sp-2); font-size: 0.76rem; line-height: 1.4; color: var(--text-1); }
-
-  .workspace-main { min-width: 0; container-type: inline-size; display: grid; gap: var(--sp-4); align-content: start; padding: var(--sp-4); }
-  .workspace-toolbar { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: var(--sp-3); }
-  .workspace-title { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
-  .workspace-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
-
-  .footer-page {
-    position: relative; left: 50%; transform: translateX(-50%);
-    width: 100vw; max-width: 92rem; box-sizing: border-box;
-    padding: 0 var(--sp-5);
-  }
-  .footer-page :global(.sources-list),
-  .footer-page :global(.related-list) {
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  /* The connecting spine: one continuous line behind all three numbered
+     markers, so the page reads as one process, not three unrelated
+     widgets stacked on a page. */
+  .flow-steps { position: relative; display: grid; gap: var(--sp-7); }
+  .flow-steps::before {
+    content: ''; position: absolute; left: 1.25rem; top: 1.25rem; bottom: 1.25rem;
+    width: 2px; background: var(--line-bright); z-index: 0;
   }
 
-  .tabs { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
-  .tab-btn {
-    font-family: var(--font-mono); font-size: 0.74rem; padding: var(--sp-2) var(--sp-3);
-    background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
+  .flow-step { position: relative; display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--sp-4); }
+  @media (max-width: 40rem) { .flow-step { grid-template-columns: 2rem 1fr; } }
+  .step-marker { display: flex; justify-content: center; }
+  .step-num {
+    width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--accent);
+    background: var(--bg-0); color: var(--accent); z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: var(--step-0); font-weight: 700;
   }
-  .tab-btn:hover { color: var(--text-0); }
-  .tab-btn.active { border-color: var(--accent); color: var(--accent); background: var(--bg-2); }
+  @media (max-width: 40rem) { .step-num { width: 2rem; height: 2rem; font-size: var(--step--1); } }
 
-  .tab-panel { display: none; }
-  .tab-panel.active { display: grid; gap: var(--sp-4); }
-
-  .lab-note { color: var(--text-2); font-size: var(--step--1); margin: 0; }
+  .step-body { min-width: 0; display: grid; gap: var(--sp-3); border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); }
+  .step-body h2 { margin: 0; }
+  .step-intro { color: var(--text-1); margin: 0; }
+  .step-why { color: var(--text-2); font-size: var(--step--1); margin: 0; padding-top: var(--sp-2); border-top: 1px solid var(--line); }
 
   .control-row { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
   .control-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -412,16 +444,16 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
   .seg-btn + .seg-btn { border-left: 1px solid var(--line-bright); }
   .seg-btn.active { background: var(--accent); color: var(--bg-0); font-weight: 700; }
 
-  /* codebase layer stack */
+  /* step 1 layer stack */
   .layer-stack { display: grid; gap: var(--sp-2); }
   .layer-node {
     padding: var(--sp-3); border: 1px solid var(--line-bright); background: var(--bg-0);
     font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-1); transition: all 150ms ease-out;
   }
   .layer-node.active { border-color: var(--status-broken); color: var(--text-0); box-shadow: 0 0 0 1px var(--status-broken), 0 0 16px color-mix(in srgb, var(--status-broken) 35%, transparent); }
-  .blast-note { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); padding: var(--sp-3); background: var(--bg-0); border: 1px solid var(--line); min-height: 2.5rem; }
+  .blast-note { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); padding: var(--sp-3); background: var(--bg-0); border: 1px solid var(--line); min-height: 2.5rem; margin: 0; }
 
-  /* pipeline (shared visual language with the pipeline lab) */
+  /* step 2 pipeline */
   .toggle-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--sp-3); }
   .toggle-item { display: grid; gap: var(--sp-1); align-content: start; }
   .toggle-chip { font-family: var(--font-mono); font-size: 0.72rem; padding: var(--sp-2) var(--sp-3); background: var(--bg-0); border: 1px solid var(--line); color: var(--text-1); cursor: pointer; }
@@ -466,7 +498,7 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
   :global(.trace-text) { color: var(--text-1); }
   :global(.trace-error) { color: var(--status-broken); }
 
-  /* compare */
+  /* step 3 compare */
   .scenario-prompt { color: var(--text-1); font-size: var(--step--1); margin: 0; }
   .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--sp-3); }
   /* Same :global() reasoning as .trace-* above -- these cards are also
@@ -477,4 +509,17 @@ import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
   :global(.option-list) { margin: 0; padding-left: 1.1rem; font-size: 0.72rem; line-height: 1.4; display: grid; gap: 0.2rem; }
   :global(.option-list.pros) { color: var(--status-working); }
   :global(.option-list.cons) { color: var(--status-broken); }
+
+  /* recap */
+  .flow-recap { margin-top: var(--sp-7); }
+  .recap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: var(--sp-3); }
+  .recap-card { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); }
+  .docs-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin: 0 0 var(--sp-2); }
+  .recap-card ul { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--sp-2); font-size: 0.8rem; line-height: 1.4; color: var(--text-1); }
+
+  .footer-page {
+    position: relative; left: 50%; transform: translateX(-50%);
+    width: 100vw; max-width: 62rem; box-sizing: border-box;
+    padding: 0 var(--sp-5);
+  }
 </style>
