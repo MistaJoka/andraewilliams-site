@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
 import VerifiedDate from '../components/VerifiedDate.astro';
+import { STACK_COMBOS } from '../lib/stack-combos';
 ---
 <BaseLayout
   title="Tech Stack Fundamentals"
@@ -163,6 +164,78 @@ import VerifiedDate from '../components/VerifiedDate.astro';
             </div>
           </div>
         </div>
+
+        <div class="digest-row">
+          <div class="digest-card">
+            <p class="net-log-label">Popular stack combos</p>
+            <div class="table-scroll">
+              <table class="combo-table">
+                <thead>
+                  <tr><th>Stack</th><th>▣ Frontend</th><th>▤ Backend</th><th>▦ Database</th></tr>
+                </thead>
+                <tbody>
+                  {STACK_COMBOS.map((s) => (
+                    <tr>
+                      <td>{s.name}</td>
+                      <td>{s.frontend.tool}</td>
+                      <td>{s.backend.tool}</td>
+                      <td>{s.database.tool}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="digest-card">
+            <p class="net-log-label">SQL vs. NoSQL, at a glance</p>
+            <div class="vs-grid">
+              <div class="vs-col">
+                <p class="vs-title">SQL</p>
+                <ul>
+                  <li>Fixed schema, rows &amp; columns</li>
+                  <li>Records relate to each other</li>
+                  <li>Postgres, MySQL, SQLite</li>
+                </ul>
+              </div>
+              <div class="vs-col">
+                <p class="vs-title">NoSQL</p>
+                <ul>
+                  <li>Flexible schema, documents</li>
+                  <li>Records stand alone, scale wide</li>
+                  <li>MongoDB, DynamoDB, Redis</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-card">
+          <p class="net-log-label">Compare stacks: what each part offers, and why you'd swap it</p>
+          <div class="compare-chips">
+            {STACK_COMBOS.map((s, i) => (
+              <button type="button" class="chip compare-chip" data-stack-id={s.id} aria-pressed={i === 0 ? 'true' : 'false'}>{s.name}</button>
+            ))}
+          </div>
+          <div class="compare-layers">
+            <div class="compare-layer">
+              <p class="compare-layer-label">▣ Frontend</p>
+              <p class="compare-tool" id="compare-frontend-tool"></p>
+              <p class="compare-offers" id="compare-frontend-offers"></p>
+            </div>
+            <div class="compare-layer">
+              <p class="compare-layer-label">▤ Backend</p>
+              <p class="compare-tool" id="compare-backend-tool"></p>
+              <p class="compare-offers" id="compare-backend-offers"></p>
+            </div>
+            <div class="compare-layer">
+              <p class="compare-layer-label">▦ Database</p>
+              <p class="compare-tool" id="compare-database-tool"></p>
+              <p class="compare-offers" id="compare-database-offers"></p>
+            </div>
+          </div>
+          <p class="compare-swap"><span class="compare-swap-label">Swap out when:</span> <span id="compare-swap-text"></span></p>
+        </div>
       </div>
     </div>
   </div>
@@ -195,6 +268,7 @@ import VerifiedDate from '../components/VerifiedDate.astro';
 <script>
   import { scrambleText as decode } from '../lib/decode';
   import { handleRequest, type Layer } from '../lib/stack-sim';
+  import { STACK_COMBOS, getStackCombo } from '../lib/stack-combos';
 
   const input = document.getElementById('path-input') as HTMLInputElement;
   const goBtn = document.getElementById('go-btn') as HTMLButtonElement;
@@ -361,6 +435,33 @@ import VerifiedDate from '../components/VerifiedDate.astro';
     if (e.key === 'Enter') { e.preventDefault(); run(input.value.trim() || '/api/users/1'); }
   });
   chips.forEach((chip) => chip.addEventListener('click', () => run(chip.dataset.path ?? '')));
+
+  const compareChips = document.querySelectorAll<HTMLButtonElement>('.compare-chip');
+  const compareEls = {
+    frontendTool: document.getElementById('compare-frontend-tool')!,
+    frontendOffers: document.getElementById('compare-frontend-offers')!,
+    backendTool: document.getElementById('compare-backend-tool')!,
+    backendOffers: document.getElementById('compare-backend-offers')!,
+    databaseTool: document.getElementById('compare-database-tool')!,
+    databaseOffers: document.getElementById('compare-database-offers')!,
+    swap: document.getElementById('compare-swap-text')!,
+  };
+
+  function showStack(id: string) {
+    const stack = getStackCombo(id);
+    if (!stack) return;
+    compareChips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.stackId === id)));
+    decode(compareEls.frontendTool, stack.frontend.tool, { frames: 6, frameMs: 25 });
+    compareEls.frontendOffers.textContent = stack.frontend.offers;
+    decode(compareEls.backendTool, stack.backend.tool, { frames: 6, frameMs: 25 });
+    compareEls.backendOffers.textContent = stack.backend.offers;
+    decode(compareEls.databaseTool, stack.database.tool, { frames: 6, frameMs: 25 });
+    compareEls.databaseOffers.textContent = stack.database.offers;
+    compareEls.swap.textContent = stack.swapWhen;
+  }
+
+  compareChips.forEach((chip) => chip.addEventListener('click', () => showStack(chip.dataset.stackId ?? '')));
+  showStack(STACK_COMBOS[0].id);
 </script>
 
 <style>
@@ -508,4 +609,39 @@ import VerifiedDate from '../components/VerifiedDate.astro';
   .db-table th, .db-table td { border: 1px solid var(--line); padding: 0.3rem 0.5rem; text-align: left; color: var(--text-1); }
   .db-table th { color: var(--text-2); font-weight: 700; }
   .db-empty { color: var(--status-broken); font-family: var(--font-mono); font-size: 0.72rem; margin: 0; }
+
+  /* Visual digests: the same information as the sidebar's text, in
+     table/grid form instead -- a reference at a glance, not more
+     reading. */
+  .digest-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: var(--sp-4); }
+  .digest-card { border: 1px solid var(--line-bright); background: var(--bg-0); padding: var(--sp-3); }
+
+  /* Wide content scrolls inside its own strip instead of overflowing
+     the page -- this table's 4 columns of real words (Node/Express,
+     PostgreSQL, Java enterprise) don't fit a narrow phone width, and
+     without this it clipped past the viewport edge there. */
+  .table-scroll { overflow-x: auto; margin-top: var(--sp-2); }
+  .combo-table { width: 100%; min-width: 30rem; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.7rem; }
+  .combo-table th, .combo-table td { border: 1px solid var(--line); padding: 0.4rem 0.6rem; text-align: left; color: var(--text-1); white-space: nowrap; }
+  .combo-table th { color: var(--accent); font-weight: 700; }
+  .combo-table td:first-child { color: var(--text-0); font-weight: 700; }
+
+  .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-top: var(--sp-2); }
+  .vs-col { border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+  .vs-title { font-family: var(--font-mono); font-weight: 700; color: var(--accent-deep); margin: 0 0 var(--sp-1); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; }
+  .vs-col ul { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--sp-1); font-size: 0.72rem; line-height: 1.4; color: var(--text-1); }
+
+  /* Interactive drill-down: click a stack, its 3 layers + swap-reason
+     decode in -- the table above is the bird's-eye view, this is the
+     click-to-inspect one, same data (stack-combos.ts) either way. */
+  .compare-card { border: 1px solid var(--line-bright); background: var(--bg-0); padding: var(--sp-3); }
+  .compare-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-2) 0 var(--sp-3); }
+  .compare-chip[aria-pressed="true"] { border-color: var(--accent); color: var(--text-0); background: var(--bg-1); box-shadow: 0 0 0 1px var(--accent); }
+  .compare-layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--sp-3); margin-bottom: var(--sp-3); }
+  .compare-layer { border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+  .compare-layer-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-1); }
+  .compare-tool { font-family: var(--font-mono); font-weight: 700; color: var(--accent); margin: 0 0 0.3rem; min-height: 1.2em; }
+  .compare-offers { font-size: 0.74rem; color: var(--text-1); margin: 0; line-height: 1.4; }
+  .compare-swap { font-size: 0.78rem; color: var(--text-1); margin: 0; padding-top: var(--sp-2); border-top: 1px solid var(--line); }
+  .compare-swap-label { font-family: var(--font-mono); font-weight: 700; color: var(--status-testing); }
 </style>
