@@ -110,6 +110,15 @@ import { STACK_COMBOS } from '../lib/stack-combos';
           </div>
           <div class="cache-trace" id="cache-trace" aria-live="polite"></div>
         </div>
+        <div class="ig-step-block job-demo-block">
+          <p class="ig-step-label">Response now, work later — try it</p>
+          <p class="cache-demo-note">"Doesn't need to finish before responding" isn't hand-waving — the response line below appears immediately, then the job keeps going on its own.</p>
+          <div class="cache-demo-controls">
+            <button type="button" id="job-submit-btn" class="chip">Submit task: resize 500 images</button>
+          </div>
+          <p class="job-response" id="job-response"></p>
+          <div class="cache-trace" id="job-trace" aria-live="polite"></div>
+        </div>
       </div>
     </section>
 
@@ -341,6 +350,7 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   import { handleRequest, type Layer } from '../lib/stack-sim';
   import { STACK_COMBOS, getStackCombo } from '../lib/stack-combos';
   import { runCachedQuery, resetCacheDemo } from '../lib/cache-demo';
+  import { submitBackgroundJob } from '../lib/job-queue';
 
   const input = document.getElementById('path-input') as HTMLInputElement;
   const goBtn = document.getElementById('go-btn') as HTMLButtonElement;
@@ -569,6 +579,30 @@ import { STACK_COMBOS } from '../lib/stack-combos';
     cacheStatus.textContent = '';
     cacheStatus.className = 'cache-status';
   });
+
+  const jobSubmitBtn = document.getElementById('job-submit-btn') as HTMLButtonElement;
+  const jobResponse = document.getElementById('job-response')!;
+  const jobTrace = document.getElementById('job-trace')!;
+  let jobRunTimer: number | undefined;
+
+  jobSubmitBtn.addEventListener('click', () => {
+    if (jobRunTimer) { clearTimeout(jobRunTimer); jobRunTimer = undefined; }
+    const { immediateResponse, backgroundSteps } = submitBackgroundJob('resize 500 images');
+    jobTrace.innerHTML = '';
+    decode(jobResponse, immediateResponse, { frames: 6, frameMs: 25 });
+    let i = 0;
+    const step = () => {
+      if (i >= backgroundSteps.length) return;
+      const line = document.createElement('p');
+      line.className = 'cache-trace-line';
+      jobTrace.append(line);
+      decode(line, backgroundSteps[i], { frames: 6, frameMs: 25, onDone: () => {
+        i++;
+        jobRunTimer = window.setTimeout(step, 500);
+      }});
+    };
+    jobRunTimer = window.setTimeout(step, 400);
+  });
 </script>
 
 <style>
@@ -760,6 +794,14 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   .cache-status.miss { color: var(--status-testing); border-color: var(--status-testing); }
   .cache-trace { display: grid; gap: 0.3rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); min-height: 1.5rem; }
   .cache-trace-line { margin: 0; }
+
+  /* Background-job demo -- reuses .cache-demo-note/.cache-demo-controls/
+     .cache-trace from the cache demo above (same shape: note, controls,
+     a decoding trace), just with its own response line since this
+     demo's whole point is that the response and the trace are two
+     separate things happening at two separate times. */
+  .job-demo-block { grid-column: 1 / -1; }
+  .job-response { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; color: var(--accent); margin: 0 0 var(--sp-2); min-height: 1.2em; }
 
   /* Latency instrument panel -- same "illustrative, not measured"
      honesty convention as the password-cracking page's log-scaled
