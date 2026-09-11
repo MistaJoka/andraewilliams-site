@@ -83,12 +83,32 @@ import { STACK_COMBOS } from '../lib/stack-combos';
           <p>Same query running over and over? Add a <strong>cache</strong> here, in front of the database. Task doesn't need to finish before responding? Hand it to a <strong>background job/queue</strong> instead of making the request wait.</p>
         </div>
         <div class="ig-step-block">
-          <p class="ig-step-label">Under the hood</p>
-          <p><strong>Stateless</strong> → can run 10 identical copies behind a load balancer. "Routing" is matching a path to a handler, not magic — watch it happen in the live run below.</p>
+          <p class="ig-step-label">Under the hood — scaling</p>
+          <p><strong>Stateless</strong> → any copy can answer any request, so a load balancer can spread traffic across many identical ones. "Routing" is matching a path to a handler, not magic — watch it happen in the live run below.</p>
+          <div class="scale-diagram" role="img" aria-label="A load balancer distributing requests across four identical stateless server copies">
+            <div class="scale-lb">Load balancer</div>
+            <div class="scale-connector"></div>
+            <div class="scale-copies">
+              <div class="scale-copy">▤ copy 1</div>
+              <div class="scale-copy">▤ copy 2</div>
+              <div class="scale-copy">▤ copy 3</div>
+              <div class="scale-copy">▤ copy 4</div>
+            </div>
+          </div>
         </div>
         <div class="ig-step-block">
           <p class="ig-step-label">Where AI fits in</p>
           <p>An LLM call is just another outbound request — same job (decide), one more thing the server waits on. An agent loop adds steps here, not new jobs — see <a href="/agentic-engineering/">Agentic Engineering</a>.</p>
+        </div>
+        <div class="ig-step-block cache-demo-block">
+          <p class="ig-step-label">Cache in action — try it</p>
+          <p class="cache-demo-note">The same query, run twice for real — not staged. The second run's trace never mentions the database at all.</p>
+          <div class="cache-demo-controls">
+            <button type="button" id="cache-run-btn" class="chip">Run query: <code>user:2</code></button>
+            <button type="button" id="cache-clear-btn" class="chip">Clear cache</button>
+            <span class="cache-status" id="cache-status"></span>
+          </div>
+          <div class="cache-trace" id="cache-trace" aria-live="polite"></div>
         </div>
       </div>
     </section>
@@ -207,6 +227,28 @@ import { STACK_COMBOS } from '../lib/stack-combos';
       </div>
     </section>
 
+    <section class="ig-latency">
+      <p class="ig-kicker">Relative speed — illustrative order, not measured</p>
+      <div class="latency-bars">
+        <div class="latency-row">
+          <span class="latency-label">Cache hit</span>
+          <div class="latency-track"><div class="latency-fill cache" style="width: 8%"></div></div>
+          <span class="latency-value">&lt; 1ms</span>
+        </div>
+        <div class="latency-row">
+          <span class="latency-label">Browser → Server (HTTP)</span>
+          <div class="latency-track"><div class="latency-fill" style="width: 35%"></div></div>
+          <span class="latency-value">~ms</span>
+        </div>
+        <div class="latency-row">
+          <span class="latency-label">Server → Database (query)</span>
+          <div class="latency-track"><div class="latency-fill db" style="width: 90%"></div></div>
+          <span class="latency-value">~10–50ms</span>
+        </div>
+      </div>
+      <p class="latency-caveat">Bar lengths show <em>order</em>, not real timings — the point is a cache hit skips the one hop that actually costs something, not the exact numbers.</p>
+    </section>
+
     <section class="ig-recap">
       <p class="ig-kicker">Common misconceptions</p>
       <ul class="ig-recap-list">
@@ -298,6 +340,7 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   import { scrambleText as decode } from '../lib/decode';
   import { handleRequest, type Layer } from '../lib/stack-sim';
   import { STACK_COMBOS, getStackCombo } from '../lib/stack-combos';
+  import { runCachedQuery, resetCacheDemo } from '../lib/cache-demo';
 
   const input = document.getElementById('path-input') as HTMLInputElement;
   const goBtn = document.getElementById('go-btn') as HTMLButtonElement;
@@ -491,6 +534,41 @@ import { STACK_COMBOS } from '../lib/stack-combos';
 
   compareChips.forEach((chip) => chip.addEventListener('click', () => showStack(chip.dataset.stackId ?? '')));
   showStack(STACK_COMBOS[0].id);
+
+  const cacheRunBtn = document.getElementById('cache-run-btn') as HTMLButtonElement;
+  const cacheClearBtn = document.getElementById('cache-clear-btn') as HTMLButtonElement;
+  const cacheStatus = document.getElementById('cache-status')!;
+  const cacheTrace = document.getElementById('cache-trace')!;
+  let cacheRunTimer: number | undefined;
+
+  function runCacheDemoStep() {
+    if (cacheRunTimer) { clearTimeout(cacheRunTimer); cacheRunTimer = undefined; }
+    const result = runCachedQuery('user:2');
+    cacheTrace.innerHTML = '';
+    cacheStatus.textContent = result.hit ? 'HIT' : 'MISS';
+    cacheStatus.className = `cache-status ${result.hit ? 'hit' : 'miss'}`;
+    let i = 0;
+    const step = () => {
+      if (i >= result.steps.length) return;
+      const line = document.createElement('p');
+      line.className = 'cache-trace-line';
+      cacheTrace.append(line);
+      decode(line, result.steps[i], { frames: 6, frameMs: 25, onDone: () => {
+        i++;
+        cacheRunTimer = window.setTimeout(step, 260);
+      }});
+    };
+    step();
+  }
+
+  cacheRunBtn.addEventListener('click', runCacheDemoStep);
+  cacheClearBtn.addEventListener('click', () => {
+    if (cacheRunTimer) { clearTimeout(cacheRunTimer); cacheRunTimer = undefined; }
+    resetCacheDemo();
+    cacheTrace.innerHTML = '';
+    cacheStatus.textContent = '';
+    cacheStatus.className = 'cache-status';
+  });
 </script>
 
 <style>
@@ -660,6 +738,47 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   .compare-offers { font-size: 0.74rem; color: var(--text-1); margin: 0; line-height: 1.4; }
   .compare-swap { font-size: 0.78rem; color: var(--text-1); margin: 0; padding-top: var(--sp-2); border-top: 1px solid var(--line); }
   .compare-swap-label { font-family: var(--font-mono); font-weight: 700; color: var(--status-testing); }
+
+  /* Scaling diagram -- turns the "stateless -> 10 copies" bullet
+     already in the copy into an actual small diagram instead of
+     leaving it as text alone. */
+  .scale-diagram { margin-top: var(--sp-3); display: flex; flex-direction: column; align-items: center; gap: var(--sp-1); }
+  .scale-lb { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; padding: var(--sp-1) var(--sp-3); border: 1px solid var(--status-working); color: var(--status-working); }
+  .scale-connector { width: 2px; height: 0.9rem; background: var(--line-bright); }
+  .scale-copies { display: flex; flex-wrap: wrap; gap: var(--sp-2); justify-content: center; }
+  .scale-copy { font-family: var(--font-mono); font-size: 0.64rem; padding: 0.3rem 0.6rem; border: 1px solid var(--line-bright); background: var(--bg-0); color: var(--text-1); }
+
+  /* Cache demo -- the one heuristic repeated across this page ("add a
+     cache in front of the database") that was never actually shown
+     happening. Deliberately a separate tested module (cache-demo.ts),
+     not a change to stack-sim.ts's already-verified pipeline. */
+  .cache-demo-block { grid-column: 1 / -1; }
+  .cache-demo-note { font-size: 0.78rem; color: var(--text-2); margin: 0 0 var(--sp-2); }
+  .cache-demo-controls { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-2); }
+  .cache-status { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border: 1px solid var(--line); color: var(--text-2); min-width: 3.5rem; text-align: center; }
+  .cache-status.hit { color: var(--status-working); border-color: var(--status-working); }
+  .cache-status.miss { color: var(--status-testing); border-color: var(--status-testing); }
+  .cache-trace { display: grid; gap: 0.3rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); min-height: 1.5rem; }
+  .cache-trace-line { margin: 0; }
+
+  /* Latency instrument panel -- same "illustrative, not measured"
+     honesty convention as the password-cracking page's log-scaled
+     race bars: the bar lengths show relative order on purpose, and
+     say so, rather than implying a precision the demo doesn't have. */
+  .ig-latency { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); }
+  .latency-bars { display: grid; gap: var(--sp-3); margin: var(--sp-3) 0; }
+  .latency-row { display: grid; grid-template-columns: 12rem 1fr 5rem; align-items: center; gap: var(--sp-2); }
+  .latency-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); }
+  .latency-track { height: 0.6rem; background: var(--bg-0); border: 1px solid var(--line); }
+  .latency-fill { height: 100%; background: var(--accent); }
+  .latency-fill.db { background: var(--status-testing); }
+  .latency-fill.cache { background: var(--status-working); }
+  .latency-value { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); text-align: right; }
+  .latency-caveat { font-size: 0.78rem; color: var(--text-2); margin: 0; }
+  @media (max-width: 30rem) {
+    .latency-row { grid-template-columns: 1fr; gap: 0.25rem; }
+    .latency-value { text-align: left; }
+  }
 
   @media (prefers-reduced-motion: no-preference) {
     .infographic { scroll-behavior: smooth; }
