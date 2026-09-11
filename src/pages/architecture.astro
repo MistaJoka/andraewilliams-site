@@ -19,12 +19,14 @@ const STEPS = [
   <h1>Architecture</h1>
   <VerifiedDate />
 
-  <p class="lede">
-    Architecture is <strong>where a decision lives</strong>, not how many
-    layers you drew. Good boundaries keep a change contained; broken ones
-    spread it everywhere — including into whatever's reading your code next,
-    human or AI agent. Three live checks, top to bottom.
-  </p>
+  <section class="hero-digest">
+    <p class="digest-kicker">The big picture — click a step to jump to it</p>
+    <ul class="digest-list">
+      <li>Architecture is <strong>where a decision lives</strong>, not how many layers you drew.</li>
+      <li>An "AI pipeline" is a normal request path with an <strong>LLM as one more block</strong> in it.</li>
+      <li>There's rarely one right architecture — only <strong>real tradeoffs</strong> given real constraints.</li>
+    </ul>
+  </section>
 
   <nav class="process-map" aria-label="Page sections">
     {STEPS.map((s, i) => (
@@ -373,7 +375,13 @@ const STEPS = [
 </script>
 
 <style>
-  .lede { color: var(--text-1); font-size: var(--step-1); max-width: 62ch; margin: var(--sp-3) 0 var(--sp-5); }
+  .hero-digest {
+    border: 1px solid var(--line-bright); background: var(--bg-1); padding: var(--sp-4);
+    max-width: 62rem; margin: var(--sp-3) 0 var(--sp-5);
+  }
+  .digest-kicker { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-3); }
+  .digest-list { margin: 0; padding-left: 1.2rem; display: grid; gap: var(--sp-2); font-size: var(--step-0); line-height: 1.5; color: var(--text-1); }
+  .digest-list strong { color: var(--text-0); }
 
   /* The high-level map: a persistent, clickable overview of the three
      steps below, always visible while scrolling -- the "understand it
