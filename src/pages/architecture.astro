@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
 import VerifiedDate from '../components/VerifiedDate.astro';
-import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS, APP_SHAPE_SCENARIOS } from '../lib/architecture';
+import { LAYERS, LAYER_FILES, TASKS, TOGGLE_BLOCKS, SCENARIOS, APP_SHAPE_SCENARIOS } from '../lib/architecture';
 
 const STEPS = [
   { id: 'step-1', num: '1', label: 'Where it lives' },
@@ -71,12 +71,29 @@ const STEPS = [
             </div>
           </div>
 
-          <div class="layer-stack" role="img" aria-label="UI, API, service, and data layers">
-            {LAYERS.map((l) => (
-              <div class="layer-node" data-layer={l.id}>
-                <span class="layer-name">{l.name}</span>
+          <div class="angle-row">
+            <div class="angle-col">
+              <p class="angle-label">As layers</p>
+              <div class="layer-stack" role="img" aria-label="UI, API, service, and data layers">
+                {LAYERS.map((l) => (
+                  <div class="layer-node" data-layer={l.id}>
+                    <span class="layer-name">{l.name}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div class="angle-col">
+              <p class="angle-label">As real files</p>
+              <div class="file-tree" role="img" aria-label="Representative files per layer">
+                {LAYERS.map((l) => (
+                  <div class="file-layer" data-file-layer={l.id}>
+                    <ul>
+                      {LAYER_FILES[l.id].map((f) => <li>{f}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           <p class="blast-note" id="blast-note"></p>
@@ -109,18 +126,27 @@ const STEPS = [
             ))}
           </div>
 
-          <div class="pipeline" role="img" aria-label="Client, API gateway, and toggleable blocks behind it">
-            <div class="pipe-node fixed active" data-pnode="client"><span class="pipe-icon" aria-hidden="true">▣</span><span class="pipe-name">Client</span></div>
-            <div class="pipe-edge"></div>
-            <div class="pipe-node fixed" data-pnode="api"><span class="pipe-icon" aria-hidden="true">▤</span><span class="pipe-name">API</span></div>
-            <div class="pipe-edge"></div>
-            <div class="pipe-node dim" data-pnode="orchestrator"><span class="pipe-icon" aria-hidden="true">◆</span><span class="pipe-name">Orchestrator</span></div>
-            <div class="pipe-edge"></div>
-            <div class="pipe-node dim" data-pnode="llm"><span class="pipe-icon" aria-hidden="true">✦</span><span class="pipe-name">LLM</span></div>
-          </div>
-          <div class="pipeline-extra">
-            <div class="pipe-node dim small" data-pnode="retrieval"><span class="pipe-name">Retrieval</span></div>
-            <div class="pipe-node dim small" data-pnode="tools"><span class="pipe-name">Tools</span></div>
+          <div class="angle-row">
+            <div class="angle-col">
+              <p class="angle-label">As a diagram</p>
+              <div class="pipeline" role="img" aria-label="Client, API gateway, and toggleable blocks behind it">
+                <div class="pipe-node fixed active" data-pnode="client"><span class="pipe-icon" aria-hidden="true">▣</span><span class="pipe-name">Client</span></div>
+                <div class="pipe-edge"></div>
+                <div class="pipe-node fixed" data-pnode="api"><span class="pipe-icon" aria-hidden="true">▤</span><span class="pipe-name">API</span></div>
+                <div class="pipe-edge"></div>
+                <div class="pipe-node dim" data-pnode="orchestrator"><span class="pipe-icon" aria-hidden="true">◆</span><span class="pipe-name">Orchestrator</span></div>
+                <div class="pipe-edge"></div>
+                <div class="pipe-node dim" data-pnode="llm"><span class="pipe-icon" aria-hidden="true">✦</span><span class="pipe-name">LLM</span></div>
+              </div>
+              <div class="pipeline-extra">
+                <div class="pipe-node dim small" data-pnode="retrieval"><span class="pipe-name">Retrieval</span></div>
+                <div class="pipe-node dim small" data-pnode="tools"><span class="pipe-name">Tools</span></div>
+              </div>
+            </div>
+            <div class="angle-col">
+              <p class="angle-label">As code</p>
+              <pre class="code-panel"><code id="pipeline-code"></code></pre>
+            </div>
           </div>
 
           <div class="generate-row">
@@ -260,7 +286,7 @@ const STEPS = [
 <script>
   import { scrambleText as decode } from '../lib/decode';
   import {
-    getBlastRadius, runPipeline, getScenario, getAppShapeScenario, LAYERS,
+    getBlastRadius, runPipeline, buildPipelineSnippet, getScenario, getAppShapeScenario, LAYERS,
     type LayerId, type BoundaryQuality, type ToggleBlockId, type PipelineBlock, type Scenario,
   } from '../lib/architecture';
 
@@ -268,14 +294,19 @@ const STEPS = [
   const taskSelect = document.getElementById('task-select') as HTMLSelectElement;
   const qualityBtns = document.querySelectorAll<HTMLButtonElement>('.seg-btn');
   const layerNodes: Record<LayerId, HTMLElement> = {} as Record<LayerId, HTMLElement>;
-  for (const l of LAYERS) layerNodes[l.id] = document.querySelector<HTMLElement>(`[data-layer="${l.id}"]`)!;
+  const fileLayerNodes: Record<LayerId, HTMLElement> = {} as Record<LayerId, HTMLElement>;
+  for (const l of LAYERS) {
+    layerNodes[l.id] = document.querySelector<HTMLElement>(`[data-layer="${l.id}"]`)!;
+    fileLayerNodes[l.id] = document.querySelector<HTMLElement>(`[data-file-layer="${l.id}"]`)!;
+  }
   const blastNote = document.getElementById('blast-note')!;
   let quality: BoundaryQuality = 'clean';
 
   function renderBlastRadius() {
     for (const el of Object.values(layerNodes)) el.classList.remove('active');
+    for (const el of Object.values(fileLayerNodes)) el.classList.remove('active');
     const { layers, note } = getBlastRadius(taskSelect.value, quality);
-    for (const id of layers) layerNodes[id].classList.add('active');
+    for (const id of layers) { layerNodes[id].classList.add('active'); fileLayerNodes[id].classList.add('active'); }
     decode(blastNote, `${layers.length} of ${LAYERS.length} layers touched — ${note}`, { frames: 5, frameMs: 20 });
   }
 
@@ -309,6 +340,11 @@ const STEPS = [
 
   const chipByBlock: Record<ToggleBlockId, HTMLButtonElement> = {} as Record<ToggleBlockId, HTMLButtonElement>;
   toggleChips.forEach((chip) => { chipByBlock[chip.dataset.block as ToggleBlockId] = chip; });
+  const pipelineCode = document.getElementById('pipeline-code')!;
+
+  function renderPipelineCode() {
+    pipelineCode.textContent = buildPipelineSnippet(enabled);
+  }
 
   function setBlockEnabled(id: ToggleBlockId, on: boolean) {
     if (on) enabled.add(id); else enabled.delete(id);
@@ -317,7 +353,9 @@ const STEPS = [
     chip.classList.toggle('active', on);
     pipeNodes[id].classList.toggle('dim', !on);
     pipeNodes[id].classList.toggle('active', on);
+    renderPipelineCode();
   }
+  renderPipelineCode();
 
   toggleChips.forEach((chip) => chip.addEventListener('click', () => {
     const id = chip.dataset.block as ToggleBlockId;
@@ -396,6 +434,9 @@ const STEPS = [
       for (const opt of scenario.options) {
         const card = document.createElement('div');
         card.className = 'option-card';
+        const path = document.createElement('p');
+        path.className = 'option-path';
+        path.textContent = opt.path.join(' → ');
         const title = document.createElement('p');
         title.className = 'option-title';
         title.textContent = opt.title;
@@ -408,7 +449,7 @@ const STEPS = [
         const cons = document.createElement('ul');
         cons.className = 'option-list cons';
         for (const c of opt.cons) { const li = document.createElement('li'); li.textContent = c; cons.append(li); }
-        card.append(title, summary, pros, cons);
+        card.append(path, title, summary, pros, cons);
         grid.append(card);
       }
     }
@@ -517,6 +558,15 @@ const STEPS = [
   .seg-btn + .seg-btn { border-left: 1px solid var(--line-bright); }
   .seg-btn.active { background: var(--accent); color: var(--bg-0); font-weight: 700; }
 
+  /* Shared two-up layout: every step's diagram gets a second, always-
+     visible concrete-example angle right next to it, not behind a
+     toggle -- side by side is the whole point, per feedback that one
+     angle per step wasn't enough to "see it in multiple ways." */
+  .angle-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); align-items: start; }
+  @media (max-width: 40rem) { .angle-row { grid-template-columns: 1fr; } }
+  .angle-col { display: grid; gap: var(--sp-2); min-width: 0; }
+  .angle-label { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0; }
+
   /* step 1 layer stack */
   .layer-stack { display: grid; gap: var(--sp-2); }
   .layer-node {
@@ -525,6 +575,18 @@ const STEPS = [
   }
   .layer-node.active { border-color: var(--status-broken); color: var(--text-0); box-shadow: 0 0 0 1px var(--status-broken), 0 0 16px color-mix(in srgb, var(--status-broken) 35%, transparent); }
   .blast-note { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); padding: var(--sp-3); background: var(--bg-0); border: 1px solid var(--line); min-height: 2.5rem; margin: 0; }
+
+  /* step 1's file-tree angle -- same layer highlighting as .layer-node,
+     just with real filenames instead of an abstract box. */
+  .file-tree { display: grid; gap: var(--sp-2); }
+  .file-layer {
+    padding: var(--sp-3); border: 1px solid var(--line-bright); background: var(--bg-0);
+    transition: all 150ms ease-out;
+  }
+  .file-layer ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.2rem; }
+  .file-layer li { font-family: var(--font-mono); font-size: var(--step--1); color: var(--text-1); }
+  .file-layer.active { border-color: var(--status-broken); box-shadow: 0 0 0 1px var(--status-broken), 0 0 16px color-mix(in srgb, var(--status-broken) 35%, transparent); }
+  .file-layer.active li { color: var(--text-0); }
 
   /* step 2 pipeline */
   .toggle-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--sp-3); }
@@ -549,6 +611,14 @@ const STEPS = [
   .pipe-edge { flex: 0 0 auto; width: 2.5rem; height: 2px; background: var(--line-bright); }
   .pipeline-extra { display: flex; justify-content: center; gap: var(--sp-3); }
   .pipe-node.small { min-width: 6rem; padding: var(--sp-2); }
+
+  /* step 2's code angle -- the same enabled set as the diagram, as the
+     handler you'd actually write. */
+  .code-panel {
+    margin: 0; padding: var(--sp-3); background: var(--bg-0); border: 1px solid var(--line-bright);
+    font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; color: var(--text-1);
+    overflow-x: auto; white-space: pre;
+  }
 
   .generate-row { margin: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
   .ex-btn {
@@ -579,6 +649,7 @@ const STEPS = [
   /* Same :global() reasoning as .trace-* above -- these cards are also
      assembled with createElement, not written in this template. */
   :global(.option-card) { border: 1px solid var(--line-bright); background: var(--bg-0); padding: var(--sp-3); display: grid; gap: var(--sp-2); align-content: start; }
+  :global(.option-path) { font-family: var(--font-mono); font-size: 0.66rem; color: var(--accent); margin: 0; letter-spacing: 0.01em; word-break: break-word; }
   :global(.option-title) { font-family: var(--font-mono); font-weight: 700; color: var(--text-0); margin: 0; font-size: var(--step--1); }
   :global(.option-summary) { color: var(--text-1); font-size: 0.74rem; margin: 0; }
   :global(.option-list) { margin: 0; padding-left: 1.1rem; font-size: 0.72rem; line-height: 1.4; display: grid; gap: 0.2rem; }

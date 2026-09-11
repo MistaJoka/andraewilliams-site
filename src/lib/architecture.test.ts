@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   TASKS, SCENARIOS, APP_SHAPE_SCENARIOS,
-  getBlastRadius, runPipeline, getScenario, getAppShapeScenario,
+  getBlastRadius, runPipeline, getScenario, getAppShapeScenario, buildPipelineSnippet,
   type ToggleBlockId, type Scenario,
 } from './architecture';
 
@@ -91,6 +91,35 @@ describe('runPipeline', () => {
   });
 });
 
+describe('buildPipelineSnippet', () => {
+  const set = (...ids: ToggleBlockId[]) => new Set(ids);
+
+  it('with nothing enabled, shows a plain endpoint with no orchestrator', () => {
+    const code = buildPipelineSnippet(set());
+    expect(code).toContain('api.handle(req)');
+    expect(code).not.toContain('orchestrator.run');
+  });
+
+  it('with orchestrator but no llm, shows the orchestrator call alone', () => {
+    const code = buildPipelineSnippet(set('orchestrator'));
+    expect(code).toContain('orchestrator.run(req)');
+    expect(code).not.toContain('llm:');
+  });
+
+  it('with orchestrator + llm, includes the llm option but not retrieval/tools', () => {
+    const code = buildPipelineSnippet(set('orchestrator', 'llm'));
+    expect(code).toContain('llm: llmClient.generate');
+    expect(code).not.toContain('retrieval:');
+    expect(code).not.toContain('tools:');
+  });
+
+  it('adds retrieval and tools lines only when enabled', () => {
+    const code = buildPipelineSnippet(set('orchestrator', 'llm', 'retrieval', 'tools'));
+    expect(code).toContain('retrieval: vectorStore.query');
+    expect(code).toContain('tools: [callApiTool, runCodeTool]');
+  });
+});
+
 function checkScenarioIntegrity(scenarios: Scenario[]) {
   it('every scenario has 2-3 options', () => {
     for (const scenario of scenarios) {
@@ -104,6 +133,14 @@ function checkScenarioIntegrity(scenarios: Scenario[]) {
       for (const option of scenario.options) {
         expect(option.pros.length).toBeGreaterThan(0);
         expect(option.cons.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('every option has a path of at least 2 nodes', () => {
+    for (const scenario of scenarios) {
+      for (const option of scenario.options) {
+        expect(option.path.length).toBeGreaterThanOrEqual(2);
       }
     }
   });

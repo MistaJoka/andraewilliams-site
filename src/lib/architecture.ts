@@ -21,6 +21,16 @@ export const LAYERS: Layer[] = [
   { id: 'data', name: 'Data / persistence' },
 ];
 
+// A representative file per layer -- not tied to any one task, just
+// what typically lives there, so the abstract layer diagram has a real
+// "which files would I actually open" angle next to it.
+export const LAYER_FILES: Record<LayerId, string[]> = {
+  ui: ['OrderSummary.tsx', 'DiscountBadge.tsx'],
+  api: ['orders.controller.ts'],
+  service: ['discountService.ts'],
+  data: ['ordersRepo.ts', 'Order.model.ts'],
+};
+
 export type BoundaryQuality = 'clean' | 'tangled';
 
 export interface Task {
@@ -153,6 +163,34 @@ export function runPipeline(enabled: Set<ToggleBlockId>): PipelineResult {
   return { valid: true, aiPowered: true, log };
 }
 
+// The diagram's "which boxes are lit up" angle, next to a real code
+// angle -- the same enabled set, rendered as the handler you'd actually
+// write. Pure string building so it's directly testable, same as the
+// diagram logic above.
+export function buildPipelineSnippet(enabled: Set<ToggleBlockId>): string {
+  if (!enabled.has('orchestrator')) {
+    return [
+      'async function handleRequest(req) {',
+      '  return api.handle(req); // no orchestrator wired in -- plain endpoint',
+      '}',
+    ].join('\n');
+  }
+  if (!enabled.has('llm')) {
+    return [
+      'async function handleRequest(req) {',
+      '  return orchestrator.run(req); // no LLM -- nothing to reason with yet',
+      '}',
+    ].join('\n');
+  }
+
+  const lines = ['async function handleRequest(req) {', '  return orchestrator.run(req, {'];
+  if (enabled.has('retrieval')) lines.push('    retrieval: vectorStore.query,');
+  lines.push('    llm: llmClient.generate,');
+  if (enabled.has('tools')) lines.push('    tools: [callApiTool, runCodeTool],');
+  lines.push('  });', '}');
+  return lines.join('\n');
+}
+
 // ---------------------------------------------------------------------
 // 3. Compare: real scenarios, 2-3 architectural options each, real tradeoffs.
 // ---------------------------------------------------------------------
@@ -161,6 +199,9 @@ export interface ArchOption {
   id: string;
   title: string;
   summary: string;
+  /** The concrete-example angle next to the pros/cons: a short request
+   *  or decision path, rendered as a compact node chain on the card. */
+  path: string[];
   pros: string[];
   cons: string[];
 }
@@ -182,6 +223,7 @@ export const SCENARIOS: Scenario[] = [
         id: 'in-process',
         title: 'In-process library call',
         summary: 'The CI script calls the LLM SDK directly, inline, as one more step.',
+        path: ['CI script', 'LLM SDK'],
         pros: ['Simplest thing that could work', 'No new service to deploy or monitor', 'Fastest to ship'],
         cons: ['CI runtime now owns API keys and SDK version churn', 'Not reusable by any other tool', 'A slow LLM call blocks the whole CI job'],
       },
@@ -189,6 +231,7 @@ export const SCENARIOS: Scenario[] = [
         id: 'sidecar',
         title: 'Sidecar service',
         summary: 'A small internal HTTP service wraps the LLM call; CI just calls that service.',
+        path: ['CI script', 'Sidecar service', 'LLM SDK'],
         pros: ['Reusable by other tools and pipelines', 'API keys and rate-limiting live in one place', 'Can add caching centrally'],
         cons: ['Another service to deploy and keep alive', 'Adds a network hop and a new failure mode'],
       },
@@ -196,6 +239,7 @@ export const SCENARIOS: Scenario[] = [
         id: 'async-queue',
         title: 'Async queue',
         summary: 'CI enqueues a review request; a worker processes it and posts the result back later as a PR comment.',
+        path: ['CI script', 'Queue', 'Worker', 'LLM SDK', 'PR comment'],
         pros: ["CI job doesn't block waiting on the LLM", 'Naturally handles retries and backpressure', 'Review speed decoupled from CI speed'],
         cons: ['The review may land after the PR check already passed', 'Needs a queue, a worker, and a callback path -- more moving parts'],
       },
@@ -210,6 +254,7 @@ export const SCENARIOS: Scenario[] = [
         id: 'direct-commit',
         title: 'Direct commit access',
         summary: 'The agent pushes straight to a branch, no human in the loop.',
+        path: ['Agent', 'main'],
         pros: ['Fastest possible feedback loop', 'No human bottleneck'],
         cons: ['A bad edit ships instantly', 'Hard to audit after the fact', 'Blast radius is whatever the agent touched, unchecked'],
       },
@@ -217,6 +262,7 @@ export const SCENARIOS: Scenario[] = [
         id: 'pr-gated',
         title: 'PR-only, human-gated',
         summary: 'The agent opens a pull request; CI runs, a human reviews and merges.',
+        path: ['Agent', 'Pull request', 'Human review', 'main'],
         pros: ['Every change gets the same review a human change would', 'CI catches regressions before merge', 'A clean audit trail'],
         cons: ['Slower feedback loop', 'Still needs a human paying attention'],
       },
@@ -224,6 +270,7 @@ export const SCENARIOS: Scenario[] = [
         id: 'sandboxed-dry-run',
         title: 'Sandboxed dry-run',
         summary: "The agent's changes run in an isolated branch or environment first, promoted only if checks pass.",
+        path: ['Agent', 'Sandbox', 'Promotion gate', 'main'],
         pros: ['Problems get caught before touching a real branch', 'Safe to let the agent be more autonomous over time'],
         cons: ['Needs real sandbox infrastructure', 'Still needs an explicit promotion gate'],
       },
@@ -253,6 +300,7 @@ export const APP_SHAPE_SCENARIOS: Scenario[] = [
         id: 'monolith',
         title: 'Monolith',
         summary: 'One deployable app, one codebase, one database.',
+        path: ['Client', 'App', 'Database'],
         pros: ['Fastest to build and reason about', 'No network calls between your own modules', 'Free to refactor module boundaries before they\'re load-bearing'],
         cons: ['Whole app scales together even if only one part is hot', 'One bug can take the whole thing down', 'A single codebase eventually strains a growing team'],
       },
@@ -260,6 +308,7 @@ export const APP_SHAPE_SCENARIOS: Scenario[] = [
         id: 'modular-monolith',
         title: 'Modular monolith',
         summary: 'One deployable app, but with enforced internal module boundaries.',
+        path: ['Client', 'App [module | module | module]', 'Database'],
         pros: ['Keeps the monolith\'s simplicity and single deploy', 'Boundaries are already drawn if you split out a service later', 'Separate teams can own separate modules without stepping on each other'],
         cons: ['Boundaries are a discipline, not a wall -- nothing stops a shortcut import across modules', 'Still scales and deploys as one unit'],
       },
@@ -267,6 +316,7 @@ export const APP_SHAPE_SCENARIOS: Scenario[] = [
         id: 'microservices',
         title: 'Microservices',
         summary: 'Separate deployable services from day one.',
+        path: ['Client', 'Service A', 'Service B', 'Service C'],
         pros: ['Each service scales and deploys independently', 'A team can own a service end to end'],
         cons: ["Heavy upfront complexity for a product that doesn't have users yet", 'Network calls where function calls used to be', "You're debugging a distributed system before you have distributed load"],
       },
@@ -281,6 +331,7 @@ export const APP_SHAPE_SCENARIOS: Scenario[] = [
         id: 'extract-hot-service',
         title: 'Extract the one hot service',
         summary: 'Pull out just the actual bottleneck (search, notifications, whatever it is) into its own service.',
+        path: ['Client', 'Monolith', '+ hot service'],
         pros: ['Targets the real bottleneck instead of a full rewrite', 'The rest of the app keeps its simplicity', 'Proves the pattern before committing further'],
         cons: ['Now two deploy pipelines and a network boundary to maintain', 'Data that used to be one transaction may now be two'],
       },
@@ -288,6 +339,7 @@ export const APP_SHAPE_SCENARIOS: Scenario[] = [
         id: 'full-rewrite',
         title: 'Full microservices rewrite',
         summary: 'Split the whole app into services along domain lines, all at once.',
+        path: ['Client', 'Service 1', 'Service 2', '...', 'Service N'],
         pros: ['Every team eventually gets independent deploys and scaling'],
         cons: ['High risk and a long timeline without shipping user value meanwhile', 'Rewrites this large frequently stall or get partially abandoned'],
       },
@@ -295,6 +347,7 @@ export const APP_SHAPE_SCENARIOS: Scenario[] = [
         id: 'stay-monolith',
         title: 'Stay monolith, invest in boundaries',
         summary: 'Refactor toward a modular monolith and scale horizontally (more copies of the whole app) instead of splitting.',
+        path: ['Client', 'Load balancer', 'App ×N', 'Database'],
         pros: ['Ships continuously, never paused for a rewrite', 'Horizontal scaling of a stateless app is cheap and well understood', 'Buys time without new operational complexity'],
         cons: ["Doesn't fix a genuinely CPU- or memory-heavy single component", 'Still eventually hits a ceiling if one part truly needs independent scaling'],
       },
