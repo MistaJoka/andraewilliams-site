@@ -4,6 +4,7 @@ import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
 import VerifiedDate from '../components/VerifiedDate.astro';
 import { STACK_COMBOS } from '../lib/stack-combos';
+import { ARCH_PATTERNS } from '../lib/arch-patterns';
 ---
 <BaseLayout
   title="Tech Stack Fundamentals"
@@ -277,6 +278,22 @@ import { STACK_COMBOS } from '../lib/stack-combos';
       </ul>
     </section>
 
+    <section class="ig-patterns">
+      <p class="ig-kicker">Architectural patterns — same 3 jobs, organized differently</p>
+      <p class="patterns-note">A named stack is <em>which tools</em> you picked. A pattern is <em>how the pieces are organized and run</em> — any stack above could be built any of these four ways.</p>
+      <div class="compare-chips">
+        {ARCH_PATTERNS.map((p, i) => (
+          <button type="button" class="chip pattern-chip" data-pattern-id={p.id} aria-pressed={i === 0 ? 'true' : 'false'}>{p.name}</button>
+        ))}
+      </div>
+      <div class="pattern-detail">
+        <p class="compare-line"><span class="compare-line-label eli5">ELI5:</span> <span id="pattern-eli5-text"></span></p>
+        <p class="compare-line"><span class="compare-line-label pipeline">One request, this way:</span> <span id="pattern-pipeline-text"></span></p>
+        <p class="compare-line"><span class="compare-line-label best">Best for:</span> <span id="pattern-bestfor-text"></span></p>
+        <p class="compare-line"><span class="compare-line-label swap">Tradeoff:</span> <span id="pattern-tradeoff-text"></span></p>
+      </div>
+    </section>
+
     <section class="ig-compare">
       <p class="ig-kicker">Compare real stacks</p>
       <div class="digest-card">
@@ -324,7 +341,9 @@ import { STACK_COMBOS } from '../lib/stack-combos';
             <p class="compare-offers" id="compare-database-offers"></p>
           </div>
         </div>
-        <p class="compare-swap"><span class="compare-swap-label">Swap out when:</span> <span id="compare-swap-text"></span></p>
+        <p class="compare-line"><span class="compare-line-label pipeline">One request, this combo:</span> <span id="compare-pipeline-text"></span></p>
+        <p class="compare-line"><span class="compare-line-label best">Best for:</span> <span id="compare-bestfor-text"></span></p>
+        <p class="compare-line"><span class="compare-line-label swap">Swap out when:</span> <span id="compare-swap-text"></span></p>
       </div>
     </section>
 
@@ -362,6 +381,7 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   import { runCachedQuery, resetCacheDemo } from '../lib/cache-demo';
   import { submitBackgroundJob } from '../lib/job-queue';
   import { runConnectionDemo, type ConnectionType } from '../lib/ws-demo';
+  import { ARCH_PATTERNS, getArchPattern } from '../lib/arch-patterns';
 
   const input = document.getElementById('path-input') as HTMLInputElement;
   const goBtn = document.getElementById('go-btn') as HTMLButtonElement;
@@ -537,6 +557,8 @@ import { STACK_COMBOS } from '../lib/stack-combos';
     backendOffers: document.getElementById('compare-backend-offers')!,
     databaseTool: document.getElementById('compare-database-tool')!,
     databaseOffers: document.getElementById('compare-database-offers')!,
+    pipeline: document.getElementById('compare-pipeline-text')!,
+    bestFor: document.getElementById('compare-bestfor-text')!,
     swap: document.getElementById('compare-swap-text')!,
   };
 
@@ -550,11 +572,34 @@ import { STACK_COMBOS } from '../lib/stack-combos';
     compareEls.backendOffers.textContent = stack.backend.offers;
     decode(compareEls.databaseTool, stack.database.tool, { frames: 6, frameMs: 25 });
     compareEls.databaseOffers.textContent = stack.database.offers;
+    compareEls.pipeline.textContent = stack.pipelineFlow;
+    compareEls.bestFor.textContent = stack.bestFor;
     compareEls.swap.textContent = stack.swapWhen;
   }
 
   compareChips.forEach((chip) => chip.addEventListener('click', () => showStack(chip.dataset.stackId ?? '')));
   showStack(STACK_COMBOS[0].id);
+
+  const patternChips = document.querySelectorAll<HTMLButtonElement>('.pattern-chip');
+  const patternEls = {
+    eli5: document.getElementById('pattern-eli5-text')!,
+    pipeline: document.getElementById('pattern-pipeline-text')!,
+    bestFor: document.getElementById('pattern-bestfor-text')!,
+    tradeoff: document.getElementById('pattern-tradeoff-text')!,
+  };
+
+  function showPattern(id: string) {
+    const pattern = getArchPattern(id);
+    if (!pattern) return;
+    patternChips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.patternId === id)));
+    decode(patternEls.eli5, pattern.eli5, { frames: 6, frameMs: 25 });
+    patternEls.pipeline.textContent = pattern.pipelineFlow;
+    patternEls.bestFor.textContent = pattern.bestFor;
+    patternEls.tradeoff.textContent = pattern.tradeoff;
+  }
+
+  patternChips.forEach((chip) => chip.addEventListener('click', () => showPattern(chip.dataset.patternId ?? '')));
+  showPattern(ARCH_PATTERNS[0].id);
 
   const cacheRunBtn = document.getElementById('cache-run-btn') as HTMLButtonElement;
   const cacheClearBtn = document.getElementById('cache-clear-btn') as HTMLButtonElement;
@@ -817,8 +862,23 @@ import { STACK_COMBOS } from '../lib/stack-combos';
   .compare-layer-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-1); }
   .compare-tool { font-family: var(--font-mono); font-weight: 700; color: var(--accent); margin: 0 0 0.3rem; min-height: 1.2em; }
   .compare-offers { font-size: 0.74rem; color: var(--text-1); margin: 0; line-height: 1.4; }
-  .compare-swap { font-size: 0.78rem; color: var(--text-1); margin: 0; padding-top: var(--sp-2); border-top: 1px solid var(--line); }
-  .compare-swap-label { font-family: var(--font-mono); font-weight: 700; color: var(--status-testing); }
+  .compare-line { font-size: 0.78rem; color: var(--text-1); margin: var(--sp-2) 0 0; padding-top: var(--sp-2); border-top: 1px solid var(--line); }
+  .compare-line-label { font-family: var(--font-mono); font-weight: 700; }
+  .compare-line-label.pipeline { color: var(--accent); }
+  .compare-line-label.best { color: var(--status-working); }
+  .compare-line-label.swap { color: var(--status-testing); }
+  .compare-line-label.eli5 { color: var(--accent-deep); }
+
+  /* Architectural patterns -- a second, orthogonal compare tool next
+     to the named-stack one: same chip+drill-down shape (reuses
+     .compare-chips/.compare-line/.compare-line-label) so the two
+     panels read as one family, but its own chip class since a stack
+     id and a pattern id are different lookups. */
+  .ig-patterns { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); }
+  .patterns-note { font-size: 0.82rem; color: var(--text-2); margin: 0 0 var(--sp-3); max-width: 65ch; }
+  .pattern-chip[aria-pressed="true"] { border-color: var(--accent-deep); color: var(--text-0); background: var(--bg-0); box-shadow: 0 0 0 1px var(--accent-deep); }
+  .pattern-detail { border: 1px solid var(--line-bright); background: var(--bg-0); padding: var(--sp-3); }
+  .pattern-detail .compare-line:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 
   /* Scaling diagram -- turns the "stateless -> 10 copies" bullet
      already in the copy into an actual small diagram instead of

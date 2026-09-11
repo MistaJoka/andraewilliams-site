@@ -17,6 +17,22 @@ describe('STACK_COMBOS', () => {
     }
   });
 
+  it('every combo has a non-empty pipeline flow and best-for angle, distinct from each other', () => {
+    for (const combo of STACK_COMBOS) {
+      expect(combo.pipelineFlow.length).toBeGreaterThan(0);
+      expect(combo.bestFor.length).toBeGreaterThan(0);
+      expect(combo.pipelineFlow).not.toBe(combo.bestFor);
+    }
+  });
+
+  it('every pipeline flow actually names at least one of that combo\'s own tools', () => {
+    for (const combo of STACK_COMBOS) {
+      const toolNames = [combo.frontend.tool, combo.backend.tool, combo.database.tool];
+      const mentionsOwnTool = toolNames.some((t) => combo.pipelineFlow.includes(t.split('/')[0].split(' ')[0]));
+      expect(mentionsOwnTool).toBe(true);
+    }
+  });
+
   it('has at least 4 combos covering different ecosystems', () => {
     expect(STACK_COMBOS.length).toBeGreaterThanOrEqual(4);
   });
