@@ -125,6 +125,8 @@ const STEPS = [
 
           <div class="generate-row">
             <button type="button" id="run-pipeline-btn" class="ex-btn">Run request →</button>
+            <button type="button" id="full-pipeline-btn" class="ex-btn ex-btn-alt">Full pipeline</button>
+            <button type="button" id="clear-pipeline-btn" class="ex-btn ex-btn-alt">Clear</button>
           </div>
           <div class="trace-log" id="pipeline-log" aria-live="polite"></div>
 
@@ -305,14 +307,21 @@ const STEPS = [
   // already-cleared log.
   let pipelineRunId = 0;
 
-  toggleChips.forEach((chip) => chip.addEventListener('click', () => {
-    const id = chip.dataset.block as ToggleBlockId;
-    const on = !enabled.has(id);
+  const chipByBlock: Record<ToggleBlockId, HTMLButtonElement> = {} as Record<ToggleBlockId, HTMLButtonElement>;
+  toggleChips.forEach((chip) => { chipByBlock[chip.dataset.block as ToggleBlockId] = chip; });
+
+  function setBlockEnabled(id: ToggleBlockId, on: boolean) {
     if (on) enabled.add(id); else enabled.delete(id);
+    const chip = chipByBlock[id];
     chip.setAttribute('aria-pressed', String(on));
     chip.classList.toggle('active', on);
     pipeNodes[id].classList.toggle('dim', !on);
     pipeNodes[id].classList.toggle('active', on);
+  }
+
+  toggleChips.forEach((chip) => chip.addEventListener('click', () => {
+    const id = chip.dataset.block as ToggleBlockId;
+    setBlockEnabled(id, !enabled.has(id));
   }));
 
   function runPipelineLab() {
@@ -359,6 +368,19 @@ const STEPS = [
     step();
   }
   runPipelineBtn.addEventListener('click', runPipelineLab);
+
+  const fullPipelineBtn = document.getElementById('full-pipeline-btn') as HTMLButtonElement;
+  const clearPipelineBtn = document.getElementById('clear-pipeline-btn') as HTMLButtonElement;
+  fullPipelineBtn.addEventListener('click', () => {
+    for (const id of Object.keys(chipByBlock) as ToggleBlockId[]) setBlockEnabled(id, true);
+    runPipelineLab();
+  });
+  clearPipelineBtn.addEventListener('click', () => {
+    for (const id of Object.keys(chipByBlock) as ToggleBlockId[]) setBlockEnabled(id, false);
+    pipelineLog.innerHTML = '';
+    if (pipelineTimer) { clearTimeout(pipelineTimer); pipelineTimer = undefined; }
+    pipelineRunId++;
+  });
 
   // ---- Step 3 & 4: compare (shared renderer -- same Scenario shape,
   // two independent pickers so choosing one never touches the other) ----
@@ -528,12 +550,14 @@ const STEPS = [
   .pipeline-extra { display: flex; justify-content: center; gap: var(--sp-3); }
   .pipe-node.small { min-width: 6rem; padding: var(--sp-2); }
 
-  .generate-row { margin: 0; }
+  .generate-row { margin: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
   .ex-btn {
     font-family: var(--font-mono); font-size: var(--step--1); padding: var(--sp-2) var(--sp-3);
     background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-1); cursor: pointer;
   }
   .ex-btn:hover { border-color: var(--accent); color: var(--text-0); }
+  .ex-btn-alt { background: transparent; border-style: dashed; color: var(--text-2); }
+  .ex-btn-alt:hover { color: var(--text-0); }
 
   .trace-log {
     min-height: 6rem; max-height: 16rem; overflow-y: auto; padding: var(--sp-3);
