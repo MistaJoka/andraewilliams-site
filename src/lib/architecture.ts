@@ -236,3 +236,74 @@ export function getScenario(scenarioId: string): Scenario {
   if (!scenario) throw new Error(`Unknown scenario: ${scenarioId}`);
   return scenario;
 }
+
+// ---------------------------------------------------------------------
+// 4. Shaping a new app: same Scenario/ArchOption shape as above, one
+// level earlier -- before there's an existing codebase to fix or an AI
+// pipeline to wire in, there's the shape of the app itself.
+// ---------------------------------------------------------------------
+
+export const APP_SHAPE_SCENARIOS: Scenario[] = [
+  {
+    id: 'new-app',
+    title: 'Starting a brand-new product, unsure of scale',
+    prompt: "No users yet. What shape do you build in on day one?",
+    options: [
+      {
+        id: 'monolith',
+        title: 'Monolith',
+        summary: 'One deployable app, one codebase, one database.',
+        pros: ['Fastest to build and reason about', 'No network calls between your own modules', 'Free to refactor module boundaries before they\'re load-bearing'],
+        cons: ['Whole app scales together even if only one part is hot', 'One bug can take the whole thing down', 'A single codebase eventually strains a growing team'],
+      },
+      {
+        id: 'modular-monolith',
+        title: 'Modular monolith',
+        summary: 'One deployable app, but with enforced internal module boundaries.',
+        pros: ['Keeps the monolith\'s simplicity and single deploy', 'Boundaries are already drawn if you split out a service later', 'Separate teams can own separate modules without stepping on each other'],
+        cons: ['Boundaries are a discipline, not a wall -- nothing stops a shortcut import across modules', 'Still scales and deploys as one unit'],
+      },
+      {
+        id: 'microservices',
+        title: 'Microservices',
+        summary: 'Separate deployable services from day one.',
+        pros: ['Each service scales and deploys independently', 'A team can own a service end to end'],
+        cons: ["Heavy upfront complexity for a product that doesn't have users yet", 'Network calls where function calls used to be', "You're debugging a distributed system before you have distributed load"],
+      },
+    ],
+  },
+  {
+    id: 'straining-monolith',
+    title: 'An existing monolith is straining as team and traffic grow',
+    prompt: 'It works, but it\'s getting harder to ship and slower to run. What now?',
+    options: [
+      {
+        id: 'extract-hot-service',
+        title: 'Extract the one hot service',
+        summary: 'Pull out just the actual bottleneck (search, notifications, whatever it is) into its own service.',
+        pros: ['Targets the real bottleneck instead of a full rewrite', 'The rest of the app keeps its simplicity', 'Proves the pattern before committing further'],
+        cons: ['Now two deploy pipelines and a network boundary to maintain', 'Data that used to be one transaction may now be two'],
+      },
+      {
+        id: 'full-rewrite',
+        title: 'Full microservices rewrite',
+        summary: 'Split the whole app into services along domain lines, all at once.',
+        pros: ['Every team eventually gets independent deploys and scaling'],
+        cons: ['High risk and a long timeline without shipping user value meanwhile', 'Rewrites this large frequently stall or get partially abandoned'],
+      },
+      {
+        id: 'stay-monolith',
+        title: 'Stay monolith, invest in boundaries',
+        summary: 'Refactor toward a modular monolith and scale horizontally (more copies of the whole app) instead of splitting.',
+        pros: ['Ships continuously, never paused for a rewrite', 'Horizontal scaling of a stateless app is cheap and well understood', 'Buys time without new operational complexity'],
+        cons: ["Doesn't fix a genuinely CPU- or memory-heavy single component", 'Still eventually hits a ceiling if one part truly needs independent scaling'],
+      },
+    ],
+  },
+];
+
+export function getAppShapeScenario(scenarioId: string): Scenario {
+  const scenario = APP_SHAPE_SCENARIOS.find((s) => s.id === scenarioId);
+  if (!scenario) throw new Error(`Unknown app-shape scenario: ${scenarioId}`);
+  return scenario;
+}

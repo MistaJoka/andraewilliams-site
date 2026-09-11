@@ -111,7 +111,7 @@ export const DOMAINS: Domain[] = [
       },
       {
         href: '/architecture/', title: 'Architecture',
-        blurb: 'Why the same task can touch one file or ten, how an AI pipeline is actually wired, and how to weigh real tradeoffs — try all three yourself.',
+        blurb: 'Why the same task can touch one file or ten, how an AI pipeline is actually wired, how to weigh real tradeoffs, and how to shape a brand-new app — four live checks.',
         isNew: true,
         related: ['/tech-stack-fundamentals/', '/agentic-engineering/'],
         lastVerified: '2026-09-10',

@@ -3,17 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Sources from '../components/Sources.astro';
 import RelatedTopics from '../components/RelatedTopics.astro';
 import VerifiedDate from '../components/VerifiedDate.astro';
-import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS } from '../lib/architecture';
+import { LAYERS, TASKS, TOGGLE_BLOCKS, SCENARIOS, APP_SHAPE_SCENARIOS } from '../lib/architecture';
 
 const STEPS = [
   { id: 'step-1', num: '1', label: 'Where it lives' },
   { id: 'step-2', num: '2', label: 'Wiring in AI' },
   { id: 'step-3', num: '3', label: 'Choosing options' },
+  { id: 'step-4', num: '4', label: 'Shaping a new app' },
 ];
 ---
 <BaseLayout
   title="Architecture"
-  description="Why the same task can touch one file or ten, how an AI pipeline is actually wired, and how to weigh real architectural tradeoffs — one continuous, interactive walkthrough."
+  description="Why the same task can touch one file or ten, how an AI pipeline is actually wired, how to weigh real architectural tradeoffs, and how to shape a brand-new app — one continuous, interactive walkthrough."
 >
   <p class="eyebrow"><a href="/systems/">← Systems</a></p>
   <h1>Architecture</h1>
@@ -25,6 +26,7 @@ const STEPS = [
       <li>Architecture is <strong>where a decision lives</strong>, not how many layers you drew.</li>
       <li>An "AI pipeline" is a normal request path with an <strong>LLM as one more block</strong> in it.</li>
       <li>There's rarely one right architecture — only <strong>real tradeoffs</strong> given real constraints.</li>
+      <li>A new app's shape should follow <strong>its actual scale and team size</strong> — monolith-first is usually the right call, not a compromise.</li>
     </ul>
   </section>
 
@@ -161,6 +163,34 @@ const STEPS = [
         </div>
       </section>
 
+      <section class="flow-step" id="step-4" data-step-section="4">
+        <div class="step-marker"><span class="step-num">4</span></div>
+        <div class="step-body">
+          <h2>Shaping a new app</h2>
+          <p class="step-intro">
+            One level earlier than the rest of this page: before there's a
+            codebase to fix or an AI pipeline to wire in, there's the shape
+            of the app itself. Pick a scenario, weigh the options.
+          </p>
+
+          <div class="control-row">
+            <label class="control-label" for="shape-scenario-select">Scenario</label>
+            <select id="shape-scenario-select" class="select-input">
+              {APP_SHAPE_SCENARIOS.map((s) => <option value={s.id}>{s.title}</option>)}
+            </select>
+          </div>
+          <p class="scenario-prompt" id="shape-scenario-prompt"></p>
+
+          <div class="options-grid" id="shape-options-grid"></div>
+
+          <p class="step-why">
+            Monolith-first isn't a compromise — it's usually correct.
+            Microservices pay off once a team or a hot path actually needs
+            independent scaling, not before.
+          </p>
+        </div>
+      </section>
+
     </div>
 
     <section class="flow-recap">
@@ -168,12 +198,13 @@ const STEPS = [
         <div class="recap-card">
           <p class="docs-label">When to use what</p>
           <ul>
-            <li>Knowing the pieces isn't the skill — knowing <strong>which one a given task actually needs</strong> is. That judgment call is what the three steps above are for.</li>
+            <li>Knowing the pieces isn't the skill — knowing <strong>which one a given task actually needs</strong> is. That judgment call is what the four steps above are for.</li>
             <li><strong>Plain endpoint, no LLM:</strong> the task is deterministic. Don't reach for a model because you can.</li>
             <li><strong>+ Orchestrator + LLM:</strong> the task needs judgment or language generation the model already knows how to do.</li>
             <li><strong>+ Retrieval:</strong> the model needs facts it wasn't trained on — your docs, your data, anything that changes after training.</li>
             <li><strong>+ Tools:</strong> the model needs to <em>do</em> something, not just say something.</li>
             <li><strong>Invest in clean layering</strong> exactly where more than one kind of change — or reader, human or agent — will touch that code again.</li>
+            <li><strong>Start monolith, split later:</strong> a service boundary you don't need yet is pure overhead — extract only once something specific actually needs independent scaling.</li>
           </ul>
         </div>
         <div class="recap-card">
@@ -182,6 +213,7 @@ const STEPS = [
             <li><strong>"More layers is always better."</strong> Step 1's phone-number task shows a case where wide blast radius is correct, not a smell.</li>
             <li><strong>"Adding an LLM call makes it an AI pipeline."</strong> Step 2 with no orchestrator is a valid, ordinary endpoint that happens to exist.</li>
             <li><strong>"There's one right architecture."</strong> Step 3's options are all viable — the right one depends on constraints the diagram alone won't show you.</li>
+            <li><strong>"Microservices are the mature choice."</strong> Step 4's straining-monolith scenario shows staying monolith and investing in boundaries is often the better call.</li>
           </ul>
         </div>
       </div>
@@ -213,6 +245,11 @@ const STEPS = [
           url: 'https://modelcontextprotocol.io',
           note: 'The real standard for how an orchestrator hands tool access to an LLM, modeled by Step 2\'s "tools" block.',
         },
+        {
+          title: 'MonolithFirst — Martin Fowler',
+          url: 'https://martinfowler.com/bliki/MonolithFirst.html',
+          note: 'The argument behind Step 4: start monolith, split out services once you actually know where the boundaries belong.',
+        },
       ]}
     />
   </div>
@@ -221,8 +258,8 @@ const STEPS = [
 <script>
   import { scrambleText as decode } from '../lib/decode';
   import {
-    getBlastRadius, runPipeline, getScenario, LAYERS,
-    type LayerId, type BoundaryQuality, type ToggleBlockId, type PipelineBlock,
+    getBlastRadius, runPipeline, getScenario, getAppShapeScenario, LAYERS,
+    type LayerId, type BoundaryQuality, type ToggleBlockId, type PipelineBlock, type Scenario,
   } from '../lib/architecture';
 
   // ---- Step 1: blast radius ----
@@ -323,36 +360,42 @@ const STEPS = [
   }
   runPipelineBtn.addEventListener('click', runPipelineLab);
 
-  // ---- Step 3: compare ----
-  const scenarioSelect = document.getElementById('scenario-select') as HTMLSelectElement;
-  const scenarioPrompt = document.getElementById('scenario-prompt')!;
-  const optionsGrid = document.getElementById('options-grid')!;
+  // ---- Step 3 & 4: compare (shared renderer -- same Scenario shape,
+  // two independent pickers so choosing one never touches the other) ----
+  function bindScenarioPicker(selectId: string, promptId: string, gridId: string, lookup: (id: string) => Scenario) {
+    const select = document.getElementById(selectId) as HTMLSelectElement;
+    const prompt = document.getElementById(promptId)!;
+    const grid = document.getElementById(gridId)!;
 
-  function renderScenario() {
-    const scenario = getScenario(scenarioSelect.value);
-    scenarioPrompt.textContent = scenario.prompt;
-    optionsGrid.innerHTML = '';
-    for (const opt of scenario.options) {
-      const card = document.createElement('div');
-      card.className = 'option-card';
-      const title = document.createElement('p');
-      title.className = 'option-title';
-      title.textContent = opt.title;
-      const summary = document.createElement('p');
-      summary.className = 'option-summary';
-      summary.textContent = opt.summary;
-      const pros = document.createElement('ul');
-      pros.className = 'option-list pros';
-      for (const p of opt.pros) { const li = document.createElement('li'); li.textContent = p; pros.append(li); }
-      const cons = document.createElement('ul');
-      cons.className = 'option-list cons';
-      for (const c of opt.cons) { const li = document.createElement('li'); li.textContent = c; cons.append(li); }
-      card.append(title, summary, pros, cons);
-      optionsGrid.append(card);
+    function render() {
+      const scenario = lookup(select.value);
+      prompt.textContent = scenario.prompt;
+      grid.innerHTML = '';
+      for (const opt of scenario.options) {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        const title = document.createElement('p');
+        title.className = 'option-title';
+        title.textContent = opt.title;
+        const summary = document.createElement('p');
+        summary.className = 'option-summary';
+        summary.textContent = opt.summary;
+        const pros = document.createElement('ul');
+        pros.className = 'option-list pros';
+        for (const p of opt.pros) { const li = document.createElement('li'); li.textContent = p; pros.append(li); }
+        const cons = document.createElement('ul');
+        cons.className = 'option-list cons';
+        for (const c of opt.cons) { const li = document.createElement('li'); li.textContent = c; cons.append(li); }
+        card.append(title, summary, pros, cons);
+        grid.append(card);
+      }
     }
+    select.addEventListener('change', render);
+    render();
   }
-  scenarioSelect.addEventListener('change', renderScenario);
-  renderScenario();
+
+  bindScenarioPicker('scenario-select', 'scenario-prompt', 'options-grid', getScenario);
+  bindScenarioPicker('shape-scenario-select', 'shape-scenario-prompt', 'shape-options-grid', getAppShapeScenario);
 
   // ---- Process map: scroll-spy + click-to-jump ----
   const mapSteps = document.querySelectorAll<HTMLAnchorElement>('.map-step');

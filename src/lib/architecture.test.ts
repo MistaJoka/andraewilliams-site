@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { TASKS, SCENARIOS, getBlastRadius, runPipeline, getScenario, type ToggleBlockId } from './architecture';
+import {
+  TASKS, SCENARIOS, APP_SHAPE_SCENARIOS,
+  getBlastRadius, runPipeline, getScenario, getAppShapeScenario,
+  type ToggleBlockId, type Scenario,
+} from './architecture';
 
 describe('getBlastRadius', () => {
   it('throws for an unknown task', () => {
@@ -87,24 +91,36 @@ describe('runPipeline', () => {
   });
 });
 
-describe('scenario data integrity', () => {
+function checkScenarioIntegrity(scenarios: Scenario[]) {
   it('every scenario has 2-3 options', () => {
-    for (const scenario of SCENARIOS) {
+    for (const scenario of scenarios) {
       expect(scenario.options.length).toBeGreaterThanOrEqual(2);
       expect(scenario.options.length).toBeLessThanOrEqual(3);
     }
   });
 
   it('every option has at least one pro and one con', () => {
-    for (const scenario of SCENARIOS) {
+    for (const scenario of scenarios) {
       for (const option of scenario.options) {
         expect(option.pros.length).toBeGreaterThan(0);
         expect(option.cons.length).toBeGreaterThan(0);
       }
     }
   });
+}
+
+describe('scenario data integrity', () => {
+  checkScenarioIntegrity(SCENARIOS);
 
   it('getScenario throws for an unknown id', () => {
     expect(() => getScenario('nope')).toThrow();
+  });
+});
+
+describe('app-shape scenario data integrity', () => {
+  checkScenarioIntegrity(APP_SHAPE_SCENARIOS);
+
+  it('getAppShapeScenario throws for an unknown id', () => {
+    expect(() => getAppShapeScenario('nope')).toThrow();
   });
 });
