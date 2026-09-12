@@ -1,0 +1,391 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sources from '../components/Sources.astro';
+import RelatedTopics from '../components/RelatedTopics.astro';
+import VerifiedDate from '../components/VerifiedDate.astro';
+import { STATUS_FAMILIES } from '../lib/api-basics';
+
+// Kept as named constants (rather than inline JSON string literals in
+// the template) so no template expression's source text contains a
+// literal { or } -- astro check's template-to-TSX scanner mismatches
+// those against the expression's own braces.
+const PRESET_CREATE_BODY = '{"title": "Buy milk"}';
+const PRESET_BAD_BODY = '{}';
+const PRESET_UPDATE_BODY = '{"done": true}';
+---
+<BaseLayout
+  title="API Fundamentals"
+  description="An API call is three things: an endpoint (where), a method (what to do), and a status code (what happened). A real in-memory REST API to build a request against and watch come back."
+>
+  <p class="eyebrow"><a href="/systems/">← Systems</a></p>
+  <h1>API Fundamentals</h1>
+  <VerifiedDate />
+
+  <div class="infographic">
+
+    <section class="ig-hero">
+      <p class="ig-kicker">The big picture — click a piece to jump to it</p>
+      <nav class="pipeline pipeline-nav" aria-label="Jump to a concept">
+        <a class="pipe-node" href="#endpoint">
+          <span class="pipe-icon" aria-hidden="true">▤</span>
+          <span class="pipe-name">Endpoint</span>
+          <span class="pipe-note">Where</span>
+        </a>
+        <div class="pipe-edge"><span class="pipe-edge-note">+</span></div>
+        <a class="pipe-node" href="#method">
+          <span class="pipe-icon" aria-hidden="true">▶</span>
+          <span class="pipe-name">Method</span>
+          <span class="pipe-note">What</span>
+        </a>
+        <div class="pipe-edge"><span class="pipe-edge-note">→</span></div>
+        <a class="pipe-node" href="#status-code">
+          <span class="pipe-icon" aria-hidden="true">●</span>
+          <span class="pipe-name">Status code</span>
+          <span class="pipe-note">Outcome</span>
+        </a>
+      </nav>
+      <ul class="ig-tldr">
+        <li>An API call is three things: an <strong>endpoint</strong> (where), a <strong>method</strong> (what to do), and a <strong>status code</strong> (what happened).</li>
+        <li>The endpoint names a <strong>resource</strong>, not an action — the method is the verb that acts on it.</li>
+        <li>The status code is the real answer. The body is detail — check the code first, always.</li>
+      </ul>
+    </section>
+
+    <section class="ig-step" id="endpoint" style={{ '--step-accent': 'var(--accent)' }}>
+      <div class="ig-step-head">
+        <span class="ig-step-icon" aria-hidden="true">▤</span>
+        <div>
+          <p class="ig-step-kicker">01 · WHERE</p>
+          <h2>Endpoint</h2>
+        </div>
+      </div>
+      <p class="ig-eli5">A street address for one specific thing, not a command — <code>/todos/2</code> names todo #2. It doesn't say what to do with it.</p>
+      <div class="ig-step-grid">
+        <div class="ig-step-block">
+          <p class="ig-step-label">Real-world example</p>
+          <p><code>/todos</code> names "the todos" as a group; <code>/todos/2</code> names one specific todo. Same noun, more specific address — that's the whole pattern most REST APIs use.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Under the hood</p>
+          <p>An endpoint is a URL path a server's router matches against — the same matching idea as <a href="/tech-stack-fundamentals/">Tech Stack Fundamentals</a>' route table, just with no method baked in yet.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Where AI fits in</p>
+          <p>A tool schema an agent calls is, underneath, an endpoint plus a method — the agent is choosing both when it decides which "tool" to use.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-step" id="method" style={{ '--step-accent': 'var(--status-working)' }}>
+      <div class="ig-step-head">
+        <span class="ig-step-icon" aria-hidden="true">▶</span>
+        <div>
+          <p class="ig-step-kicker">02 · WHAT</p>
+          <h2>Method</h2>
+        </div>
+      </div>
+      <p class="ig-eli5">The verb next to the address. <strong>GET</strong> reads, <strong>POST</strong> creates, <strong>PUT</strong> replaces, <strong>DELETE</strong> removes — same endpoint, different method, a completely different outcome.</p>
+      <div class="ig-step-grid">
+        <div class="ig-step-block">
+          <p class="ig-step-label">Real-world example</p>
+          <p><code>GET /todos/2</code> reads it. <code>DELETE /todos/2</code> removes it. Same address — try both in the live lab below.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Under the hood</p>
+          <p>GET is meant to be <strong>safe</strong> — it shouldn't change anything. That's why a browser can prefetch or cache a GET without asking, and never a POST.</p>
+        </div>
+        <div class="ig-step-block">
+          <p class="ig-step-label">Where AI fits in</p>
+          <p>An agent wired with only GET-shaped tools genuinely can't corrupt your data, no matter what it decides — the method is the real safety boundary, not a prompt instruction telling it to "be careful."</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-step" id="status-code" style={{ '--step-accent': 'var(--accent-deep)' }}>
+      <div class="ig-step-head">
+        <span class="ig-step-icon" aria-hidden="true">●</span>
+        <div>
+          <p class="ig-step-kicker">03 · OUTCOME</p>
+          <h2>Status code</h2>
+        </div>
+      </div>
+      <p class="ig-eli5">A 3-digit answer sent back with every single response, no exceptions. 2xx it worked, 4xx you made a mistake, 5xx they did.</p>
+      <div class="ig-step-grid">
+        {STATUS_FAMILIES.map((f) => (
+          <div class="ig-step-block">
+            <p class="ig-step-label">{f.range} — {f.name}</p>
+            <p>{f.meaning} <em>{f.example}</em></p>
+          </div>
+        ))}
+        <div class="ig-step-block">
+          <p class="ig-step-label">Where AI fits in</p>
+          <p>An agent parses the status code programmatically, not the wording of the body — a confidently worded error message doesn't change that 500 means "retry," not "trust this."</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-live">
+      <p class="ig-kicker">See it happen — live</p>
+      <div class="workspace-toolbar">
+        <span class="workspace-title">todos-api.sim</span>
+        <span class="workspace-hint">a genuinely real (tiny) in-memory REST API — build a request, send it, see what actually comes back</span>
+      </div>
+
+      <div class="control-row">
+        <span class="control-label">Method</span>
+        <div class="segmented" role="radiogroup" aria-label="HTTP method">
+          <button type="button" class="seg-btn active" data-method="GET">GET</button>
+          <button type="button" class="seg-btn" data-method="POST">POST</button>
+          <button type="button" class="seg-btn" data-method="PUT">PUT</button>
+          <button type="button" class="seg-btn" data-method="DELETE">DELETE</button>
+        </div>
+      </div>
+
+      <div class="addr-input-row">
+        <span class="addr-proto" id="method-label">GET</span>
+        <input id="path-input" class="addr-input" type="text" value="/todos" spellcheck="false" autocomplete="off" aria-label="Request path" />
+        <button type="button" id="send-btn" class="go-btn">Send ▶</button>
+      </div>
+
+      <div class="body-row" id="body-row" hidden>
+        <label class="control-label" for="body-input">JSON body</label>
+        <textarea id="body-input" class="body-input" rows="2" spellcheck="false">{PRESET_CREATE_BODY}</textarea>
+      </div>
+
+      <div class="preset-chips">
+        <button type="button" class="chip" data-method="GET" data-path="/todos">GET /todos</button>
+        <button type="button" class="chip" data-method="GET" data-path="/todos/1">GET /todos/1</button>
+        <button type="button" class="chip" data-method="GET" data-path="/todos/999">GET /todos/999 (missing)</button>
+        <button type="button" class="chip" data-method="POST" data-path="/todos" data-body={PRESET_CREATE_BODY}>POST /todos</button>
+        <button type="button" class="chip" data-method="POST" data-path="/todos" data-body={PRESET_BAD_BODY}>POST /todos (bad body)</button>
+        <button type="button" class="chip" data-method="PUT" data-path="/todos/1" data-body={PRESET_UPDATE_BODY}>PUT /todos/1</button>
+        <button type="button" class="chip" data-method="DELETE" data-path="/todos/2">DELETE /todos/2</button>
+      </div>
+
+      <div class="tool-grid-2">
+        <div class="tool-window">
+          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">Request</span></div>
+          <div class="tool-body"><pre class="req-view" id="request-view">— nothing sent yet —</pre></div>
+        </div>
+        <div class="tool-window">
+          <div class="tool-titlebar"><span class="tw-dots"><i></i><i></i><i></i></span><span class="tw-tab">Response</span></div>
+          <div class="tool-body">
+            <p class="status-line" id="status-line">—</p>
+            <pre class="req-view" id="response-view"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ig-recap">
+      <p class="ig-kicker">Common misconceptions</p>
+      <ul class="ig-recap-list">
+        <li><strong>"A 404 means the whole API is down."</strong> It means that one resource wasn't found — every other endpoint is unaffected. Try <code>GET /todos/999</code> above, then <code>GET /todos</code> right after.</li>
+        <li><strong>"GET is just as safe to skip checking as any other method."</strong> Backwards — GET is the one method that's supposed to be side-effect-free, which is exactly what makes it safe to cache, retry, and prefetch.</li>
+        <li><strong>"REST means JSON."</strong> REST is a style, not a format — JSON just won out as the common choice. The endpoint/method/status-code shape here works the same with XML or anything else.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <div class="footer-page">
+    <RelatedTopics />
+
+    <Sources
+      sources={[
+        {
+          title: 'HTTP request methods — MDN Web Docs',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods',
+          note: 'The real definitions behind GET, POST, PUT, and DELETE this page\'s lab implements.',
+        },
+        {
+          title: 'HTTP response status codes — MDN Web Docs',
+          url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status',
+          note: 'The full reference behind the 2xx/4xx/5xx families in the Status Code step.',
+        },
+        {
+          title: 'Representational state transfer — Wikipedia',
+          url: 'https://en.wikipedia.org/wiki/Representational_state_transfer',
+          note: 'The architectural style this page\'s endpoint/method shape is named after.',
+        },
+      ]}
+    />
+  </div>
+</BaseLayout>
+
+<script>
+  import { scrambleText as decode } from '../lib/decode';
+  import { createApiSim } from '../lib/api-basics';
+
+  const api = createApiSim();
+
+  const methodBtns = document.querySelectorAll<HTMLButtonElement>('.seg-btn');
+  const methodLabel = document.getElementById('method-label')!;
+  const pathInput = document.getElementById('path-input') as HTMLInputElement;
+  const bodyRow = document.getElementById('body-row') as HTMLElement;
+  const bodyInput = document.getElementById('body-input') as HTMLTextAreaElement;
+  const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const requestView = document.getElementById('request-view')!;
+  const statusLine = document.getElementById('status-line')!;
+  const responseView = document.getElementById('response-view')!;
+
+  let method = 'GET';
+
+  function setMethod(next: string) {
+    method = next;
+    methodLabel.textContent = method;
+    methodBtns.forEach((b) => b.classList.toggle('active', b.dataset.method === method));
+    bodyRow.hidden = method !== 'POST' && method !== 'PUT';
+  }
+
+  methodBtns.forEach((btn) => btn.addEventListener('click', () => setMethod(btn.dataset.method!)));
+  setMethod('GET');
+
+  function send() {
+    const path = pathInput.value.trim() || '/todos';
+    const needsBody = method === 'POST' || method === 'PUT';
+    let body: unknown;
+    let requestText = `${method} ${path}`;
+
+    if (needsBody) {
+      const raw = bodyInput.value.trim();
+      requestText += `\n${raw}`;
+      if (raw) {
+        try {
+          body = JSON.parse(raw);
+        } catch {
+          requestView.textContent = requestText;
+          statusLine.textContent = '—';
+          statusLine.className = 'status-line';
+          decode(responseView, 'Request never sent — invalid JSON in the body.', { frames: 5, frameMs: 20 });
+          return;
+        }
+      }
+    }
+
+    requestView.textContent = requestText;
+    const result = api.request(method, path, body);
+    const family = Math.floor(result.status / 100);
+    statusLine.textContent = `${result.status}`;
+    statusLine.className = `status-line status-${family}xx`;
+    decode(responseView, JSON.stringify(result.body, null, 2) ?? 'null', { frames: 5, frameMs: 20 });
+  }
+
+  sendBtn.addEventListener('click', send);
+
+  chips.forEach((chip) => chip.addEventListener('click', () => {
+    setMethod(chip.dataset.method!);
+    pathInput.value = chip.dataset.path ?? '/todos';
+    if (chip.dataset.body !== undefined) bodyInput.value = chip.dataset.body;
+    send();
+  }));
+</script>
+
+<style>
+  .infographic {
+    position: relative; left: 50%; transform: translateX(-50%);
+    width: 100vw; max-width: 76rem; box-sizing: border-box;
+    padding: 0 var(--sp-5);
+    margin: var(--sp-5) 0 var(--sp-6);
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-4);
+  }
+  .footer-page {
+    position: relative; left: 50%; transform: translateX(-50%);
+    width: 100vw; max-width: 76rem; box-sizing: border-box;
+    padding: 0 var(--sp-5);
+  }
+  .footer-page :global(.sources-list),
+  .footer-page :global(.related-list) {
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+
+  .ig-kicker { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-3); }
+  .ig-hero { border: 1px solid var(--line-bright); background: var(--bg-1); padding: var(--sp-4); }
+  .ig-tldr { margin: var(--sp-4) 0 0; padding-left: 1.2rem; display: grid; gap: var(--sp-2); font-size: 0.85rem; line-height: 1.5; color: var(--text-1); }
+
+  .ig-step { border: 1px solid var(--line); border-left: 3px solid var(--step-accent); background: var(--bg-1); padding: var(--sp-4); scroll-margin-top: var(--sp-4); }
+  .ig-step-head { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+  .ig-step-icon { font-size: var(--step-3); color: var(--step-accent); line-height: 1; }
+  .ig-step-kicker { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--step-accent); margin: 0; }
+  .ig-step h2 { margin: 0; }
+  .ig-eli5 { color: var(--text-1); margin: 0 0 var(--sp-3); max-width: 65ch; }
+  .ig-eli5 code { font-size: 0.9em; }
+  .ig-step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--sp-3); }
+  .ig-step-block { border: 1px solid var(--line); background: var(--bg-0); padding: var(--sp-3); }
+  .ig-step-label { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 0 0 var(--sp-1); }
+  .ig-step-block p:last-child { margin: 0; font-size: 0.82rem; line-height: 1.5; color: var(--text-1); }
+  .ig-step-block a { color: var(--accent); }
+  .ig-step-block code { font-size: 0.9em; }
+
+  .ig-live { border: 1px solid var(--line); background: var(--bg-1); padding: var(--sp-4); container-type: inline-size; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+  .ig-recap { border: 1px solid var(--line); border-left: 3px solid var(--status-testing); background: var(--bg-1); padding: var(--sp-4); }
+  .ig-recap-list { margin: 0; padding-left: 1.2rem; display: grid; gap: var(--sp-2); font-size: 0.85rem; line-height: 1.5; color: var(--text-1); }
+  .ig-recap-list code { font-size: 0.9em; }
+
+  .workspace-toolbar { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: var(--sp-3); }
+  .workspace-title { font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+  .workspace-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+
+  /* pipeline nav (hero only, on this page -- no live-run animated twin) */
+  .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+  .pipe-node {
+    display: flex; flex-direction: column; align-items: center; gap: var(--sp-1);
+    padding: var(--sp-3); border: 1px solid var(--line-bright); background: var(--bg-0);
+    min-width: 9rem; text-align: center; text-decoration: none; color: inherit;
+  }
+  .pipeline-nav .pipe-node { cursor: pointer; }
+  .pipeline-nav .pipe-node:hover { border-color: var(--accent); }
+  .pipeline-nav .pipe-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pipe-icon { font-size: var(--step-2); color: var(--text-1); }
+  .pipe-name { font-family: var(--font-mono); font-weight: 700; color: var(--text-0); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; }
+  .pipe-note { font-size: 0.68rem; color: var(--text-2); max-width: 9rem; }
+  .pipe-edge { flex: 0 0 auto; width: 3rem; height: 2px; background: var(--line-bright); position: relative; }
+  .pipe-edge::after { content: '▶'; position: absolute; right: -0.6rem; top: 50%; transform: translateY(-50%); font-size: 0.6rem; color: var(--line-bright); }
+  .pipe-edge-note { position: absolute; top: -1.1rem; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
+  @media (max-width: 40rem) {
+    .pipeline { flex-direction: column; }
+    .pipe-edge { width: 2px; height: 2rem; }
+    .pipe-edge::after { content: '▼'; right: 50%; top: auto; bottom: -0.7rem; transform: translateX(50%); }
+    .pipe-edge-note { top: 50%; left: -2rem; transform: translateY(-50%); }
+  }
+
+  /* controls */
+  .control-row { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+  .control-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .segmented { display: flex; gap: 0; border: 1px solid var(--line-bright); }
+  .seg-btn { font-family: var(--font-mono); font-size: 0.7rem; padding: var(--sp-2) var(--sp-3); background: var(--bg-0); border: none; color: var(--text-1); cursor: pointer; }
+  .seg-btn + .seg-btn { border-left: 1px solid var(--line-bright); }
+  .seg-btn.active { background: var(--accent); color: var(--bg-0); font-weight: 700; }
+
+  .addr-input-row { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+  .addr-proto { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-2); font-weight: 700; min-width: 3.5rem; }
+  .addr-input { flex: 1; min-width: 12rem; font-family: var(--font-mono); font-size: 0.8rem; padding: var(--sp-2); background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0); }
+  .addr-input:focus { outline: 1px solid var(--accent); }
+  .go-btn { font-family: var(--font-mono); font-size: 0.8rem; padding: var(--sp-2) var(--sp-3); background: var(--accent); color: var(--bg-0); border: none; font-weight: 700; cursor: pointer; }
+  .go-btn:hover { background: var(--accent-deep); }
+
+  .body-row { display: grid; gap: var(--sp-1); }
+  .body-row[hidden] { display: none; }
+  .body-input { font-family: var(--font-mono); font-size: 0.78rem; padding: var(--sp-2); background: var(--bg-0); border: 1px solid var(--line-bright); color: var(--text-0); resize: vertical; }
+  .body-input:focus { outline: 1px solid var(--accent); }
+
+  .preset-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  .chip { font-family: var(--font-mono); font-size: 0.7rem; padding: var(--sp-1) var(--sp-2); background: var(--bg-0); border: 1px solid var(--line); color: var(--text-1); cursor: pointer; }
+  .chip:hover { border-color: var(--accent); color: var(--text-0); }
+
+  .tool-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+  @container (max-width: 40rem) { .tool-grid-2 { grid-template-columns: 1fr; } }
+  .tool-window { border: 1px solid var(--line-bright); background: var(--bg-0); display: flex; flex-direction: column; min-height: 10rem; }
+  .tool-titlebar { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); background: var(--bg-1); border-bottom: 1px solid var(--line); }
+  .tw-dots { display: flex; gap: 0.3rem; }
+  .tw-dots i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--line-bright); display: block; }
+  .tw-tab { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-2); }
+  .tool-body { padding: var(--sp-3); flex: 1; display: flex; flex-direction: column; gap: var(--sp-2); overflow: auto; }
+
+  .req-view { margin: 0; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-1); white-space: pre-wrap; word-break: break-word; }
+  .status-line { font-family: var(--font-mono); font-size: var(--step-0); font-weight: 700; color: var(--text-2); margin: 0; }
+  .status-line.status-2xx { color: var(--status-working); }
+  .status-line.status-4xx { color: var(--status-testing); }
+  .status-line.status-5xx { color: var(--status-broken); }
+</style>
